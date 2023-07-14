@@ -2,27 +2,125 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+type User {
+  id:String!
+  image_url:String!
+  name:String!
+  email:String!
+  school:[School!]!
+  likes:[Note!]!
+  class:[Class!]!
+  notes:[Note!]!
+}
+type Note{
+  id:String!
+  class_id:String!
+  school_id:String!
+  description:String!
+  user_id:String!
+  is_public:Boolean!
+  school:School!
+  tags:[Tag!]!
+  like_user:[User!]!
+  comment:[Comment!]!
+}
+type School{
+  id:String!
+  name:String!
+  owner_id:String!
+  owner:User!
+  students:[User!]!
 }
 
-type User {
-  id: ID!
-  name: String!
+type Class {
+  id:String!
+  name:String!
+  school_id:String!
+  owner_id:String!
+
+  school:School!
+  students:[User!]!
+  notes:[Note!]!
+}
+
+type Tag {
+  id:String!
+  name:String!
+}
+type Comment{
+  id:String!
+  note_id:String!
+  comment:String!
 }
 
 type Query {
-  todos: [Todo!]!
+  getNotes: [Note!]!
+  getSchools: [School!]!
+  getClasses: [Class!]!
+  getTags: [Tag!]!
+  getMyNotes: Note!
+  getUser:User!
 }
-
-input NewTodo {
-  text: String!
-  userId: String!
-}
-
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createUser(input: NewUser!): User!
+  updateUser(input: NewUser):User!
+  createNote(input: NewNote!): Note!
+  updateNote(input: NewNote):Note!
+  createClass(input: NewClass!): Class!
+  updateClass(input: NewClass):Class!
+  createSchool(input: NewSchool!): School!
+  updateSchool(input: NewSchool):School!
+  createComment(input: NewComment!): Comment!
+  updateComment(input: NewComment):Comment!
+  createTag(input: NewTag!): Tag!
+  joinClass(input:NewJoinClass!):Class!
+  joinSchool(input:NewJoinSchool!):School!
 }
+
+
+input NewNote {
+  classID: String!
+  schoolID:String!
+  description:String!
+  userID:String!
+  isPublic:Boolean!
+}
+
+input NewClass {
+  name: String!
+  schoolID:String!
+  ownerID:String!
+}
+
+input NewSchool {
+  Name: String!
+  schoolID:String!
+  userID:String!
+}
+
+input NewUser {
+  Name: String!
+  Email: String!
+  Password: String!
+}
+
+input NewTag {
+  Name: String!
+}
+
+input NewComment {
+  Comment: String!
+  NoteID: String!
+}
+
+
+input NewJoinClass {
+  ClassID: String!
+  UserID: String!
+}
+
+input NewJoinSchool {
+  SchoolID: String!
+  UserID: String!
+}
+

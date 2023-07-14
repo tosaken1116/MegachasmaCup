@@ -10,14 +10,99 @@ import (
 	"megachasma/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+}
+
+// CreateNote is the resolver for the createNote field.
+func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error) {
+	panic(fmt.Errorf("not implemented: CreateNote - createNote"))
+}
+
+// UpdateNote is the resolver for the updateNote field.
+func (r *mutationResolver) UpdateNote(ctx context.Context, input *model.NewNote) (*model.Note, error) {
+	panic(fmt.Errorf("not implemented: UpdateNote - updateNote"))
+}
+
+// CreateClass is the resolver for the createClass field.
+func (r *mutationResolver) CreateClass(ctx context.Context, input model.NewClass) (*model.Class, error) {
+	panic(fmt.Errorf("not implemented: CreateClass - createClass"))
+}
+
+// UpdateClass is the resolver for the updateClass field.
+func (r *mutationResolver) UpdateClass(ctx context.Context, input *model.NewClass) (*model.Class, error) {
+	panic(fmt.Errorf("not implemented: UpdateClass - updateClass"))
+}
+
+// CreateSchool is the resolver for the createSchool field.
+func (r *mutationResolver) CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error) {
+	panic(fmt.Errorf("not implemented: CreateSchool - createSchool"))
+}
+
+// UpdateSchool is the resolver for the updateSchool field.
+func (r *mutationResolver) UpdateSchool(ctx context.Context, input *model.NewSchool) (*model.School, error) {
+	panic(fmt.Errorf("not implemented: UpdateSchool - updateSchool"))
+}
+
+// CreateComment is the resolver for the createComment field.
+func (r *mutationResolver) CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error) {
+	panic(fmt.Errorf("not implemented: CreateComment - createComment"))
+}
+
+// UpdateComment is the resolver for the updateComment field.
+func (r *mutationResolver) UpdateComment(ctx context.Context, input *model.NewComment) (*model.Comment, error) {
+	panic(fmt.Errorf("not implemented: UpdateComment - updateComment"))
+}
+
+// CreateTag is the resolver for the createTag field.
+func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error) {
+	panic(fmt.Errorf("not implemented: CreateTag - createTag"))
+}
+
+// JoinClass is the resolver for the joinClass field.
+func (r *mutationResolver) JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error) {
+	panic(fmt.Errorf("not implemented: JoinClass - joinClass"))
+}
+
+// JoinSchool is the resolver for the joinSchool field.
+func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error) {
+	panic(fmt.Errorf("not implemented: JoinSchool - joinSchool"))
+}
+
+// GetNotes is the resolver for the getNotes field.
+func (r *queryResolver) GetNotes(ctx context.Context) ([]*model.Note, error) {
+	panic(fmt.Errorf("not implemented: GetNotes - getNotes"))
+}
+
+// GetSchools is the resolver for the getSchools field.
+func (r *queryResolver) GetSchools(ctx context.Context) ([]*model.School, error) {
+	panic(fmt.Errorf("not implemented: GetSchools - getSchools"))
+}
+
+// GetClasses is the resolver for the getClasses field.
+func (r *queryResolver) GetClasses(ctx context.Context) ([]*model.Class, error) {
+	panic(fmt.Errorf("not implemented: GetClasses - getClasses"))
+}
+
+// GetTags is the resolver for the getTags field.
+func (r *queryResolver) GetTags(ctx context.Context) ([]*model.Tag, error) {
+	panic(fmt.Errorf("not implemented: GetTags - getTags"))
+}
+
+// GetMyNotes is the resolver for the getMyNotes field.
+func (r *queryResolver) GetMyNotes(ctx context.Context) (*model.Note, error) {
+	panic(fmt.Errorf("not implemented: GetMyNotes - getMyNotes"))
+}
+
+// GetUser is the resolver for the getUser field.
+func (r *queryResolver) GetUser(ctx context.Context) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: GetUser - getUser"))
 }
 
 // Mutation returns MutationResolver implementation.

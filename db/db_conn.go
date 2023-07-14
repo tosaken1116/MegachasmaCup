@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"megachasma/config"
-	"megachasma/graph/model"
+	model "megachasma/graph/model/db"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,7 +18,7 @@ func NewPostgresConnector() *PostgresConnector {
 	conf := config.LoadEnv()
 	dsn := postgresConnInfo(*conf.PostgresEnv)
 	Psql, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if ; err != nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 
