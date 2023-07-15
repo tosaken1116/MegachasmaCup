@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
@@ -30,13 +31,13 @@ func GetSchoolByID(db *gorm.DB, id string) (*dbModel.School, error) {
 	return school, nil
 }
 
-func (ss *schoolService) CreateSchool(input model.NewSchool) (*model.School, error) {
-	pOwnerID, err := uuid.Parse(input.OwnerID)
+func (ss *schoolService) CreateSchool(ctx context.Context, Name string, OwnerID string) (*model.School, error) {
+	pOwnerID, err := uuid.Parse(OwnerID)
 	if err != nil {
 		return nil, err
 	}
 	school := dbModel.School{
-		Name:    input.Name,
+		Name:    Name,
 		OwnerID: pOwnerID,
 	}
 	if err := ss.db.Create(&school).Error; err != nil {
