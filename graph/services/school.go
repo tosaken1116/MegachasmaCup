@@ -28,3 +28,16 @@ func GetSchoolByID(db *gorm.DB, id string) (*dbModel.School, error) {
 	}
 	return school, nil
 }
+
+func (ss *schoolService) UpdateSchool(input model.School) (*model.School, error) {
+	school, err := GetSchoolByID(ss.db, input.ID)
+	if err != nil {
+		return nil, err
+	}
+	school.Name = input.Name
+	if err := ss.db.Save(&school).Error; err != nil {
+		return nil, err
+	}
+	updatedSchool := convertSchool(*school)
+	return updatedSchool, nil
+}
