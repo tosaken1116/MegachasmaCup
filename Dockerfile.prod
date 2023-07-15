@@ -7,16 +7,8 @@ WORKDIR /app
 COPY ./ ./
 RUN go mod download
 
-# 任意です
-# 環境によって環境変数を読み分けるための設定（.env.${_STAGE}にあたる）
-ARG _STAGE
-ENV STAGE=${_STAGE}
-
-# goファイルのビルド
-RUN go build server.go
-
 # docker コンテナの50001ポートをこのサービスのために使用
 EXPOSE 50001
 
 # apiサーバを起動
-CMD /app/server
+CMD ["go","run","server.go"]
