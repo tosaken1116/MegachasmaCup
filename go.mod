@@ -7,6 +7,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/subosito/gotenv v1.4.2
 	github.com/vektah/gqlparser/v2 v2.5.4
+	golang.org/x/crypto v0.8.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.2
 )
@@ -21,6 +22,5 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	golang.org/x/crypto v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 )
