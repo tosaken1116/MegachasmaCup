@@ -30,3 +30,13 @@ func convertTag(tags dbModel.Tag) *model.Tag {
 		Name: tags.Name,
 	}
 }
+
+func (ts *tagService) CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error) {
+	tag := dbModel.Tag{
+		Name: input.Name,
+	}
+	if err := ts.db.Create(&tag).Error; err != nil {
+		return nil, err
+	}
+	return convertTag(tag), nil
+}
