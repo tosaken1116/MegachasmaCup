@@ -61,3 +61,15 @@ func (us *userService) GetUsersClass(ctx context.Context, userID string) ([]*mod
 	}
 	return convertedClass, nil
 }
+
+func (us *userService) GetUsersLike(ctx context.Context, userID string) ([]*model.Note, error) {
+	user := new(dbModel.User)
+	if err := us.db.Where("id = ?", userID).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedNote := make([]*model.Note, len(user.Likes))
+	for i, key := range user.Likes {
+		convertedNote[i] = convertNote(*key)
+	}
+	return convertedNote, nil
+}

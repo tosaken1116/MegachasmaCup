@@ -128,7 +128,7 @@ func (r *userResolver) School(ctx context.Context, obj *model.User) ([]*model.Sc
 
 // Likes is the resolver for the likes field.
 func (r *userResolver) Likes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
-	panic(fmt.Errorf("not implemented: Likes - likes"))
+	return r.Srv.GetUsersLike(ctx, obj.ID)
 }
 
 // Class is the resolver for the class field.

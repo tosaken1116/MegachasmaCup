@@ -11,6 +11,7 @@ type UserService interface {
 	CreateUser(ctx context.Context, Email string, Name string, Password string) (*model.User, error)
 	GetUsersNote(ctx context.Context, userID string) ([]*model.Note, error)
 	GetUsersClass(ctx context.Context, userID string) ([]*model.Class, error)
+	GetUsersLike(ctx context.Context, userID string) ([]*model.Note, error)
 }
 
 type NoteService interface {
