@@ -16,6 +16,7 @@ type NoteService interface {
 }
 
 type SchoolService interface {
+	GetSchoolByID(ctx context.Context, id string) (*model.School, error)
 }
 
 type ClassService interface {

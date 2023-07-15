@@ -78,7 +78,7 @@ func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSc
 
 // School is the resolver for the school field.
 func (r *noteResolver) School(ctx context.Context, obj *model.Note) (*model.School, error) {
-	panic(fmt.Errorf("not implemented: School - school"))
+	return r.Srv.GetSchoolByID(ctx, obj.SchoolID)
 }
 
 // Tags is the resolver for the tags field.

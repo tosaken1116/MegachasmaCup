@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
@@ -21,10 +22,10 @@ func convertSchool(school dbModel.School) *model.School {
 		UpdatedAt: school.UpdatedAt,
 	}
 }
-func GetSchoolByID(db *gorm.DB, id string) (*dbModel.School, error) {
+func (ss *schoolService) GetSchoolByID(ctx context.Context, id string) (*model.School, error) {
 	school := new(dbModel.School)
-	if err := db.Where("id = ?", id).Find(&school).Error; err != nil {
+	if err := ss.db.Where("id = ?", id).Find(&school).Error; err != nil {
 		return nil, err
 	}
-	return school, nil
+	return convertSchool(*school), nil
 }
