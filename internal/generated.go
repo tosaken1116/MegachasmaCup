@@ -106,7 +106,7 @@ type ComplexityRoot struct {
 		GetMyNotes func(childComplexity int) int
 		GetNotes   func(childComplexity int) int
 		GetSchools func(childComplexity int) int
-		GetTags    func(childComplexity int) int
+		GetTags    func(childComplexity int, searchWord string) int
 		GetUser    func(childComplexity int) int
 	}
 
@@ -165,7 +165,7 @@ type QueryResolver interface {
 	GetNotes(ctx context.Context) ([]*model.Note, error)
 	GetSchools(ctx context.Context) ([]*model.School, error)
 	GetClasses(ctx context.Context) ([]*model.Class, error)
-	GetTags(ctx context.Context) ([]*model.Tag, error)
+	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 	GetMyNotes(ctx context.Context) (*model.Note, error)
 	GetUser(ctx context.Context) (*model.User, error)
 }
@@ -583,7 +583,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetTags(childComplexity), true
+		args, err := ec.field_Query_getTags_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetTags(childComplexity, args["searchWord"].(string)), true
 
 	case "Query.getUser":
 		if e.complexity.Query.GetUser == nil {
@@ -931,7 +936,7 @@ type Query {
   getNotes: [Note!]!
   getSchools: [School!]!
   getClasses: [Class!]!
-  getTags: [Tag!]!
+  getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
   getUser:User!
 }
@@ -1213,6 +1218,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getTags_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["searchWord"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("searchWord"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["searchWord"] = arg0
 	return args, nil
 }
 
@@ -3849,7 +3869,7 @@ func (ec *executionContext) _Query_getTags(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetTags(rctx)
+		return ec.resolvers.Query().GetTags(rctx, fc.Args["searchWord"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3881,6 +3901,17 @@ func (ec *executionContext) fieldContext_Query_getTags(ctx context.Context, fiel
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Tag", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getTags_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }

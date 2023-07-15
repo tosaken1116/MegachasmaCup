@@ -77,7 +77,7 @@ type Query {
   getNotes: [Note!]!
   getSchools: [School!]!
   getClasses: [Class!]!
-  getTags: [Tag!]!
+  getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
   getUser:User!
 }

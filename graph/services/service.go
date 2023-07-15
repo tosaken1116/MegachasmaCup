@@ -21,6 +21,7 @@ type ClassService interface {
 }
 
 type TagService interface {
+	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 }
 
 type Services interface {
