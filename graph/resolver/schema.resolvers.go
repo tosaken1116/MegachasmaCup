@@ -78,17 +78,17 @@ func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSc
 
 // School is the resolver for the school field.
 func (r *noteResolver) School(ctx context.Context, obj *model.Note) (*model.School, error) {
-	panic(fmt.Errorf("not implemented: School - school"))
+	return r.Srv.GetSchoolByID(ctx, obj.SchoolID)
 }
 
 // Tags is the resolver for the tags field.
 func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag, error) {
-	panic(fmt.Errorf("not implemented: Tags - tags"))
+	return r.Srv.GetNoteTags(ctx, obj.ID)
 }
 
 // LikeUser is the resolver for the like_user field.
 func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: LikeUser - like_user"))
+	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
 }
 
 // GetNotes is the resolver for the getNotes field.
@@ -123,22 +123,22 @@ func (r *queryResolver) GetUser(ctx context.Context) (*model.User, error) {
 
 // School is the resolver for the school field.
 func (r *userResolver) School(ctx context.Context, obj *model.User) ([]*model.School, error) {
-	panic(fmt.Errorf("not implemented: School - school"))
+	return r.Srv.GetUsersSchool(ctx, obj.ID)
 }
 
 // Likes is the resolver for the likes field.
 func (r *userResolver) Likes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
-	panic(fmt.Errorf("not implemented: Likes - likes"))
+	return r.Srv.GetUsersLike(ctx, obj.ID)
 }
 
 // Class is the resolver for the class field.
 func (r *userResolver) Class(ctx context.Context, obj *model.User) ([]*model.Class, error) {
-	panic(fmt.Errorf("not implemented: Class - class"))
+	return r.Srv.GetUsersClass(ctx, obj.ID)
 }
 
 // Notes is the resolver for the notes field.
 func (r *userResolver) Notes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
-	panic(fmt.Errorf("not implemented: Notes - notes"))
+	return r.Srv.GetUsersNote(ctx, obj.ID)
 }
 
 // Mutation returns internal.MutationResolver implementation.

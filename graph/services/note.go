@@ -80,3 +80,26 @@ func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID 
 	}
 	return convertCreateNote(newNote), nil
 }
+
+func (ns *noteService) GetNoteTags(ctx context.Context, NoteID string) ([]*model.Tag, error) {
+	note := new(dbModel.Note)
+	if err := ns.db.Where("id = ?", NoteID).Find(&note).Error; err != nil {
+		return nil, err
+	}
+	convertedTag := make([]*model.Tag, len(note.Tags))
+	for i, key := range note.Tags {
+		convertedTag[i] = convertTag(*key)
+	}
+	return convertedTag, nil
+}
+func (ns *noteService) GetLikeUserOfNote(ctx context.Context, NoteID string) ([]*model.User, error) {
+	note := new(dbModel.Note)
+	if err := ns.db.Where("id = ?", NoteID).Find(&note).Error; err != nil {
+		return nil, err
+	}
+	convertedUser := make([]*model.User, len(note.LikeUser))
+	for i, key := range note.LikeUser {
+		convertedUser[i] = convertUser(*key)
+	}
+	return convertedUser, nil
+}

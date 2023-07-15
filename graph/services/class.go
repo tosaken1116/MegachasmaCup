@@ -44,10 +44,6 @@ func convertCreateClass(class dbModel.Class) *model.Class {
 	}
 }
 func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID string, OwnerID string) (*model.Class, error) {
-	school, err := GetSchoolByID(cs.db, SchoolID)
-	if err != nil {
-		return nil, err
-	}
 	pSchoolID, err := uuid.Parse(SchoolID)
 	if err != nil {
 		return nil, err
@@ -60,7 +56,6 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 		Name:     Name,
 		SchoolID: pSchoolID,
 		OwnerID:  pOwnerID,
-		School:   *school,
 	}
 	if err := cs.db.Create(&newClass).Error; err != nil {
 		return nil, err

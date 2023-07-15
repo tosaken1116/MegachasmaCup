@@ -9,13 +9,20 @@ import (
 
 type UserService interface {
 	CreateUser(ctx context.Context, Email string, Name string, Password string) (*model.User, error)
+	GetUsersNote(ctx context.Context, userID string) ([]*model.Note, error)
+	GetUsersClass(ctx context.Context, userID string) ([]*model.Class, error)
+	GetUsersLike(ctx context.Context, userID string) ([]*model.Note, error)
+	GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error)
 }
 
 type NoteService interface {
 	CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, UserID string, IsPublic bool) (*model.Note, error)
+	GetNoteTags(ctx context.Context, NoteID string) ([]*model.Tag, error)
+	GetLikeUserOfNote(ctx context.Context, NoteID string) ([]*model.User, error)
 }
 
 type SchoolService interface {
+	GetSchoolByID(ctx context.Context, id string) (*model.School, error)
 	CreateSchool(ctx context.Context, Name string, OwnerID string) (*model.School, error)
 }
 
