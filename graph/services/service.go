@@ -1,6 +1,11 @@
 package services
 
-import "gorm.io/gorm"
+import (
+	"context"
+	"megachasma/graph/model"
+
+	"gorm.io/gorm"
+)
 
 type UserService interface {
 }
@@ -15,6 +20,7 @@ type ClassService interface {
 }
 
 type TagService interface {
+	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 }
 
 type Services interface {
