@@ -2,11 +2,17 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar DateTime
+
 type User {
   id:String!
   image_url:String!
   name:String!
   email:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
+
   school:[School!]!
   likes:[Note!]!
   class:[Class!]!
@@ -19,6 +25,10 @@ type Note{
   description:String!
   user_id:String!
   is_public:Boolean!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
+
   school:School!
   tags:[Tag!]!
   like_user:[User!]!
@@ -28,6 +38,10 @@ type School{
   id:String!
   name:String!
   owner_id:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
+
   owner:User!
   students:[User!]!
 }
@@ -37,6 +51,9 @@ type Class {
   name:String!
   school_id:String!
   owner_id:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
 
   school:School!
   students:[User!]!
@@ -51,6 +68,9 @@ type Comment{
   id:String!
   note_id:String!
   comment:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
 }
 
 type Query {

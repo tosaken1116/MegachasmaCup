@@ -2,20 +2,30 @@
 
 package model
 
+import (
+	"time"
+)
+
 type Class struct {
-	ID       string  `json:"id"`
-	Name     string  `json:"name"`
-	SchoolID string  `json:"school_id"`
-	OwnerID  string  `json:"owner_id"`
-	School   *School `json:"school"`
-	Students []*User `json:"students"`
-	Notes    []*Note `json:"notes"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	SchoolID  string    `json:"school_id"`
+	OwnerID   string    `json:"owner_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
+	School    *School   `json:"school"`
+	Students  []*User   `json:"students"`
+	Notes     []*Note   `json:"notes"`
 }
 
 type Comment struct {
-	ID      string `json:"id"`
-	NoteID  string `json:"note_id"`
-	Comment string `json:"comment"`
+	ID        string    `json:"id"`
+	NoteID    string    `json:"note_id"`
+	Comment   string    `json:"comment"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
 type NewClass struct {
@@ -70,6 +80,9 @@ type Note struct {
 	Description string     `json:"description"`
 	UserID      string     `json:"user_id"`
 	IsPublic    bool       `json:"is_public"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	DeletedAt   time.Time  `json:"deleted_at"`
 	School      *School    `json:"school"`
 	Tags        []*Tag     `json:"tags"`
 	LikeUser    []*User    `json:"like_user"`
@@ -77,11 +90,14 @@ type Note struct {
 }
 
 type School struct {
-	ID       string  `json:"id"`
-	Name     string  `json:"name"`
-	OwnerID  string  `json:"owner_id"`
-	Owner    *User   `json:"owner"`
-	Students []*User `json:"students"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	OwnerID   string    `json:"owner_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
+	Owner     *User     `json:"owner"`
+	Students  []*User   `json:"students"`
 }
 
 type Tag struct {
@@ -90,12 +106,15 @@ type Tag struct {
 }
 
 type User struct {
-	ID       string    `json:"id"`
-	ImageURL string    `json:"image_url"`
-	Name     string    `json:"name"`
-	Email    string    `json:"email"`
-	School   []*School `json:"school"`
-	Likes    []*Note   `json:"likes"`
-	Class    []*Class  `json:"class"`
-	Notes    []*Note   `json:"notes"`
+	ID        string    `json:"id"`
+	ImageURL  string    `json:"image_url"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
+	School    []*School `json:"school"`
+	Likes     []*Note   `json:"likes"`
+	Class     []*Class  `json:"class"`
+	Notes     []*Note   `json:"notes"`
 }
