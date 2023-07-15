@@ -983,8 +983,7 @@ input NewClass {
 
 input NewSchool {
   Name: String!
-  schoolID:String!
-  userID:String!
+  ownerID:String!
 }
 
 input NewUser {
@@ -7336,7 +7335,7 @@ func (ec *executionContext) unmarshalInputNewSchool(ctx context.Context, obj int
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Name", "schoolID", "userID"}
+	fieldsInOrder := [...]string{"Name", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7352,24 +7351,15 @@ func (ec *executionContext) unmarshalInputNewSchool(ctx context.Context, obj int
 				return it, err
 			}
 			it.Name = data
-		case "schoolID":
+		case "ownerID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SchoolID = data
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
+			it.OwnerID = data
 		}
 	}
 
