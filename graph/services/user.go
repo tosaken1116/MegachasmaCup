@@ -37,3 +37,15 @@ func (us *userService) CreateUser(ctx context.Context, Email string, Name string
 	}
 	return convertUser(newUser), nil
 }
+
+func (us *userService) GetUsersNote(ctx context.Context, userID string) ([]*model.Note, error) {
+	note := new([]*dbModel.Note)
+	if err := us.db.Where("user_id = ?", userID).Find(&note).Error; err != nil {
+		return nil, err
+	}
+	convertedNote := make([]*model.Note, len(*note))
+	for i, key := range *note {
+		convertedNote[i] = convertNote(*key)
+	}
+	return convertedNote, nil
+}

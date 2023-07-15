@@ -138,7 +138,7 @@ func (r *userResolver) Class(ctx context.Context, obj *model.User) ([]*model.Cla
 
 // Notes is the resolver for the notes field.
 func (r *userResolver) Notes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
-	panic(fmt.Errorf("not implemented: Notes - notes"))
+	return r.Srv.GetUsersNote(ctx, obj.ID)
 }
 
 // Mutation returns internal.MutationResolver implementation.

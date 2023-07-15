@@ -9,6 +9,7 @@ import (
 
 type UserService interface {
 	CreateUser(ctx context.Context, Email string, Name string, Password string) (*model.User, error)
+	GetUsersNote(ctx context.Context, userID string) ([]*model.Note, error)
 }
 
 type NoteService interface {
