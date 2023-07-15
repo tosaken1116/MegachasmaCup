@@ -12,12 +12,16 @@ type tagService struct {
 	db *gorm.DB
 }
 
-func (ts *tagService) GetTags(ctx context.Context, searchWord string) (*model.Tag, error) {
-	tags := dbModel.Tag{}
-	if err := ts.db.Find(&tags).Error; err != nil {
+func (ts *tagService) GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error) {
+	tags := []*dbModel.Tag{}
+	if err := ts.db.Where("name LIKE ?", "%"+searchWord+"%").Find(&tags).Error; err != nil {
 		return nil, err
 	}
-	return convertTag(tags), nil
+	convertedTag := make([]*model.Tag, len(tags))
+	for i, key := range tags {
+		convertedTag[i] = convertTag(*key)
+	}
+	return convertedTag, nil
 }
 
 func convertTag(tags dbModel.Tag) *model.Tag {
