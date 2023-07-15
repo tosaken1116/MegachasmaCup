@@ -67,6 +67,7 @@ type ComplexityRoot struct {
 		ID        func(childComplexity int) int
 		NoteID    func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+		UserID    func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -78,11 +79,11 @@ type ComplexityRoot struct {
 		CreateUser    func(childComplexity int, input model.NewUser) int
 		JoinClass     func(childComplexity int, input model.NewJoinClass) int
 		JoinSchool    func(childComplexity int, input model.NewJoinSchool) int
-		UpdateClass   func(childComplexity int, input *model.NewClass) int
-		UpdateComment func(childComplexity int, input *model.NewComment) int
-		UpdateNote    func(childComplexity int, input *model.NewNote) int
-		UpdateSchool  func(childComplexity int, input *model.NewSchool) int
-		UpdateUser    func(childComplexity int, input *model.NewUser) int
+		UpdateClass   func(childComplexity int, id string, input *model.NewClass) int
+		UpdateComment func(childComplexity int, id string, input *model.NewComment) int
+		UpdateNote    func(childComplexity int, id string, input *model.NewNote) int
+		UpdateSchool  func(childComplexity int, id string, input *model.NewSchool) int
+		UpdateUser    func(childComplexity int, id string, input *model.NewUser) int
 	}
 
 	Note struct {
@@ -144,15 +145,15 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (*model.User, error)
-	UpdateUser(ctx context.Context, input *model.NewUser) (*model.User, error)
+	UpdateUser(ctx context.Context, id string, input *model.NewUser) (*model.User, error)
 	CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error)
-	UpdateNote(ctx context.Context, input *model.NewNote) (*model.Note, error)
+	UpdateNote(ctx context.Context, id string, input *model.NewNote) (*model.Note, error)
 	CreateClass(ctx context.Context, input model.NewClass) (*model.Class, error)
-	UpdateClass(ctx context.Context, input *model.NewClass) (*model.Class, error)
+	UpdateClass(ctx context.Context, id string, input *model.NewClass) (*model.Class, error)
 	CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error)
-	UpdateSchool(ctx context.Context, input *model.NewSchool) (*model.School, error)
+	UpdateSchool(ctx context.Context, id string, input *model.NewSchool) (*model.School, error)
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
-	UpdateComment(ctx context.Context, input *model.NewComment) (*model.Comment, error)
+	UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 	JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error)
 	JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error)
@@ -304,6 +305,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Comment.UpdatedAt(childComplexity), true
 
+	case "Comment.user_id":
+		if e.complexity.Comment.UserID == nil {
+			break
+		}
+
+		return e.complexity.Comment.UserID(childComplexity), true
+
 	case "Mutation.createClass":
 		if e.complexity.Mutation.CreateClass == nil {
 			break
@@ -410,7 +418,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateClass(childComplexity, args["input"].(*model.NewClass)), true
+		return e.complexity.Mutation.UpdateClass(childComplexity, args["id"].(string), args["input"].(*model.NewClass)), true
 
 	case "Mutation.updateComment":
 		if e.complexity.Mutation.UpdateComment == nil {
@@ -422,7 +430,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateComment(childComplexity, args["input"].(*model.NewComment)), true
+		return e.complexity.Mutation.UpdateComment(childComplexity, args["id"].(string), args["input"].(*model.NewComment)), true
 
 	case "Mutation.updateNote":
 		if e.complexity.Mutation.UpdateNote == nil {
@@ -434,7 +442,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateNote(childComplexity, args["input"].(*model.NewNote)), true
+		return e.complexity.Mutation.UpdateNote(childComplexity, args["id"].(string), args["input"].(*model.NewNote)), true
 
 	case "Mutation.updateSchool":
 		if e.complexity.Mutation.UpdateSchool == nil {
@@ -446,7 +454,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSchool(childComplexity, args["input"].(*model.NewSchool)), true
+		return e.complexity.Mutation.UpdateSchool(childComplexity, args["id"].(string), args["input"].(*model.NewSchool)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -458,7 +466,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(*model.NewUser)), true
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(*model.NewUser)), true
 
 	case "Note.class_id":
 		if e.complexity.Note.ClassID == nil {
@@ -935,6 +943,7 @@ type Tag {
 type Comment{
   id:String!
   note_id:String!
+  user_id:String!
   comment:String!
   created_at:DateTime!
   updated_at:DateTime!
@@ -951,15 +960,15 @@ type Query {
 }
 type Mutation {
   createUser(input: NewUser!): User!
-  updateUser(input: NewUser):User!
+  updateUser(id:String!,input: NewUser):User!
   createNote(input: NewNote!): Note!
-  updateNote(input: NewNote):Note!
+  updateNote(id:String!,input: NewNote):Note!
   createClass(input: NewClass!): Class!
-  updateClass(input: NewClass):Class!
+  updateClass(id:String!,input: NewClass):Class!
   createSchool(input: NewSchool!): School!
-  updateSchool(input: NewSchool):School!
+  updateSchool(id:String!,input: NewSchool):School!
   createComment(input: NewComment!): Comment!
-  updateComment(input: NewComment):Comment!
+  updateComment(id:String!,input: NewComment):Comment!
   createTag(input: NewTag!): Tag!
   joinClass(input:NewJoinClass!):Class!
   joinSchool(input:NewJoinSchool!):School!
@@ -1143,75 +1152,120 @@ func (ec *executionContext) field_Mutation_joinSchool_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewClass
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewClass2ᚖmegachasmaᚋgraphᚋmodelᚐNewClass(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["id"] = arg0
+	var arg1 *model.NewClass
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalONewClass2ᚖmegachasmaᚋgraphᚋmodelᚐNewClass(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_updateComment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewComment
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewComment2ᚖmegachasmaᚋgraphᚋmodelᚐNewComment(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["id"] = arg0
+	var arg1 *model.NewComment
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalONewComment2ᚖmegachasmaᚋgraphᚋmodelᚐNewComment(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_updateNote_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewNote
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewNote2ᚖmegachasmaᚋgraphᚋmodelᚐNewNote(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["id"] = arg0
+	var arg1 *model.NewNote
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalONewNote2ᚖmegachasmaᚋgraphᚋmodelᚐNewNote(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_updateSchool_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewSchool
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewSchool2ᚖmegachasmaᚋgraphᚋmodelᚐNewSchool(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["id"] = arg0
+	var arg1 *model.NewSchool
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalONewSchool2ᚖmegachasmaᚋgraphᚋmodelᚐNewSchool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewUser
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewUser2ᚖmegachasmaᚋgraphᚋmodelᚐNewUser(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["id"] = arg0
+	var arg1 *model.NewUser
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalONewUser2ᚖmegachasmaᚋgraphᚋmodelᚐNewUser(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -1883,6 +1937,50 @@ func (ec *executionContext) fieldContext_Comment_note_id(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Comment_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Comment_comment(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Comment_comment(ctx, field)
 	if err != nil {
@@ -2152,7 +2250,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(*model.NewUser))
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewUser))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2316,7 +2414,7 @@ func (ec *executionContext) _Mutation_updateNote(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateNote(rctx, fc.Args["input"].(*model.NewNote))
+		return ec.resolvers.Mutation().UpdateNote(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewNote))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2478,7 +2576,7 @@ func (ec *executionContext) _Mutation_updateClass(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateClass(rctx, fc.Args["input"].(*model.NewClass))
+		return ec.resolvers.Mutation().UpdateClass(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewClass))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2628,7 +2726,7 @@ func (ec *executionContext) _Mutation_updateSchool(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSchool(rctx, fc.Args["input"].(*model.NewSchool))
+		return ec.resolvers.Mutation().UpdateSchool(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewSchool))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2730,6 +2828,8 @@ func (ec *executionContext) fieldContext_Mutation_createComment(ctx context.Cont
 				return ec.fieldContext_Comment_id(ctx, field)
 			case "note_id":
 				return ec.fieldContext_Comment_note_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Comment_user_id(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
 			case "created_at":
@@ -2770,7 +2870,7 @@ func (ec *executionContext) _Mutation_updateComment(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateComment(rctx, fc.Args["input"].(*model.NewComment))
+		return ec.resolvers.Mutation().UpdateComment(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewComment))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2799,6 +2899,8 @@ func (ec *executionContext) fieldContext_Mutation_updateComment(ctx context.Cont
 				return ec.fieldContext_Comment_id(ctx, field)
 			case "note_id":
 				return ec.fieldContext_Comment_note_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Comment_user_id(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
 			case "created_at":
@@ -3699,6 +3801,8 @@ func (ec *executionContext) fieldContext_Note_comment(ctx context.Context, field
 				return ec.fieldContext_Comment_id(ctx, field)
 			case "note_id":
 				return ec.fieldContext_Comment_note_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_Comment_user_id(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
 			case "created_at":
@@ -7552,6 +7656,11 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "note_id":
 			out.Values[i] = ec._Comment_note_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user_id":
+			out.Values[i] = ec._Comment_user_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -74,5 +74,7 @@ type Tag struct {
 type Comment struct {
 	Base
 	NoteID  uuid.UUID `json:"note_id" gorm:"not null"`
+	UserID  uuid.UUID `json:"user_id"`
+	User    User      `json:"user"`
 	Comment string    `json:"comment" gorm:"not null"`
 }

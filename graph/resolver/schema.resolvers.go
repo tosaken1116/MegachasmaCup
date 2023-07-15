@@ -17,7 +17,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, input *model.NewUser) (*model.User, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *model.NewUser) (*model.User, error) {
 	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
 }
 
@@ -27,7 +27,7 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) 
 }
 
 // UpdateNote is the resolver for the updateNote field.
-func (r *mutationResolver) UpdateNote(ctx context.Context, input *model.NewNote) (*model.Note, error) {
+func (r *mutationResolver) UpdateNote(ctx context.Context, id string, input *model.NewNote) (*model.Note, error) {
 	panic(fmt.Errorf("not implemented: UpdateNote - updateNote"))
 }
 
@@ -37,7 +37,7 @@ func (r *mutationResolver) CreateClass(ctx context.Context, input model.NewClass
 }
 
 // UpdateClass is the resolver for the updateClass field.
-func (r *mutationResolver) UpdateClass(ctx context.Context, input *model.NewClass) (*model.Class, error) {
+func (r *mutationResolver) UpdateClass(ctx context.Context, id string, input *model.NewClass) (*model.Class, error) {
 	panic(fmt.Errorf("not implemented: UpdateClass - updateClass"))
 }
 
@@ -47,7 +47,7 @@ func (r *mutationResolver) CreateSchool(ctx context.Context, input model.NewScho
 }
 
 // UpdateSchool is the resolver for the updateSchool field.
-func (r *mutationResolver) UpdateSchool(ctx context.Context, input *model.NewSchool) (*model.School, error) {
+func (r *mutationResolver) UpdateSchool(ctx context.Context, id string, input *model.NewSchool) (*model.School, error) {
 	panic(fmt.Errorf("not implemented: UpdateSchool - updateSchool"))
 }
 
@@ -57,7 +57,7 @@ func (r *mutationResolver) CreateComment(ctx context.Context, input model.NewCom
 }
 
 // UpdateComment is the resolver for the updateComment field.
-func (r *mutationResolver) UpdateComment(ctx context.Context, input *model.NewComment) (*model.Comment, error) {
+func (r *mutationResolver) UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error) {
 	panic(fmt.Errorf("not implemented: UpdateComment - updateComment"))
 }
 

@@ -22,6 +22,7 @@ type Class struct {
 type Comment struct {
 	ID        string    `json:"id"`
 	NoteID    string    `json:"note_id"`
+	UserID    string    `json:"user_id"`
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
