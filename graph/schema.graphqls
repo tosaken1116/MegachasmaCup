@@ -77,7 +77,7 @@ type Comment{
 
 type Query {
   getNotes: [Note!]!
-  getSchools: [School!]!
+  getSchools(searchWord:String!): [School!]!
   getClasses: [Class!]!
   getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
