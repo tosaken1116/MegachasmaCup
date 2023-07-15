@@ -26,7 +26,7 @@ func (ts *tagService) GetTags(ctx context.Context, searchWord string) ([]*model.
 
 func convertTag(tags dbModel.Tag) *model.Tag {
 	return &model.Tag{
-		ID:   tags.ID,
+		ID:   tags.ID.String(),
 		Name: tags.Name,
 	}
 }

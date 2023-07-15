@@ -23,6 +23,7 @@ type Note{
   class_id:String!
   school_id:String!
   description:String!
+  title:String!
   user_id:String!
   is_public:Boolean!
   created_at:DateTime!
@@ -102,6 +103,7 @@ input NewNote {
   classID: String!
   schoolID:String!
   description:String!
+  title:String!
   userID:String!
   isPublic:Boolean!
 }

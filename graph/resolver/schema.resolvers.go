@@ -23,7 +23,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input *model.NewUser)
 
 // CreateNote is the resolver for the createNote field.
 func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error) {
-	panic(fmt.Errorf("not implemented: CreateNote - createNote"))
+	return r.Srv.CreateNote(ctx, input.ClassID, input.SchoolID, input.Description, input.Title, input.UserID, input.IsPublic)
 }
 
 // UpdateNote is the resolver for the updateNote field.

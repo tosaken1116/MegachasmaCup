@@ -97,6 +97,7 @@ type ComplexityRoot struct {
 		School      func(childComplexity int) int
 		SchoolID    func(childComplexity int) int
 		Tags        func(childComplexity int) int
+		Title       func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
 	}
@@ -536,6 +537,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.Tags(childComplexity), true
 
+	case "Note.title":
+		if e.complexity.Note.Title == nil {
+			break
+		}
+
+		return e.complexity.Note.Title(childComplexity), true
+
 	case "Note.updated_at":
 		if e.complexity.Note.UpdatedAt == nil {
 			break
@@ -882,6 +890,7 @@ type Note{
   class_id:String!
   school_id:String!
   description:String!
+  title:String!
   user_id:String!
   is_public:Boolean!
   created_at:DateTime!
@@ -961,6 +970,7 @@ input NewNote {
   classID: String!
   schoolID:String!
   description:String!
+  title:String!
   userID:String!
   isPublic:Boolean!
 }
@@ -1759,6 +1769,8 @@ func (ec *executionContext) fieldContext_Class_notes(ctx context.Context, field 
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -2253,6 +2265,8 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -2336,6 +2350,8 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -3197,6 +3213,50 @@ func (ec *executionContext) fieldContext_Note_description(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Note_title(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_title(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Note_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Note",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Note_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Note_user_id(ctx, field)
 	if err != nil {
@@ -3702,6 +3762,8 @@ func (ec *executionContext) fieldContext_Query_getNotes(ctx context.Context, fie
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -3963,6 +4025,8 @@ func (ec *executionContext) fieldContext_Query_getMyNotes(ctx context.Context, f
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -5090,6 +5154,8 @@ func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field g
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -5228,6 +5294,8 @@ func (ec *executionContext) fieldContext_User_notes(ctx context.Context, field g
 				return ec.fieldContext_Note_school_id(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
@@ -7194,7 +7262,7 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"classID", "schoolID", "description", "userID", "isPublic"}
+	fieldsInOrder := [...]string{"classID", "schoolID", "description", "title", "userID", "isPublic"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7228,6 +7296,15 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 				return it, err
 			}
 			it.Description = data
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
 		case "userID":
 			var err error
 
@@ -7692,6 +7769,11 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "description":
 			out.Values[i] = ec._Note_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "title":
+			out.Values[i] = ec._Note_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
