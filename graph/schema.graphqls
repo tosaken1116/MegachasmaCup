@@ -68,6 +68,7 @@ type Tag {
 type Comment{
   id:String!
   note_id:String!
+  user_id:String!
   comment:String!
   created_at:DateTime!
   updated_at:DateTime!
@@ -84,15 +85,15 @@ type Query {
 }
 type Mutation {
   createUser(input: NewUser!): User!
-  updateUser(input: NewUser):User!
+  updateUser(id:String!,input: NewUser):User!
   createNote(input: NewNote!): Note!
-  updateNote(input: NewNote):Note!
+  updateNote(id:String!,input: NewNote):Note!
   createClass(input: NewClass!): Class!
-  updateClass(input: NewClass):Class!
+  updateClass(id:String!,input: NewClass):Class!
   createSchool(input: NewSchool!): School!
-  updateSchool(input: NewSchool):School!
+  updateSchool(id:String!,input: NewSchool):School!
   createComment(input: NewComment!): Comment!
-  updateComment(input: NewComment):Comment!
+  updateComment(id:String!,input: NewComment):Comment!
   createTag(input: NewTag!): Tag!
   joinClass(input:NewJoinClass!):Class!
   joinSchool(input:NewJoinSchool!):School!
