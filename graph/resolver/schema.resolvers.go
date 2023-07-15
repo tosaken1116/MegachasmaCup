@@ -123,7 +123,7 @@ func (r *queryResolver) GetUser(ctx context.Context) (*model.User, error) {
 
 // School is the resolver for the school field.
 func (r *userResolver) School(ctx context.Context, obj *model.User) ([]*model.School, error) {
-	panic(fmt.Errorf("not implemented: School - school"))
+	return r.Srv.GetUsersSchool(ctx, obj.ID)
 }
 
 // Likes is the resolver for the likes field.

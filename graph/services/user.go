@@ -73,3 +73,15 @@ func (us *userService) GetUsersLike(ctx context.Context, userID string) ([]*mode
 	}
 	return convertedNote, nil
 }
+
+func (us *userService) GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error) {
+	user := new(dbModel.User)
+	if err := us.db.Where("id = ?", userID).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedSchool := make([]*model.School, len(user.School))
+	for i, key := range user.School {
+		convertedSchool[i] = convertSchool(*key)
+	}
+	return convertedSchool, nil
+}
