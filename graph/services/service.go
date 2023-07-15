@@ -24,6 +24,7 @@ type NoteService interface {
 type SchoolService interface {
 	GetSchoolByID(ctx context.Context, id string) (*model.School, error)
 	CreateSchool(ctx context.Context, Name string, OwnerID string) (*model.School, error)
+	GetSchoolBySearchWord(searchWord string) ([]*model.School, error)
 }
 
 type ClassService interface {

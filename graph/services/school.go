@@ -59,3 +59,15 @@ func (ss *schoolService) CreateSchool(ctx context.Context, Name string, OwnerID 
 // 	updatedSchool := convertSchool(*school)
 // 	return updatedSchool, nil
 // }
+
+func (ss *schoolService) GetSchoolBySearchWord(searchWord string) ([]*model.School, error) {
+	schools := []*dbModel.School{}
+	if err := ss.db.Where("name LIKE ?", "%"+searchWord+"%").Find(&schools).Error; err != nil {
+		return nil, err
+	}
+	convertedSchool := make([]*model.School, len(schools))
+	for i, key := range schools {
+		convertedSchool[i] = convertSchool(*key)
+	}
+	return convertedSchool, nil
+}
