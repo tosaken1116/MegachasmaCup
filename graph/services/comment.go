@@ -21,3 +21,15 @@ func convertComment(comment dbModel.Comment) *model.Comment {
 		UpdatedAt: comment.UpdatedAt,
 	}
 }
+func (cs *commentService) CreateComment(input model.NewComment) (*model.Comment, error) {
+	comment := dbModel.Comment{
+		UserID:  input.UserID,
+		NoteID:  input.NoteID,
+		Comment: input.Comment,
+	}
+	if err := cs.db.Create(&comment).Error; err != nil {
+		return nil, err
+	}
+	createdComment := convertComment(comment)
+	return createdComment, nil
+}
