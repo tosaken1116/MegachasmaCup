@@ -1,0 +1,22 @@
+FROM golang:1.17 as build
+
+# コンテナ上にアプリケーション(main.goのビルド成果物)を配置するdirectoryを作成
+WORKDIR /app
+
+# ソースをコピー
+COPY ./ ./
+RUN go mod download
+
+# 任意です
+# 環境によって環境変数を読み分けるための設定（.env.${_STAGE}にあたる）
+ARG _STAGE
+ENV STAGE=${_STAGE}
+
+# goファイルのビルド
+RUN GOOS=linux GOARCH=amd64 go build -mod=readonly -v -o server
+
+# docker コンテナの50001ポートをこのサービスのために使用
+EXPOSE 50001
+
+# apiサーバを起動
+CMD GO_ENV=${STAGE} /app/server
