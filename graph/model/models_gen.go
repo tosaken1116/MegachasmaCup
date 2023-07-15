@@ -53,6 +53,7 @@ type NewNote struct {
 	ClassID     string `json:"classID"`
 	SchoolID    string `json:"schoolID"`
 	Description string `json:"description"`
+	Title       string `json:"title"`
 	UserID      string `json:"userID"`
 	IsPublic    bool   `json:"isPublic"`
 }
@@ -78,6 +79,7 @@ type Note struct {
 	ClassID     string     `json:"class_id"`
 	SchoolID    string     `json:"school_id"`
 	Description string     `json:"description"`
+	Title       string     `json:"title"`
 	UserID      string     `json:"user_id"`
 	IsPublic    bool       `json:"is_public"`
 	CreatedAt   time.Time  `json:"created_at"`

@@ -35,6 +35,7 @@ type Note struct {
 	Base
 	ClassID     uuid.UUID `json:"class_id" gorm:"not null"`
 	SchoolID    uuid.UUID `json:"school_id" gorm:"not null"`
+	Title       string    `json:"title" gorm:"not null"`
 	Description string    `json:"description" gorm:"not null"`
 	UserID      uuid.UUID `json:"user_id" gorm:"not null"`
 	IsPublic    bool      `json:"is_public" gorm:"default false"`
