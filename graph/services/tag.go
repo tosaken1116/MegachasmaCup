@@ -5,6 +5,7 @@ import (
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -26,14 +27,15 @@ func (ts *tagService) GetTags(ctx context.Context, searchWord string) ([]*model.
 
 func convertTag(tags dbModel.Tag) *model.Tag {
 	return &model.Tag{
-		ID:   tags.ID,
+		ID:   tags.ID.String(),
 		Name: tags.Name,
 	}
 }
 
-func (ts *tagService) CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error) {
+func (ts *tagService) CreateTag(ctx context.Context, Name string) (*model.Tag, error) {
 	tag := dbModel.Tag{
-		Name: input.Name,
+		ID:   uuid.New(),
+		Name: Name,
 	}
 	if err := ts.db.Create(&tag).Error; err != nil {
 		return nil, err

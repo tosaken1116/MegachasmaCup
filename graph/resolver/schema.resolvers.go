@@ -63,7 +63,7 @@ func (r *mutationResolver) UpdateComment(ctx context.Context, input *model.NewCo
 
 // CreateTag is the resolver for the createTag field.
 func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error) {
-	return r.Srv.CreateTag(ctx, input)
+	return r.Srv.CreateTag(ctx, input.Name)
 }
 
 // JoinClass is the resolver for the joinClass field.
