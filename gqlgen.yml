@@ -4,8 +4,8 @@ schema:
 
 # Where should the generated server code go?
 exec:
-  filename: graph/generated.go
-  package: graph
+  filename: internal/generated.go
+  package: internal
 
 # Uncomment to enable federation
 # federation:
@@ -20,7 +20,7 @@ model:
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: graph
+  dir: graph/resolver
   package: graph
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
@@ -85,3 +85,37 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  User:
+   fields:
+    school:
+     resolver: true
+    likes:
+     resolver: true
+    class:
+     resolver: true
+    notes:
+     resolver: true
+  Note:
+   fields:
+    school:
+      resolver: true
+    tags:
+     resolver: true
+    like_user:
+     resolver: true
+    comments:
+     resolver: true
+  school:
+    fields:
+      owner:
+        resolver: true
+      students:
+        resolver: true
+  class:
+    fields:
+      school:
+        resolver: true
+      students:
+        resolver: true
+      notes:
+        resolver: true

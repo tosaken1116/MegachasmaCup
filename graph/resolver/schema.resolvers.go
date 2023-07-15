@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"megachasma/graph/model"
+	"megachasma/internal"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -75,6 +76,21 @@ func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSc
 	panic(fmt.Errorf("not implemented: JoinSchool - joinSchool"))
 }
 
+// School is the resolver for the school field.
+func (r *noteResolver) School(ctx context.Context, obj *model.Note) (*model.School, error) {
+	panic(fmt.Errorf("not implemented: School - school"))
+}
+
+// Tags is the resolver for the tags field.
+func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag, error) {
+	panic(fmt.Errorf("not implemented: Tags - tags"))
+}
+
+// LikeUser is the resolver for the like_user field.
+func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented: LikeUser - like_user"))
+}
+
 // GetNotes is the resolver for the getNotes field.
 func (r *queryResolver) GetNotes(ctx context.Context) ([]*model.Note, error) {
 	panic(fmt.Errorf("not implemented: GetNotes - getNotes"))
@@ -105,11 +121,39 @@ func (r *queryResolver) GetUser(ctx context.Context) (*model.User, error) {
 	panic(fmt.Errorf("not implemented: GetUser - getUser"))
 }
 
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+// School is the resolver for the school field.
+func (r *userResolver) School(ctx context.Context, obj *model.User) ([]*model.School, error) {
+	panic(fmt.Errorf("not implemented: School - school"))
+}
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+// Likes is the resolver for the likes field.
+func (r *userResolver) Likes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
+	panic(fmt.Errorf("not implemented: Likes - likes"))
+}
+
+// Class is the resolver for the class field.
+func (r *userResolver) Class(ctx context.Context, obj *model.User) ([]*model.Class, error) {
+	panic(fmt.Errorf("not implemented: Class - class"))
+}
+
+// Notes is the resolver for the notes field.
+func (r *userResolver) Notes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
+	panic(fmt.Errorf("not implemented: Notes - notes"))
+}
+
+// Mutation returns internal.MutationResolver implementation.
+func (r *Resolver) Mutation() internal.MutationResolver { return &mutationResolver{r} }
+
+// Note returns internal.NoteResolver implementation.
+func (r *Resolver) Note() internal.NoteResolver { return &noteResolver{r} }
+
+// Query returns internal.QueryResolver implementation.
+func (r *Resolver) Query() internal.QueryResolver { return &queryResolver{r} }
+
+// User returns internal.UserResolver implementation.
+func (r *Resolver) User() internal.UserResolver { return &userResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+type noteResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type userResolver struct{ *Resolver }
