@@ -49,3 +49,15 @@ func (us *userService) GetUsersNote(ctx context.Context, userID string) ([]*mode
 	}
 	return convertedNote, nil
 }
+
+func (us *userService) GetUsersClass(ctx context.Context, userID string) ([]*model.Class, error) {
+	user := new(dbModel.User)
+	if err := us.db.Where("id = ?", userID).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedClass := make([]*model.Class, len(user.Class))
+	for i, key := range user.Class {
+		convertedClass[i] = convertClass(*key)
+	}
+	return convertedClass, nil
+}

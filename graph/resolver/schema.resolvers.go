@@ -133,7 +133,7 @@ func (r *userResolver) Likes(ctx context.Context, obj *model.User) ([]*model.Not
 
 // Class is the resolver for the class field.
 func (r *userResolver) Class(ctx context.Context, obj *model.User) ([]*model.Class, error) {
-	panic(fmt.Errorf("not implemented: Class - class"))
+	return r.Srv.GetUsersClass(ctx, obj.ID)
 }
 
 // Notes is the resolver for the notes field.
