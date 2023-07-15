@@ -88,7 +88,7 @@ func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag,
 
 // LikeUser is the resolver for the like_user field.
 func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: LikeUser - like_user"))
+	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
 }
 
 // GetNotes is the resolver for the getNotes field.
