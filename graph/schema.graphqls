@@ -116,8 +116,7 @@ input NewClass {
 
 input NewSchool {
   Name: String!
-  schoolID:String!
-  userID:String!
+  ownerID:String!
 }
 
 input NewUser {

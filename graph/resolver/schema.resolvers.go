@@ -43,7 +43,7 @@ func (r *mutationResolver) UpdateClass(ctx context.Context, input *model.NewClas
 
 // CreateSchool is the resolver for the createSchool field.
 func (r *mutationResolver) CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error) {
-	panic(fmt.Errorf("not implemented: CreateSchool - createSchool"))
+	return r.Srv.CreateSchool(ctx, input.Name, input.OwnerID)
 }
 
 // UpdateSchool is the resolver for the updateSchool field.
