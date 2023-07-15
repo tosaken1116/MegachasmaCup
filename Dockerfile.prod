@@ -13,10 +13,10 @@ ARG _STAGE
 ENV STAGE=${_STAGE}
 
 # goファイルのビルド
-RUN GOOS=linux GOARCH=amd64 go build -mod=readonly -v -o server
+RUN go build server.go
 
 # docker コンテナの50001ポートをこのサービスのために使用
 EXPOSE 50001
 
 # apiサーバを起動
-CMD GO_ENV=${STAGE} /app/server
+CMD /app/server
