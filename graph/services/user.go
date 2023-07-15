@@ -1,9 +1,12 @@
 package services
 
 import (
+	"context"
+	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -21,4 +24,16 @@ func convertUser(user dbModel.User) *model.User {
 		DeletedAt: user.DeletedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
+}
+
+func (us *userService) CreateUser(ctx context.Context, Email string, Name string, Password string) (*model.User, error) {
+	if err := us.db.Where(&dbModel.User{Email: Email}).First(&dbModel.User{}).Error; err == nil {
+		return nil, errors.New("email is already in use")
+	}
+	hashed, _ := bcrypt.GenerateFromPassword([]byte(Password), 10)
+	newUser := dbModel.User{Name: Name, Email: Email, HashedPassword: string(hashed)}
+	if err := us.db.Create(&newUser).Error; err != nil {
+		return nil, errors.New("failed create user")
+	}
+	return convertUser(newUser), nil
 }
