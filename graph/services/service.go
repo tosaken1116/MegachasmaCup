@@ -15,6 +15,7 @@ type NoteService interface {
 }
 
 type SchoolService interface {
+	CreateSchool(ctx context.Context, Name string, OwnerID string) (*model.School, error)
 }
 
 type ClassService interface {
