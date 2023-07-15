@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -47,19 +48,25 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Class struct {
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Notes    func(childComplexity int) int
-		OwnerID  func(childComplexity int) int
-		School   func(childComplexity int) int
-		SchoolID func(childComplexity int) int
-		Students func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Notes     func(childComplexity int) int
+		OwnerID   func(childComplexity int) int
+		School    func(childComplexity int) int
+		SchoolID  func(childComplexity int) int
+		Students  func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 
 	Comment struct {
-		Comment func(childComplexity int) int
-		ID      func(childComplexity int) int
-		NoteID  func(childComplexity int) int
+		Comment   func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		NoteID    func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -81,6 +88,8 @@ type ComplexityRoot struct {
 	Note struct {
 		ClassID     func(childComplexity int) int
 		Comment     func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsPublic    func(childComplexity int) int
@@ -88,6 +97,7 @@ type ComplexityRoot struct {
 		School      func(childComplexity int) int
 		SchoolID    func(childComplexity int) int
 		Tags        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
 	}
 
@@ -101,11 +111,14 @@ type ComplexityRoot struct {
 	}
 
 	School struct {
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Owner    func(childComplexity int) int
-		OwnerID  func(childComplexity int) int
-		Students func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Owner     func(childComplexity int) int
+		OwnerID   func(childComplexity int) int
+		Students  func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 
 	Tag struct {
@@ -114,14 +127,17 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Class    func(childComplexity int) int
-		Email    func(childComplexity int) int
-		ID       func(childComplexity int) int
-		ImageURL func(childComplexity int) int
-		Likes    func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Notes    func(childComplexity int) int
-		School   func(childComplexity int) int
+		Class     func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		ID        func(childComplexity int) int
+		ImageURL  func(childComplexity int) int
+		Likes     func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Notes     func(childComplexity int) int
+		School    func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 }
 
@@ -175,6 +191,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Class.created_at":
+		if e.complexity.Class.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Class.CreatedAt(childComplexity), true
+
+	case "Class.deleted_at":
+		if e.complexity.Class.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Class.DeletedAt(childComplexity), true
+
 	case "Class.id":
 		if e.complexity.Class.ID == nil {
 			break
@@ -224,12 +254,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Class.Students(childComplexity), true
 
+	case "Class.updated_at":
+		if e.complexity.Class.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Class.UpdatedAt(childComplexity), true
+
 	case "Comment.comment":
 		if e.complexity.Comment.Comment == nil {
 			break
 		}
 
 		return e.complexity.Comment.Comment(childComplexity), true
+
+	case "Comment.created_at":
+		if e.complexity.Comment.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Comment.CreatedAt(childComplexity), true
+
+	case "Comment.deleted_at":
+		if e.complexity.Comment.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Comment.DeletedAt(childComplexity), true
 
 	case "Comment.id":
 		if e.complexity.Comment.ID == nil {
@@ -244,6 +295,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Comment.NoteID(childComplexity), true
+
+	case "Comment.updated_at":
+		if e.complexity.Comment.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Comment.UpdatedAt(childComplexity), true
 
 	case "Mutation.createClass":
 		if e.complexity.Mutation.CreateClass == nil {
@@ -415,6 +473,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.Comment(childComplexity), true
 
+	case "Note.created_at":
+		if e.complexity.Note.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Note.CreatedAt(childComplexity), true
+
+	case "Note.deleted_at":
+		if e.complexity.Note.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Note.DeletedAt(childComplexity), true
+
 	case "Note.description":
 		if e.complexity.Note.Description == nil {
 			break
@@ -463,6 +535,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Note.Tags(childComplexity), true
+
+	case "Note.updated_at":
+		if e.complexity.Note.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Note.UpdatedAt(childComplexity), true
 
 	case "Note.user_id":
 		if e.complexity.Note.UserID == nil {
@@ -513,6 +592,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetUser(childComplexity), true
 
+	case "School.created_at":
+		if e.complexity.School.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.School.CreatedAt(childComplexity), true
+
+	case "School.deleted_at":
+		if e.complexity.School.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.School.DeletedAt(childComplexity), true
+
 	case "School.id":
 		if e.complexity.School.ID == nil {
 			break
@@ -548,6 +641,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.School.Students(childComplexity), true
 
+	case "School.updated_at":
+		if e.complexity.School.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.School.UpdatedAt(childComplexity), true
+
 	case "Tag.id":
 		if e.complexity.Tag.ID == nil {
 			break
@@ -568,6 +668,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Class(childComplexity), true
+
+	case "User.created_at":
+		if e.complexity.User.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.User.CreatedAt(childComplexity), true
+
+	case "User.deleted_at":
+		if e.complexity.User.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.User.DeletedAt(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -617,6 +731,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.School(childComplexity), true
+
+	case "User.updated_at":
+		if e.complexity.User.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.User.UpdatedAt(childComplexity), true
 
 	}
 	return 0, false
@@ -735,11 +856,17 @@ var sources = []*ast.Source{
 #
 # https://gqlgen.com/getting-started/
 
+scalar DateTime
+
 type User {
   id:String!
   image_url:String!
   name:String!
   email:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
+
   school:[School!]!
   likes:[Note!]!
   class:[Class!]!
@@ -752,6 +879,10 @@ type Note{
   description:String!
   user_id:String!
   is_public:Boolean!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
+
   school:School!
   tags:[Tag!]!
   like_user:[User!]!
@@ -761,6 +892,10 @@ type School{
   id:String!
   name:String!
   owner_id:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
+
   owner:User!
   students:[User!]!
 }
@@ -770,6 +905,9 @@ type Class {
   name:String!
   school_id:String!
   owner_id:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
 
   school:School!
   students:[User!]!
@@ -784,6 +922,9 @@ type Comment{
   id:String!
   note_id:String!
   comment:String!
+  created_at:DateTime!
+  updated_at:DateTime!
+  deleted_at:DateTime!
 }
 
 type Query {
@@ -1289,6 +1430,138 @@ func (ec *executionContext) fieldContext_Class_owner_id(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Class_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Class_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Class",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Class_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Class_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Class",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Class_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_deleted_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Class_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Class",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Class_school(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Class_school(ctx, field)
 	if err != nil {
@@ -1334,6 +1607,12 @@ func (ec *executionContext) fieldContext_Class_school(ctx context.Context, field
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -1392,6 +1671,12 @@ func (ec *executionContext) fieldContext_Class_students(ctx context.Context, fie
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -1458,6 +1743,12 @@ func (ec *executionContext) fieldContext_Class_notes(ctx context.Context, field 
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -1605,6 +1896,138 @@ func (ec *executionContext) fieldContext_Comment_comment(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Comment_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Comment_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Comment_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_deleted_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
 	if err != nil {
@@ -1652,6 +2075,12 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -1725,6 +2154,12 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -1802,6 +2237,12 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -1879,6 +2320,12 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -1952,6 +2399,12 @@ func (ec *executionContext) fieldContext_Mutation_createClass(ctx context.Contex
 				return ec.fieldContext_Class_school_id(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_Class_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Class_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Class_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Class_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -2023,6 +2476,12 @@ func (ec *executionContext) fieldContext_Mutation_updateClass(ctx context.Contex
 				return ec.fieldContext_Class_school_id(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_Class_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Class_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Class_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Class_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -2092,6 +2551,12 @@ func (ec *executionContext) fieldContext_Mutation_createSchool(ctx context.Conte
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -2159,6 +2624,12 @@ func (ec *executionContext) fieldContext_Mutation_updateSchool(ctx context.Conte
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -2226,6 +2697,12 @@ func (ec *executionContext) fieldContext_Mutation_createComment(ctx context.Cont
 				return ec.fieldContext_Comment_note_id(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Comment_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Comment_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Comment_deleted_at(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
 		},
@@ -2289,6 +2766,12 @@ func (ec *executionContext) fieldContext_Mutation_updateComment(ctx context.Cont
 				return ec.fieldContext_Comment_note_id(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Comment_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Comment_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Comment_deleted_at(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
 		},
@@ -2415,6 +2898,12 @@ func (ec *executionContext) fieldContext_Mutation_joinClass(ctx context.Context,
 				return ec.fieldContext_Class_school_id(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_Class_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Class_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Class_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Class_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -2484,6 +2973,12 @@ func (ec *executionContext) fieldContext_Mutation_joinSchool(ctx context.Context
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -2770,6 +3265,138 @@ func (ec *executionContext) fieldContext_Note_is_public(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Note_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Note_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Note",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Note_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Note_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Note",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Note_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_deleted_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Note_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Note",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Note_school(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Note_school(ctx, field)
 	if err != nil {
@@ -2815,6 +3442,12 @@ func (ec *executionContext) fieldContext_Note_school(ctx context.Context, field 
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -2923,6 +3556,12 @@ func (ec *executionContext) fieldContext_Note_like_user(ctx context.Context, fie
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -2983,6 +3622,12 @@ func (ec *executionContext) fieldContext_Note_comment(ctx context.Context, field
 				return ec.fieldContext_Comment_note_id(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Comment_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Comment_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Comment_deleted_at(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
 		},
@@ -3041,6 +3686,12 @@ func (ec *executionContext) fieldContext_Query_getNotes(ctx context.Context, fie
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -3101,6 +3752,12 @@ func (ec *executionContext) fieldContext_Query_getSchools(ctx context.Context, f
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -3159,6 +3816,12 @@ func (ec *executionContext) fieldContext_Query_getClasses(ctx context.Context, f
 				return ec.fieldContext_Class_school_id(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_Class_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Class_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Class_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Class_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -3273,6 +3936,12 @@ func (ec *executionContext) fieldContext_Query_getMyNotes(ctx context.Context, f
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -3335,6 +4004,12 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -3611,6 +4286,138 @@ func (ec *executionContext) fieldContext_School_owner_id(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _School_created_at(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_School_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "School",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _School_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_School_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "School",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _School_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_deleted_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_School_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "School",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _School_owner(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_School_owner(ctx, field)
 	if err != nil {
@@ -3658,6 +4465,12 @@ func (ec *executionContext) fieldContext_School_owner(ctx context.Context, field
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -3720,6 +4533,12 @@ func (ec *executionContext) fieldContext_School_students(ctx context.Context, fi
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_User_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -3999,6 +4818,138 @@ func (ec *executionContext) fieldContext_User_email(ctx context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _User_created_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_deleted_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_school(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_school(ctx, field)
 	if err != nil {
@@ -4044,6 +4995,12 @@ func (ec *executionContext) fieldContext_User_school(ctx context.Context, field 
 				return ec.fieldContext_School_name(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_School_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_School_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_School_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_School_deleted_at(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -4106,6 +5063,12 @@ func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field g
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -4168,6 +5131,12 @@ func (ec *executionContext) fieldContext_User_class(ctx context.Context, field g
 				return ec.fieldContext_Class_school_id(ctx, field)
 			case "owner_id":
 				return ec.fieldContext_Class_owner_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Class_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Class_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Class_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -4232,6 +5201,12 @@ func (ec *executionContext) fieldContext_User_notes(ctx context.Context, field g
 				return ec.fieldContext_Note_user_id(ctx, field)
 			case "is_public":
 				return ec.fieldContext_Note_is_public(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Note_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Note_updated_at(ctx, field)
+			case "deleted_at":
+				return ec.fieldContext_Note_deleted_at(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
@@ -6408,6 +7383,21 @@ func (ec *executionContext) _Class(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "created_at":
+			out.Values[i] = ec._Class_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updated_at":
+			out.Values[i] = ec._Class_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleted_at":
+			out.Values[i] = ec._Class_deleted_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "school":
 			out.Values[i] = ec._Class_school(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6469,6 +7459,21 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "comment":
 			out.Values[i] = ec._Comment_comment(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_at":
+			out.Values[i] = ec._Comment_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updated_at":
+			out.Values[i] = ec._Comment_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleted_at":
+			out.Values[i] = ec._Comment_deleted_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -6666,6 +7671,21 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "is_public":
 			out.Values[i] = ec._Note_is_public(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "created_at":
+			out.Values[i] = ec._Note_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._Note_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "deleted_at":
+			out.Values[i] = ec._Note_deleted_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -7013,6 +8033,21 @@ func (ec *executionContext) _School(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "created_at":
+			out.Values[i] = ec._School_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updated_at":
+			out.Values[i] = ec._School_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleted_at":
+			out.Values[i] = ec._School_deleted_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "owner":
 			out.Values[i] = ec._School_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -7118,6 +8153,21 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "email":
 			out.Values[i] = ec._User_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "created_at":
+			out.Values[i] = ec._User_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updated_at":
+			out.Values[i] = ec._User_updated_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "deleted_at":
+			out.Values[i] = ec._User_deleted_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -7743,6 +8793,21 @@ func (ec *executionContext) marshalNComment2ᚖmegachasmaᚋgraphᚋmodelᚐComm
 		return graphql.Null
 	}
 	return ec._Comment(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDateTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+	res, err := graphql.UnmarshalTime(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	res := graphql.MarshalTime(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNNewClass2megachasmaᚋgraphᚋmodelᚐNewClass(ctx context.Context, v interface{}) (model.NewClass, error) {

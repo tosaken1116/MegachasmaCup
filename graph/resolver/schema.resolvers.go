@@ -33,7 +33,7 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, input *model.NewNote)
 
 // CreateClass is the resolver for the createClass field.
 func (r *mutationResolver) CreateClass(ctx context.Context, input model.NewClass) (*model.Class, error) {
-	panic(fmt.Errorf("not implemented: CreateClass - createClass"))
+	return r.Srv.CreateClass(ctx, input.Name, input.SchoolID, input.OwnerID)
 }
 
 // UpdateClass is the resolver for the updateClass field.

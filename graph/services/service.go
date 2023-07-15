@@ -1,6 +1,11 @@
 package services
 
-import "gorm.io/gorm"
+import (
+	"context"
+	"megachasma/graph/model"
+
+	"gorm.io/gorm"
+)
 
 type UserService interface {
 }
@@ -12,6 +17,7 @@ type SchoolService interface {
 }
 
 type ClassService interface {
+	CreateClass(ctx context.Context, Name string, SchoolID string, OwnerID string) (*model.Class, error)
 }
 
 type TagService interface {
