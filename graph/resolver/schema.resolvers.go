@@ -83,7 +83,7 @@ func (r *noteResolver) School(ctx context.Context, obj *model.Note) (*model.Scho
 
 // Tags is the resolver for the tags field.
 func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag, error) {
-	panic(fmt.Errorf("not implemented: Tags - tags"))
+	return r.Srv.GetNoteTags(ctx, obj.ID)
 }
 
 // LikeUser is the resolver for the like_user field.

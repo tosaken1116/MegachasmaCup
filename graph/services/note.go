@@ -80,3 +80,15 @@ func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID 
 	}
 	return convertCreateNote(newNote), nil
 }
+
+func (ns *noteService) GetNoteTags(ctx context.Context, NoteID string) ([]*model.Tag, error) {
+	note := new(dbModel.Note)
+	if err := ns.db.Where("id = ?", NoteID).Find(&note).Error; err != nil {
+		return nil, err
+	}
+	convertedTag := make([]*model.Tag, len(note.Tags))
+	for i, key := range note.Tags {
+		convertedTag[i] = convertTag(*key)
+	}
+	return convertedTag, nil
+}

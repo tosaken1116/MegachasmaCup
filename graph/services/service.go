@@ -13,6 +13,7 @@ type UserService interface {
 
 type NoteService interface {
 	CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, UserID string, IsPublic bool) (*model.Note, error)
+	GetNoteTags(ctx context.Context, NoteID string) ([]*model.Tag, error)
 }
 
 type SchoolService interface {
