@@ -35,6 +35,10 @@ type TagService interface {
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 }
 
+type CommentService interface {
+	CreateComment(ctx context.Context, UserID string, NoteID string, Comment string) (*model.Comment, error)
+}
+
 type Services interface {
 	UserService
 	NoteService
