@@ -13,10 +13,10 @@ func (base *Base) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type Base struct {
-	ID        uuid.UUID      `json:"id" gorm:"type:uuid;not null;primaryKey"`
-	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at"`
-	UpdatedAt time.Time      `json:"updated_at"  gorm:"autoUpdateTime"`
+	ID        uuid.UUID `json:"id" gorm:"type:uuid;not null;primaryKey"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	DeletedAt time.Time `json:"deleted_at" gorm:"default:null"`
+	UpdatedAt time.Time `json:"updated_at"  gorm:"autoUpdateTime"`
 }
 
 type User struct {
@@ -24,7 +24,7 @@ type User struct {
 	ImageUrl       string    `json:"image_url"`
 	Name           string    `json:"name" gorm:"not null"`
 	Email          string    `json:"email" gorm:"unique; not null"`
-	HashedPassword string    `json:"hashed_password"`
+	HashedPassword string    `json:"hashed_password" gorm:"not null"`
 	School         []*School `json:"school" gorm:"many2many:school_user;"`
 	Likes          []*Note   `json:"likes" gorm:"many2many:likes;"`
 	Class          []*Class  `json:"class" gorm:"many2many:class_user;"`
@@ -74,7 +74,7 @@ type Tag struct {
 type Comment struct {
 	Base
 	NoteID  uuid.UUID `json:"note_id" gorm:"not null"`
-	UserID  uuid.UUID `json:"user_id"`
+	UserID  uuid.UUID `json:"user_id" gorm:"not null"`
 	User    User      `json:"user"`
 	Comment string    `json:"comment" gorm:"not null"`
 }
