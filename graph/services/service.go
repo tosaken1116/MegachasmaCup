@@ -37,6 +37,7 @@ type SchoolService interface {
 type ClassService interface {
 	CreateClass(ctx context.Context, Name string, SchoolID string, OwnerID string) (*model.Class, error)
 	GetClasses(input model.GetClassesProps) ([]*model.Class, error)
+	UpdateClass(ctx context.Context, id string, input model.UpdateClassProps) (*model.Class, error)
 }
 
 type TagService interface {
