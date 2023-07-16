@@ -174,5 +174,4 @@ input UpdateSchoolProps{
 input UpdateClassProps {
   name:String
   owner_id:String
-  school_id:String
 }

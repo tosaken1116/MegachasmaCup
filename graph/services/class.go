@@ -79,13 +79,6 @@ func (cs *classService) UpdateClass(ctx context.Context, id string, input model.
 		}
 		class.OwnerID = pOwnerID
 	}
-	if input.SchoolID != nil {
-		pSchoolID, err := uuid.Parse(*input.SchoolID)
-		if err != nil {
-			return nil, err
-		}
-		class.SchoolID = pSchoolID
-	}
 
 	if err := cs.db.Save(&class).Error; err != nil {
 		return nil, err

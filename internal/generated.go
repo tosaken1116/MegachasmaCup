@@ -1073,7 +1073,6 @@ input UpdateSchoolProps{
 input UpdateClassProps {
   name:String
   owner_id:String
-  school_id:String
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -7887,7 +7886,7 @@ func (ec *executionContext) unmarshalInputUpdateClassProps(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "owner_id", "school_id"}
+	fieldsInOrder := [...]string{"name", "owner_id"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7912,15 +7911,6 @@ func (ec *executionContext) unmarshalInputUpdateClassProps(ctx context.Context, 
 				return it, err
 			}
 			it.OwnerID = data
-		case "school_id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("school_id"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SchoolID = data
 		}
 	}
 

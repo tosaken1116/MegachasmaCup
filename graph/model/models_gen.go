@@ -130,9 +130,8 @@ type Tag struct {
 }
 
 type UpdateClassProps struct {
-	Name     *string `json:"name,omitempty"`
-	OwnerID  *string `json:"owner_id,omitempty"`
-	SchoolID *string `json:"school_id,omitempty"`
+	Name    *string `json:"name,omitempty"`
+	OwnerID *string `json:"owner_id,omitempty"`
 }
 
 type UpdateSchoolProps struct {
