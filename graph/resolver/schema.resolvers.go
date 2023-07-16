@@ -126,6 +126,11 @@ func (r *queryResolver) GetUser(ctx context.Context, input *model.GetUserProps) 
 	return r.Srv.GetUser(*input)
 }
 
+// GetJwt is the resolver for the getJwt field.
+func (r *queryResolver) GetJwt(ctx context.Context, input *model.GetJwtProps) (*model.Jwt, error) {
+	return r.Srv.SignIn(input)
+}
+
 // School is the resolver for the school field.
 func (r *userResolver) School(ctx context.Context, obj *model.User) ([]*model.School, error) {
 	return r.Srv.GetUsersSchool(ctx, obj.ID)

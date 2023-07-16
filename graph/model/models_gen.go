@@ -36,6 +36,11 @@ type GetClassesProps struct {
 	SearchWord *string `json:"searchWord,omitempty"`
 }
 
+type GetJwtProps struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type GetNoteProps struct {
 	NoteID   *string `json:"noteID,omitempty"`
 	SchoolID *string `json:"schoolID,omitempty"`
@@ -48,6 +53,10 @@ type GetUserProps struct {
 	Email  *string `json:"email,omitempty"`
 	UserID *string `json:"userID,omitempty"`
 	Name   *string `json:"name,omitempty"`
+}
+
+type Jwt struct {
+	Token string `json:"token"`
 }
 
 type LikeProps struct {
