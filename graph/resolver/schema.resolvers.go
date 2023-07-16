@@ -72,8 +72,8 @@ func (r *mutationResolver) JoinClass(ctx context.Context, input model.NewJoinCla
 }
 
 // JoinSchool is the resolver for the joinSchool field.
-func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error) {
-	return r.Srv.JoinSchool(input)
+func (r *mutationResolver) JoinSchool(ctx context.Context, schoolID string) (*model.School, error) {
+	return r.Srv.JoinSchool(ctx, schoolID)
 }
 
 // Like is the resolver for the like field.

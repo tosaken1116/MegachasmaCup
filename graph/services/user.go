@@ -6,6 +6,7 @@ import (
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/middleware/auth"
 	"megachasma/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -143,12 +144,16 @@ func (us *userService) JoinClass(input model.NewJoinClass) (*model.Class, error)
 	return convertClass(*joinClass), nil
 }
 
-func (us *userService) JoinSchool(input model.NewJoinSchool) (*model.School, error) {
+func (us *userService) JoinSchool(ctx context.Context, schoolID string) (*model.School, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	joinSchool := new(dbModel.School)
-	if err := us.db.Where("id = ?", input.SchoolID).Find(&joinSchool).Error; err != nil {
+	if err := us.db.Where("id = ?", schoolID).Find(&joinSchool).Error; err != nil {
 		return nil, err
 	}
-	if err := us.db.Exec("INSERT INTO school_user (user_id,school_id) VALUES(@user_id,@school_id)", sql.Named("school_id", input.SchoolID), sql.Named("user_id", input.UserID)).Error; err != nil {
+	if err := us.db.Exec("INSERT INTO school_user (user_id,school_id) VALUES(@user_id,@school_id)", sql.Named("school_id", schoolID), sql.Named("user_id", userID)).Error; err != nil {
 		return nil, err
 	}
 	return convertSchool(*joinSchool), nil

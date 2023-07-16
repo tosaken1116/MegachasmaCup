@@ -15,7 +15,7 @@ type UserService interface {
 	GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error)
 	GetUser(input model.GetUserProps) ([]*model.User, error)
 	JoinClass(input model.NewJoinClass) (*model.Class, error)
-	JoinSchool(input model.NewJoinSchool) (*model.School, error)
+	JoinSchool(ctx context.Context, schoolID string) (*model.School, error)
 	SignIn(input *model.GetJwtProps) (*model.Jwt, error)
 	UpdateUser(ctx context.Context, id string, input model.UpdateUserProps) (*model.User, error)
 }

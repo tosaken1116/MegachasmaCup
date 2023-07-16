@@ -79,11 +79,6 @@ type NewJoinClass struct {
 	UserID  string `json:"userID"`
 }
 
-type NewJoinSchool struct {
-	SchoolID string `json:"schoolID"`
-	UserID   string `json:"userID"`
-}
-
 type NewNote struct {
 	ClassID     string `json:"classID"`
 	SchoolID    string `json:"schoolID"`
