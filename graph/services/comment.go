@@ -4,6 +4,7 @@ import (
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -20,4 +21,25 @@ func convertComment(comment dbModel.Comment) *model.Comment {
 		DeletedAt: comment.DeletedAt,
 		UpdatedAt: comment.UpdatedAt,
 	}
+}
+func (cs *commentService) CreateComment(input model.NewComment) (*model.Comment, error) {
+	pUserID, err := uuid.Parse(input.UserID)
+	if err != nil {
+		return nil, err
+	}
+	pNoteID, err := uuid.Parse(input.NoteID)
+	if err != nil {
+		return nil, err
+	}
+
+	comment := dbModel.Comment{
+		UserID:  pUserID,
+		NoteID:  pNoteID,
+		Comment: input.Comment,
+	}
+	if err := cs.db.Create(&comment).Error; err != nil {
+		return nil, err
+	}
+	createdComment := convertComment(comment)
+	return createdComment, nil
 }

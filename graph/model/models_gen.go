@@ -36,8 +36,9 @@ type NewClass struct {
 }
 
 type NewComment struct {
-	Comment string `json:"Comment"`
+	UserID  string `json:"UserID"`
 	NoteID  string `json:"NoteID"`
+	Comment string `json:"Comment"`
 }
 
 type NewJoinClass struct {

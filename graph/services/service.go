@@ -36,12 +36,17 @@ type TagService interface {
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 }
 
+type CommentService interface {
+	CreateComment(input model.NewComment) (*model.Comment, error)
+}
+
 type Services interface {
 	UserService
 	NoteService
 	SchoolService
 	ClassService
 	TagService
+	CommentService
 }
 
 type services struct {
@@ -50,14 +55,16 @@ type services struct {
 	*classService
 	*schoolService
 	*tagService
+	*commentService
 }
 
 func New(db *gorm.DB) Services {
 	return &services{
-		userService:   &userService{db: db},
-		noteService:   &noteService{db: db},
-		schoolService: &schoolService{db: db},
-		classService:  &classService{db: db},
-		tagService:    &tagService{db: db},
+		userService:    &userService{db: db},
+		noteService:    &noteService{db: db},
+		schoolService:  &schoolService{db: db},
+		classService:   &classService{db: db},
+		tagService:     &tagService{db: db},
+		commentService: &commentService{db: db},
 	}
 }
