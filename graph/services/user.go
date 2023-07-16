@@ -41,9 +41,16 @@ func (us *userService) CreateUser(ctx context.Context, Email string, Name string
 }
 
 func (us *userService) UpdateUser(ctx context.Context, id string, input model.UpdateUserProps) (*model.User, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	user := new(dbModel.User)
 	if err := us.db.Where("id = ?", id).Find(&user).Error; err != nil {
 		return nil, err
+	}
+	if userID != user.ID.String() {
+		return nil, errors.New("this id is not yours")
 	}
 	if input.Email != nil {
 		user.Email = *input.Email

@@ -57,10 +57,16 @@ func (ss *schoolService) CreateSchool(ctx context.Context, Name string) (*model.
 }
 
 func (ss *schoolService) UpdateSchool(ctx context.Context, id string, input model.UpdateSchoolProps) (*model.School, error) {
-
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	school := new(dbModel.School)
 	if err := ss.db.Where("id = ?", id).Find(&school).Error; err != nil {
 		return nil, err
+	}
+	if userID != school.OwnerID.String() {
+		return nil, errors.New("this school owner is not you")
 	}
 	if input.OwnerID != nil {
 		pOwnerID, err := uuid.Parse(*input.OwnerID)

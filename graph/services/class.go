@@ -78,9 +78,16 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 }
 
 func (cs *classService) UpdateClass(ctx context.Context, id string, input model.UpdateClassProps) (*model.Class, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	class := new(dbModel.Class)
 	if err := cs.db.Where("id = ?", id).Find(&class).Error; err != nil {
 		return nil, err
+	}
+	if userID != class.OwnerID.String() {
+		return nil, errors.New("this class owner is not you")
 	}
 
 	if input.Name != nil {
