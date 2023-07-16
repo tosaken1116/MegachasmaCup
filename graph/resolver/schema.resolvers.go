@@ -95,6 +95,11 @@ func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag,
 	return r.Srv.GetNoteTags(ctx, obj.ID)
 }
 
+// LikeUser is the resolver for the like_user field.
+func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
+	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
+}
+
 // GetNotes is the resolver for the getNotes field.
 func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
 	return r.Srv.GetNotes(ctx, *input)

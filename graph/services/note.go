@@ -106,7 +106,7 @@ func (ns *noteService) GetNoteTags(ctx context.Context, NoteID string) ([]*model
 }
 func (ns *noteService) GetLikeUserOfNote(ctx context.Context, NoteID string) ([]*model.User, error) {
 	note := new(dbModel.Note)
-	if err := ns.db.Where("id = ?", NoteID).Find(&note).Error; err != nil {
+	if err := ns.db.Preload("LikeUser").Where("id = ?", NoteID).Find(&note).Error; err != nil {
 		return nil, err
 	}
 	convertedUser := make([]*model.User, len(note.LikeUser))

@@ -102,7 +102,7 @@ type Note struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 	School      *School    `json:"school"`
 	Tags        []*Tag     `json:"tags"`
-	LikeUser    []*User    `json:"likeUser"`
+	LikeUser    []*User    `json:"like_user"`
 	Comment     []*Comment `json:"comment"`
 }
 
