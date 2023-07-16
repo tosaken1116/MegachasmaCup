@@ -63,16 +63,16 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 	return convertCreateClass(newClass), nil
 }
 
-func (cs *classService) GetClass(ctx context.Context, ID string) (*model.Class, error) {
-	pClassID, err := uuid.Parse(ID)
-	if err != nil {
+func (cs *classService) GetClasses(ctx context.Context) ([]*model.Class, error) {
+	var classes []*dbModel.Class
+	if err := cs.db.Find(&classes).Error; err != nil {
 		return nil, err
 	}
 
-	var class dbModel.Class
-	if err := cs.db.Preload("Students").Preload("Notes").First(&class, pClassID).Error; err != nil {
-		return nil, err
+	result := make([]*model.Class, len(classes))
+	for i, class := range classes {
+		result[i] = convertCreateClass(*class)
 	}
 
-	return convertCreateClass(class), nil
+	return result, nil
 }
