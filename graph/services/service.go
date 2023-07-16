@@ -49,6 +49,7 @@ type TagService interface {
 
 type CommentService interface {
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
+	UpdateComment(ctx context.Context, id string, input model.UpdateCommentProps) (*model.Comment, error)
 }
 
 type Services interface {
