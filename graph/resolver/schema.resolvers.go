@@ -92,8 +92,8 @@ func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.
 }
 
 // GetNotes is the resolver for the getNotes field.
-func (r *queryResolver) GetNotes(ctx context.Context) ([]*model.Note, error) {
-	panic(fmt.Errorf("not implemented: GetNotes - getNotes"))
+func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
+	return r.Srv.GetNotes(*input)
 }
 
 // GetSchools is the resolver for the getSchools field.

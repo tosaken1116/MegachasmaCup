@@ -19,6 +19,7 @@ type NoteService interface {
 	CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, UserID string, IsPublic bool) (*model.Note, error)
 	GetNoteTags(ctx context.Context, NoteID string) ([]*model.Tag, error)
 	GetLikeUserOfNote(ctx context.Context, NoteID string) ([]*model.User, error)
+	GetNotes(input model.GetNoteProps) ([]*model.Note, error)
 }
 
 type SchoolService interface {
