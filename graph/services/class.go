@@ -63,6 +63,38 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 	return convertCreateClass(newClass), nil
 }
 
+func (cs *classService) UpdateClass(ctx context.Context, id string, input model.UpdateClassProps) (*model.Class, error) {
+	class := new(dbModel.Class)
+	if err := cs.db.Where("id = ?", id).Find(&class).Error; err != nil {
+		return nil, err
+	}
+
+	if input.Name != nil {
+		class.Name = *input.Name
+	}
+	if input.OwnerID != nil {
+		pOwnerID, err := uuid.Parse(*input.OwnerID)
+		if err != nil {
+			return nil, err
+		}
+		class.OwnerID = pOwnerID
+	}
+	if input.SchoolID != nil {
+		pSchoolID, err := uuid.Parse(*input.SchoolID)
+		if err != nil {
+			return nil, err
+		}
+		class.SchoolID = pSchoolID
+	}
+
+	if err := cs.db.Save(&class).Error; err != nil {
+		return nil, err
+	}
+
+	updatedClass := convertCreateClass(*class)
+	return updatedClass, nil
+}
+
 func (cs *classService) GetClasses(input model.GetClassesProps) ([]*model.Class, error) {
 	classes := make([]*dbModel.Class, 0)
 	orm := cs.db.Model(&dbModel.Class{})
