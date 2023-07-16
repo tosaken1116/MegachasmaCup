@@ -17,6 +17,7 @@ type UserService interface {
 	JoinClass(input model.NewJoinClass) (*model.Class, error)
 	JoinSchool(input model.NewJoinSchool) (*model.School, error)
 	SignIn(input *model.GetJwtProps) (*model.Jwt, error)
+	UpdateUser(ctx context.Context, id string, input model.UpdateUserProps) (*model.User, error)
 }
 
 type NoteService interface {
@@ -38,6 +39,7 @@ type SchoolService interface {
 type ClassService interface {
 	CreateClass(ctx context.Context, Name string, SchoolID string, OwnerID string) (*model.Class, error)
 	GetClasses(input model.GetClassesProps) ([]*model.Class, error)
+	UpdateClass(ctx context.Context, id string, input model.UpdateClassProps) (*model.Class, error)
 }
 
 type TagService interface {

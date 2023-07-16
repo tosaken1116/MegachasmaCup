@@ -17,8 +17,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *model.NewUser) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *model.UpdateUserProps) (*model.User, error) {
+	return r.Srv.UpdateUser(ctx, id, *input)
 }
 
 // CreateNote is the resolver for the createNote field.
@@ -37,8 +37,8 @@ func (r *mutationResolver) CreateClass(ctx context.Context, input model.NewClass
 }
 
 // UpdateClass is the resolver for the updateClass field.
-func (r *mutationResolver) UpdateClass(ctx context.Context, id string, input *model.NewClass) (*model.Class, error) {
-	panic(fmt.Errorf("not implemented: UpdateClass - updateClass"))
+func (r *mutationResolver) UpdateClass(ctx context.Context, id string, input *model.UpdateClassProps) (*model.Class, error) {
+	return r.Srv.UpdateClass(ctx, id, *input)
 }
 
 // CreateSchool is the resolver for the createSchool field.
