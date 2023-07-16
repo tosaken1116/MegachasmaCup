@@ -147,7 +147,7 @@ type UpdateSchoolProps struct {
 type UpdateUserProps struct {
 	Email    *string `json:"email,omitempty"`
 	Name     *string `json:"name,omitempty"`
-	Password *string `json:"password,omitempty"`
+	ImageURL *string `json:"imageUrl,omitempty"`
 }
 
 type User struct {

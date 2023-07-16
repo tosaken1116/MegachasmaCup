@@ -1117,7 +1117,7 @@ input LikeProps {
 input UpdateUserProps {
   email:String
   name:String
-  password:String
+  imageUrl:String
 }
 
 `, BuiltIn: false},
@@ -8247,7 +8247,7 @@ func (ec *executionContext) unmarshalInputUpdateUserProps(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "name", "password"}
+	fieldsInOrder := [...]string{"email", "name", "imageUrl"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8272,15 +8272,15 @@ func (ec *executionContext) unmarshalInputUpdateUserProps(ctx context.Context, o
 				return it, err
 			}
 			it.Name = data
-		case "password":
+		case "imageUrl":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Password = data
+			it.ImageURL = data
 		}
 	}
 

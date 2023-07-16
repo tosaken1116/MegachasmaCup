@@ -188,6 +188,6 @@ input LikeProps {
 input UpdateUserProps {
   email:String
   name:String
-  password:String
+  imageUrl:String
 }
 
