@@ -27,6 +27,7 @@ type NoteService interface {
 	GetNotes(ctx context.Context, input model.GetNoteProps) ([]*model.Note, error)
 	LikeNote(ctx context.Context, noteID string) (*model.Note, error)
 	DeleteLikeNote(ctx context.Context, noteID string) (*model.Note, error)
+	UpdateNote(ctx context.Context, id string, input model.UpdateNoteProps) (*model.Note, error)
 }
 
 type SchoolService interface {

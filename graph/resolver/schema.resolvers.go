@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"megachasma/graph/model"
 	"megachasma/internal"
 )
@@ -28,7 +27,7 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) 
 
 // UpdateNote is the resolver for the updateNote field.
 func (r *mutationResolver) UpdateNote(ctx context.Context, id string, input *model.UpdateNoteProps) (*model.Note, error) {
-	panic(fmt.Errorf("not implemented: UpdateNote - updateNote"))
+	return r.Srv.UpdateNote(ctx, id, *input)
 }
 
 // CreateClass is the resolver for the createClass field.
