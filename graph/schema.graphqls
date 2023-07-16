@@ -35,7 +35,7 @@ type Note{
   school:School!
   tags:[Tag!]!
   like_user:[User!]!
-  comment:[Comment!]!
+  comments:[Comment!]!
 }
 type School{
   id:String!

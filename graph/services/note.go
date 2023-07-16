@@ -52,7 +52,7 @@ func convertCreateNote(note dbModel.Note) *model.Note {
 		School:      &model.School{ID: note.SchoolID.String()},
 		Tags:        tags,
 		LikeUser:    likeUser,
-		Comment:     comment,
+		Comments:    comment,
 	}
 }
 
@@ -123,7 +123,7 @@ func (ns *noteService) GetNotes(ctx context.Context, input model.GetNoteProps) (
 	}
 
 	note := new([]*dbModel.Note)
-	orm := ns.db.Where("")
+	orm := ns.db.Preload("Comment").Where("")
 	if input.IsMy != nil {
 		if *input.IsMy {
 			if input.UserID != nil {
@@ -225,4 +225,16 @@ func (ns *noteService) UpdateNote(ctx context.Context, id string, input model.Up
 		return nil, err
 	}
 	return convertNote(*note), nil
+}
+
+func (ns *noteService) GetNoteComments(ctx context.Context, noteId string) ([]*model.Comment, error) {
+	note := new(dbModel.Note)
+	if err := ns.db.Preload("Comment").Where("id = ?", noteId).Find(&note).Error; err != nil {
+		return nil, err
+	}
+	convertedComment := make([]*model.Comment, len(note.Comment))
+	for i, key := range note.Comment {
+		convertedComment[i] = convertComment(*key)
+	}
+	return convertedComment, nil
 }

@@ -93,7 +93,7 @@ type ComplexityRoot struct {
 
 	Note struct {
 		ClassID     func(childComplexity int) int
-		Comment     func(childComplexity int) int
+		Comments    func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -166,6 +166,7 @@ type NoteResolver interface {
 	School(ctx context.Context, obj *model.Note) (*model.School, error)
 	Tags(ctx context.Context, obj *model.Note) ([]*model.Tag, error)
 	LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error)
+	Comments(ctx context.Context, obj *model.Note) ([]*model.Comment, error)
 }
 type QueryResolver interface {
 	GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error)
@@ -496,12 +497,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.ClassID(childComplexity), true
 
-	case "Note.comment":
-		if e.complexity.Note.Comment == nil {
+	case "Note.comments":
+		if e.complexity.Note.Comments == nil {
 			break
 		}
 
-		return e.complexity.Note.Comment(childComplexity), true
+		return e.complexity.Note.Comments(childComplexity), true
 
 	case "Note.createdAt":
 		if e.complexity.Note.CreatedAt == nil {
@@ -942,7 +943,7 @@ type Note{
   school:School!
   tags:[Tag!]!
   like_user:[User!]!
-  comment:[Comment!]!
+  comments:[Comment!]!
 }
 type School{
   id:String!
@@ -1968,8 +1969,8 @@ func (ec *executionContext) fieldContext_Class_notes(ctx context.Context, field 
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -2542,8 +2543,8 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -2645,8 +2646,8 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -3565,8 +3566,8 @@ func (ec *executionContext) fieldContext_Mutation_like(ctx context.Context, fiel
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -3668,8 +3669,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteLike(ctx context.Context
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -4260,8 +4261,8 @@ func (ec *executionContext) fieldContext_Note_like_user(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_comment(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_comment(ctx, field)
+func (ec *executionContext) _Note_comments(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_comments(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4274,7 +4275,7 @@ func (ec *executionContext) _Note_comment(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Comment, nil
+		return ec.resolvers.Note().Comments(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4291,12 +4292,12 @@ func (ec *executionContext) _Note_comment(ctx context.Context, field graphql.Col
 	return ec.marshalNComment2ᚕᚖmegachasmaᚋgraphᚋmodelᚐCommentᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_comment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_comments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -4401,8 +4402,8 @@ func (ec *executionContext) fieldContext_Query_getNotes(ctx context.Context, fie
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -5820,8 +5821,8 @@ func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field g
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -5956,8 +5957,8 @@ func (ec *executionContext) fieldContext_User_notes(ctx context.Context, field g
 				return ec.fieldContext_Note_tags(ctx, field)
 			case "like_user":
 				return ec.fieldContext_Note_like_user(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
+			case "comments":
+				return ec.fieldContext_Note_comments(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
@@ -8944,11 +8945,42 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "comment":
-			out.Values[i] = ec._Note_comment(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+		case "comments":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Note_comments(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

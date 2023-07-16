@@ -100,6 +100,11 @@ func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.
 	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
 }
 
+// Comments is the resolver for the comments field.
+func (r *noteResolver) Comments(ctx context.Context, obj *model.Note) ([]*model.Comment, error) {
+	return r.Srv.GetNoteComments(ctx, obj.ID)
+}
+
 // GetNotes is the resolver for the getNotes field.
 func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
 	return r.Srv.GetNotes(ctx, *input)

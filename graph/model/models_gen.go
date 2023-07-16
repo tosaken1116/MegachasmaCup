@@ -103,7 +103,7 @@ type Note struct {
 	School      *School    `json:"school"`
 	Tags        []*Tag     `json:"tags"`
 	LikeUser    []*User    `json:"like_user"`
-	Comment     []*Comment `json:"comment"`
+	Comments    []*Comment `json:"comments"`
 }
 
 type School struct {
