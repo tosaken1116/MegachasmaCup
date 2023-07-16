@@ -86,14 +86,9 @@ func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag,
 	return r.Srv.GetNoteTags(ctx, obj.ID)
 }
 
-// LikeUser is the resolver for the like_user field.
-func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
-	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
-}
-
 // GetNotes is the resolver for the getNotes field.
-func (r *queryResolver) GetNotes(ctx context.Context) ([]*model.Note, error) {
-	panic(fmt.Errorf("not implemented: GetNotes - getNotes"))
+func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
+	return r.Srv.GetNotes(*input)
 }
 
 // GetSchools is the resolver for the getSchools field.
@@ -117,8 +112,8 @@ func (r *queryResolver) GetMyNotes(ctx context.Context) (*model.Note, error) {
 }
 
 // GetUser is the resolver for the getUser field.
-func (r *queryResolver) GetUser(ctx context.Context) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: GetUser - getUser"))
+func (r *queryResolver) GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error) {
+	return r.Srv.GetUser(*input)
 }
 
 // School is the resolver for the school field.

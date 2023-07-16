@@ -103,3 +103,30 @@ func (ns *noteService) GetLikeUserOfNote(ctx context.Context, NoteID string) ([]
 	}
 	return convertedUser, nil
 }
+
+func (ns *noteService) GetNotes(input model.GetNoteProps) ([]*model.Note, error) {
+	note := new([]*dbModel.Note)
+	orm := ns.db.Where("")
+	if input.NoteID != nil {
+		orm.Where("id = ?", *input.NoteID)
+	} else {
+		if input.ClassID != nil {
+			orm.Where("class_id = ?", *input.ClassID)
+		}
+		if input.SchoolID != nil {
+			orm.Where("school_id = ?", *input.SchoolID)
+		}
+		if input.IsPublic != nil {
+			orm.Where("is_public = ?", *input.IsPublic)
+		}
+
+	}
+	if err := orm.Find(&note).Error; err != nil {
+		return nil, err
+	}
+	convertedNote := make([]*model.Note, len(*note))
+	for i, key := range *note {
+		convertedNote[i] = convertNote(*key)
+	}
+	return convertedNote, nil
+}
