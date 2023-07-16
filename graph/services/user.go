@@ -120,3 +120,14 @@ func (us *userService) JoinClass(input model.NewJoinClass) (*model.Class, error)
 	}
 	return convertClass(*joinClass), nil
 }
+
+func (us *userService) JoinSchool(input model.NewJoinSchool) (*model.School, error) {
+	joinSchool := new(dbModel.School)
+	if err := us.db.Where("id = ?", input.SchoolID).Find(&joinSchool).Error; err != nil {
+		return nil, err
+	}
+	if err := us.db.Exec("INSERT INTO school_user (user_id,school_id) VALUES(@user_id,@school_id)", sql.Named("school_id", input.SchoolID), sql.Named("user_id", input.UserID)).Error; err != nil {
+		return nil, err
+	}
+	return convertSchool(*joinSchool), nil
+}
