@@ -38,7 +38,6 @@ func convertCreateClass(class dbModel.Class) *model.Class {
 		SchoolID:  class.SchoolID.String(),
 		OwnerID:   class.OwnerID.String(),
 		CreatedAt: class.CreatedAt,
-		DeletedAt: class.DeletedAt,
 		UpdatedAt: class.UpdatedAt,
 		School:    &model.School{ID: class.SchoolID.String()},
 		Students:  students,

@@ -21,7 +21,6 @@ func convertComment(comment dbModel.Comment) *model.Comment {
 		NoteID:    comment.NoteID.String(),
 		Comment:   comment.Comment,
 		CreatedAt: comment.CreatedAt,
-		DeletedAt: comment.DeletedAt,
 		UpdatedAt: comment.UpdatedAt,
 	}
 }

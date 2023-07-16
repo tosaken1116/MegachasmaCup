@@ -12,7 +12,6 @@ type User {
   email:String!
   createdAt:DateTime!
   updatedAt:DateTime!
-  deletedAt:DateTime!
 
   school:[School!]!
   likes:[Note!]!
@@ -32,7 +31,6 @@ type Note{
   isPublic:Boolean!
   createdAt:DateTime!
   updatedAt:DateTime!
-  deletedAt:DateTime!
 
   school:School!
   tags:[Tag!]!
@@ -45,7 +43,6 @@ type School{
   ownerId:String!
   createdAt:DateTime!
   updatedAt:DateTime!
-  deletedAt:DateTime!
 
   owner:User!
   students:[User!]!
@@ -58,7 +55,6 @@ type Class {
   ownerId:String!
   createdAt:DateTime!
   updatedAt:DateTime!
-  deletedAt:DateTime!
 
   school:School!
   students:[User!]!
@@ -76,7 +72,6 @@ type Comment{
   comment:String!
   createdAt:DateTime!
   updatedAt:DateTime!
-  deletedAt:DateTime!
 }
 
 type Query {

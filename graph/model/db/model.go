@@ -13,10 +13,10 @@ func (base *Base) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type Base struct {
-	ID        uuid.UUID `json:"id" gorm:"type:uuid;not null;primaryKey"`
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	DeletedAt time.Time `json:"deleted_at"`
-	UpdatedAt time.Time `json:"updated_at"  gorm:"autoUpdateTime"`
+	ID        uuid.UUID      `json:"id" gorm:"type:uuid;not null;primaryKey"`
+	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	DeletedAt gorm.DeletedAt `json:"deleted_at"`
+	UpdatedAt time.Time      `json:"updated_at"  gorm:"autoUpdateTime"`
 }
 
 type User struct {

@@ -13,7 +13,6 @@ type Class struct {
 	OwnerID   string    `json:"ownerId"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	DeletedAt time.Time `json:"deletedAt"`
 	School    *School   `json:"school"`
 	Students  []*User   `json:"students"`
 	Notes     []*Note   `json:"notes"`
@@ -26,7 +25,6 @@ type Comment struct {
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	DeletedAt time.Time `json:"deletedAt"`
 }
 
 type GetClassesProps struct {
@@ -102,7 +100,6 @@ type Note struct {
 	IsPublic    bool       `json:"isPublic"`
 	CreatedAt   time.Time  `json:"createdAt"`
 	UpdatedAt   time.Time  `json:"updatedAt"`
-	DeletedAt   time.Time  `json:"deletedAt"`
 	School      *School    `json:"school"`
 	Tags        []*Tag     `json:"tags"`
 	LikeUser    []*User    `json:"likeUser"`
@@ -115,7 +112,6 @@ type School struct {
 	OwnerID   string    `json:"ownerId"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	DeletedAt time.Time `json:"deletedAt"`
 	Owner     *User     `json:"owner"`
 	Students  []*User   `json:"students"`
 }
@@ -148,7 +144,6 @@ type User struct {
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	DeletedAt time.Time `json:"deletedAt"`
 	School    []*School `json:"school"`
 	Likes     []*Note   `json:"likes"`
 	Class     []*Class  `json:"class"`
