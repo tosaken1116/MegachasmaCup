@@ -1,8 +1,11 @@
 package services
 
 import (
+	"context"
+	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/middleware/auth"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -22,8 +25,12 @@ func convertComment(comment dbModel.Comment) *model.Comment {
 		UpdatedAt: comment.UpdatedAt,
 	}
 }
-func (cs *commentService) CreateComment(input model.NewComment) (*model.Comment, error) {
-	pUserID, err := uuid.Parse(input.UserID)
+func (cs *commentService) CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+	pUserID, err := uuid.Parse(userID)
 	if err != nil {
 		return nil, err
 	}

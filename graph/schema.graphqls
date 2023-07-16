@@ -100,10 +100,10 @@ type Mutation {
   createComment(input: NewComment!): Comment! @isAuthenticated
   updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
   createTag(input: NewTag!): Tag! @isAuthenticated
-  joinClass(input:NewJoinClass!):Class! @isAuthenticated
-  joinSchool(input:NewJoinSchool!):School! @isAuthenticated
-  like(input:LikeProps!):Note! @isAuthenticated
-  deleteLike(input:LikeProps!):Note! @isAuthenticated
+  joinClass(classID: String!):Class! @isAuthenticated
+  joinSchool(schoolID: String!):School! @isAuthenticated
+  like(noteID: String!):Note! @isAuthenticated
+  deleteLike(noteID:String!):Note! @isAuthenticated
 }
 
 
@@ -112,19 +112,16 @@ input NewNote {
   schoolID:String!
   description:String!
   title:String!
-  userID:String!
   isPublic:Boolean!
 }
 
 input NewClass {
   name: String!
   schoolID:String!
-  ownerID:String!
 }
 
 input NewSchool {
   name: String!
-  ownerID:String!
 }
 
 input NewUser {
@@ -142,20 +139,8 @@ input NewTag {
 }
 
 input NewComment {
-  userID: String!
   noteID: String!
   comment: String!
-}
-
-
-input NewJoinClass {
-  classID: String!
-  userID: String!
-}
-
-input NewJoinSchool {
-  schoolID: String!
-  userID: String!
 }
 
 input GetClassesProps {
@@ -166,6 +151,7 @@ input GetClassesProps {
 }
 
 input GetNoteProps {
+  isMy:Boolean
   noteID: String
   schoolID: String
   userID: String
@@ -187,11 +173,6 @@ input UpdateSchoolProps {
 input UpdateClassProps {
   name:String
   owner_id:String
-}
-
-input LikeProps {
-  userID:String!
-  noteID:String!
 }
 
 input UpdateUserProps {

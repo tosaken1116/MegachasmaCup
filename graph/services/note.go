@@ -6,6 +6,7 @@ import (
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/middleware/auth"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -56,7 +57,15 @@ func convertCreateNote(note dbModel.Note) *model.Note {
 	}
 }
 
-func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, UserID string, IsPublic bool) (*model.Note, error) {
+func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, IsPublic bool) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+	pUserID, err := uuid.Parse(userID)
+	if err != nil {
+		return nil, err
+	}
 	pSchoolID, err := uuid.Parse(SchoolID)
 	if err != nil {
 		return nil, err
@@ -65,9 +74,11 @@ func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID 
 	if err != nil {
 		return nil, err
 	}
-	pUserID, err := uuid.Parse(UserID)
-	if err != nil {
-		return nil, err
+	if !IsUserSchoolExist(ns.db, userID, SchoolID) {
+		return nil, errors.New("you are not joined to school")
+	}
+	if !IsUserClassExist(ns.db, userID, ClassID) {
+		return nil, errors.New("you are not joined to class")
 	}
 	newNote := dbModel.Note{
 		ClassID:     pClassID,
@@ -106,48 +117,82 @@ func (ns *noteService) GetLikeUserOfNote(ctx context.Context, NoteID string) ([]
 	return convertedUser, nil
 }
 
-func (ns *noteService) GetNotes(input model.GetNoteProps) ([]*model.Note, error) {
+func (ns *noteService) GetNotes(ctx context.Context, input model.GetNoteProps) ([]*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+
 	note := new([]*dbModel.Note)
 	orm := ns.db.Where("")
+	if input.IsMy != nil {
+		if *input.IsMy {
+			if input.UserID != nil {
+				return nil, errors.New("isMy and userId cannot use the same time")
+			}
+			if input.IsPublic != nil {
+				orm.Where("is_public = ?", *input.IsPublic)
+			}
+		}
+	} else if input.ClassID != nil && input.SchoolID != nil {
+		if !IsUserSchoolExist(ns.db, userID, *input.SchoolID) {
+			return nil, errors.New("you are not joined to school")
+		}
+		if !IsUserClassExist(ns.db, userID, *input.ClassID) {
+			return nil, errors.New("you are not joined to class")
+		}
+		if input.UserID != nil {
+			orm.Where("user_id = ?", *input.UserID)
+		}
+		orm.Where("class_id = ?", *input.ClassID)
+		orm.Where("school_id = ?", *input.SchoolID)
+		orm.Where("is_public = ?", true)
+	} else {
+		return nil, errors.New("class id and school id or isMy is required")
+	}
 	if input.NoteID != nil {
 		orm.Where("id = ?", *input.NoteID)
-	} else {
-		if input.ClassID != nil {
-			orm.Where("class_id = ?", *input.ClassID)
-		}
-		if input.SchoolID != nil {
-			orm.Where("school_id = ?", *input.SchoolID)
-		}
-		if input.IsPublic != nil {
-			orm.Where("is_public = ?", *input.IsPublic)
-		}
-
 	}
 	if err := orm.Find(&note).Error; err != nil {
 		return nil, err
 	}
+	existMyNote := false
 	convertedNote := make([]*model.Note, len(*note))
 	for i, key := range *note {
+		if key.UserID.String() == userID {
+			existMyNote = true
+		}
 		convertedNote[i] = convertNote(*key)
+	}
+	if !existMyNote {
+		return nil, errors.New("not allowed because your note is not found")
 	}
 	return convertedNote, nil
 }
-func (ns *noteService) LikeNote(input model.LikeProps) (*model.Note, error) {
+func (ns *noteService) LikeNote(ctx context.Context, noteID string) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	likeNote := new(dbModel.Note)
-	if err := ns.db.Where("id = ?", input.NoteID).Find(&likeNote).Error; err != nil {
+	if err := ns.db.Where("id = ?", noteID).Find(&likeNote).Error; err != nil {
 		return nil, err
 	}
-	if err := ns.db.Exec("INSERT INTO likes (user_id,note_id) VALUES(@user_id,@note_id)", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).Error; err != nil {
+	if err := ns.db.Exec("INSERT INTO likes (user_id,note_id) VALUES(@user_id,@note_id)", sql.Named("note_id", noteID), sql.Named("user_id", userID)).Error; err != nil {
 		return nil, err
 	}
 	return convertNote(*likeNote), nil
 }
-func (ns *noteService) DeleteLikeNote(input model.LikeProps) (*model.Note, error) {
+func (ns *noteService) DeleteLikeNote(ctx context.Context, noteID string) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	likeNote := new(dbModel.Note)
-	if err := ns.db.Where("id = ?", input.NoteID).Find(&likeNote).Error; err != nil {
+	if err := ns.db.Where("id = ?", noteID).Find(&likeNote).Error; err != nil {
 		return nil, err
 	}
-	if count := ns.db.Exec("DELETE FROM likes WHERE user_id = @user_id AND note_id = @note_id", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).RowsAffected; count == 0 {
+	if count := ns.db.Exec("DELETE FROM likes WHERE user_id = @user_id AND note_id = @note_id", sql.Named("note_id", noteID), sql.Named("user_id", userID)).RowsAffected; count == 0 {
 		return nil, errors.New("yet like note")
 	}
 	return convertNote(*likeNote), nil

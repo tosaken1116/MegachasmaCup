@@ -82,10 +82,10 @@ type ComplexityRoot struct {
 		CreateSchool  func(childComplexity int, input model.NewSchool) int
 		CreateTag     func(childComplexity int, input model.NewTag) int
 		CreateUser    func(childComplexity int, input model.NewUser) int
-		DeleteLike    func(childComplexity int, input model.LikeProps) int
-		JoinClass     func(childComplexity int, input model.NewJoinClass) int
-		JoinSchool    func(childComplexity int, input model.NewJoinSchool) int
-		Like          func(childComplexity int, input model.LikeProps) int
+		DeleteLike    func(childComplexity int, noteID string) int
+		JoinClass     func(childComplexity int, classID string) int
+		JoinSchool    func(childComplexity int, schoolID string) int
+		Like          func(childComplexity int, noteID string) int
 		UpdateClass   func(childComplexity int, id string, input *model.UpdateClassProps) int
 		UpdateComment func(childComplexity int, id string, input *model.NewComment) int
 		UpdateNote    func(childComplexity int, id string, input *model.NewNote) int
@@ -163,10 +163,10 @@ type MutationResolver interface {
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
 	UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
-	JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error)
-	JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error)
-	Like(ctx context.Context, input model.LikeProps) (*model.Note, error)
-	DeleteLike(ctx context.Context, input model.LikeProps) (*model.Note, error)
+	JoinClass(ctx context.Context, classID string) (*model.Class, error)
+	JoinSchool(ctx context.Context, schoolID string) (*model.School, error)
+	Like(ctx context.Context, noteID string) (*model.Note, error)
+	DeleteLike(ctx context.Context, noteID string) (*model.Note, error)
 }
 type NoteResolver interface {
 	School(ctx context.Context, obj *model.Note) (*model.School, error)
@@ -411,7 +411,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteLike(childComplexity, args["input"].(model.LikeProps)), true
+		return e.complexity.Mutation.DeleteLike(childComplexity, args["noteID"].(string)), true
 
 	case "Mutation.joinClass":
 		if e.complexity.Mutation.JoinClass == nil {
@@ -423,7 +423,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.JoinClass(childComplexity, args["input"].(model.NewJoinClass)), true
+		return e.complexity.Mutation.JoinClass(childComplexity, args["classID"].(string)), true
 
 	case "Mutation.joinSchool":
 		if e.complexity.Mutation.JoinSchool == nil {
@@ -435,7 +435,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.JoinSchool(childComplexity, args["input"].(model.NewJoinSchool)), true
+		return e.complexity.Mutation.JoinSchool(childComplexity, args["schoolID"].(string)), true
 
 	case "Mutation.like":
 		if e.complexity.Mutation.Like == nil {
@@ -447,7 +447,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Like(childComplexity, args["input"].(model.LikeProps)), true
+		return e.complexity.Mutation.Like(childComplexity, args["noteID"].(string)), true
 
 	case "Mutation.updateClass":
 		if e.complexity.Mutation.UpdateClass == nil {
@@ -845,11 +845,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGetJwtProps,
 		ec.unmarshalInputGetNoteProps,
 		ec.unmarshalInputGetUserProps,
-		ec.unmarshalInputLikeProps,
 		ec.unmarshalInputNewClass,
 		ec.unmarshalInputNewComment,
-		ec.unmarshalInputNewJoinClass,
-		ec.unmarshalInputNewJoinSchool,
 		ec.unmarshalInputNewNote,
 		ec.unmarshalInputNewSchool,
 		ec.unmarshalInputNewTag,
@@ -1056,10 +1053,10 @@ type Mutation {
   createComment(input: NewComment!): Comment! @isAuthenticated
   updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
   createTag(input: NewTag!): Tag! @isAuthenticated
-  joinClass(input:NewJoinClass!):Class! @isAuthenticated
-  joinSchool(input:NewJoinSchool!):School! @isAuthenticated
-  like(input:LikeProps!):Note! @isAuthenticated
-  deleteLike(input:LikeProps!):Note! @isAuthenticated
+  joinClass(classID: String!):Class! @isAuthenticated
+  joinSchool(schoolID: String!):School! @isAuthenticated
+  like(noteID: String!):Note! @isAuthenticated
+  deleteLike(noteID:String!):Note! @isAuthenticated
 }
 
 
@@ -1068,19 +1065,16 @@ input NewNote {
   schoolID:String!
   description:String!
   title:String!
-  userID:String!
   isPublic:Boolean!
 }
 
 input NewClass {
   name: String!
   schoolID:String!
-  ownerID:String!
 }
 
 input NewSchool {
   name: String!
-  ownerID:String!
 }
 
 input NewUser {
@@ -1098,20 +1092,8 @@ input NewTag {
 }
 
 input NewComment {
-  userID: String!
   noteID: String!
   comment: String!
-}
-
-
-input NewJoinClass {
-  classID: String!
-  userID: String!
-}
-
-input NewJoinSchool {
-  schoolID: String!
-  userID: String!
 }
 
 input GetClassesProps {
@@ -1122,6 +1104,7 @@ input GetClassesProps {
 }
 
 input GetNoteProps {
+  isMy:Boolean
   noteID: String
   schoolID: String
   userID: String
@@ -1143,11 +1126,6 @@ input UpdateSchoolProps {
 input UpdateClassProps {
   name:String
   owner_id:String
-}
-
-input LikeProps {
-  userID:String!
-  noteID:String!
 }
 
 input UpdateUserProps {
@@ -1257,60 +1235,60 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_deleteLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.LikeProps
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["noteID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noteID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["noteID"] = arg0
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_joinClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewJoinClass
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewJoinClass2megachasmaᚋgraphᚋmodelᚐNewJoinClass(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["classID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["classID"] = arg0
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_joinSchool_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewJoinSchool
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewJoinSchool2megachasmaᚋgraphᚋmodelᚐNewJoinSchool(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["schoolID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["schoolID"] = arg0
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_like_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.LikeProps
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["noteID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noteID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["noteID"] = arg0
 	return args, nil
 }
 
@@ -3487,7 +3465,7 @@ func (ec *executionContext) _Mutation_joinClass(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().JoinClass(rctx, fc.Args["input"].(model.NewJoinClass))
+			return ec.resolvers.Mutation().JoinClass(rctx, fc.Args["classID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsAuthenticated == nil {
@@ -3584,7 +3562,7 @@ func (ec *executionContext) _Mutation_joinSchool(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().JoinSchool(rctx, fc.Args["input"].(model.NewJoinSchool))
+			return ec.resolvers.Mutation().JoinSchool(rctx, fc.Args["schoolID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsAuthenticated == nil {
@@ -3677,7 +3655,7 @@ func (ec *executionContext) _Mutation_like(ctx context.Context, field graphql.Co
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().Like(rctx, fc.Args["input"].(model.LikeProps))
+			return ec.resolvers.Mutation().Like(rctx, fc.Args["noteID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsAuthenticated == nil {
@@ -3782,7 +3760,7 @@ func (ec *executionContext) _Mutation_deleteLike(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteLike(rctx, fc.Args["input"].(model.LikeProps))
+			return ec.resolvers.Mutation().DeleteLike(rctx, fc.Args["noteID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsAuthenticated == nil {
@@ -8275,13 +8253,22 @@ func (ec *executionContext) unmarshalInputGetNoteProps(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"noteID", "schoolID", "userID", "classID", "isPublic"}
+	fieldsInOrder := [...]string{"isMy", "noteID", "schoolID", "userID", "classID", "isPublic"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "isMy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMy"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsMy = data
 		case "noteID":
 			var err error
 
@@ -8380,44 +8367,6 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLikeProps(ctx context.Context, obj interface{}) (model.LikeProps, error) {
-	var it model.LikeProps
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"userID", "noteID"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
-		case "noteID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noteID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NoteID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj interface{}) (model.NewClass, error) {
 	var it model.NewClass
 	asMap := map[string]interface{}{}
@@ -8425,7 +8374,7 @@ func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "schoolID", "ownerID"}
+	fieldsInOrder := [...]string{"name", "schoolID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8450,15 +8399,6 @@ func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj inte
 				return it, err
 			}
 			it.SchoolID = data
-		case "ownerID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerID = data
 		}
 	}
 
@@ -8472,22 +8412,13 @@ func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userID", "noteID", "comment"}
+	fieldsInOrder := [...]string{"noteID", "comment"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		case "noteID":
 			var err error
 
@@ -8512,82 +8443,6 @@ func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewJoinClass(ctx context.Context, obj interface{}) (model.NewJoinClass, error) {
-	var it model.NewJoinClass
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"classID", "userID"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "classID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClassID = data
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputNewJoinSchool(ctx context.Context, obj interface{}) (model.NewJoinSchool, error) {
-	var it model.NewJoinSchool
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"schoolID", "userID"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "schoolID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SchoolID = data
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj interface{}) (model.NewNote, error) {
 	var it model.NewNote
 	asMap := map[string]interface{}{}
@@ -8595,7 +8450,7 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"classID", "schoolID", "description", "title", "userID", "isPublic"}
+	fieldsInOrder := [...]string{"classID", "schoolID", "description", "title", "isPublic"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8638,15 +8493,6 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 				return it, err
 			}
 			it.Title = data
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		case "isPublic":
 			var err error
 
@@ -8669,7 +8515,7 @@ func (ec *executionContext) unmarshalInputNewSchool(ctx context.Context, obj int
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "ownerID"}
+	fieldsInOrder := [...]string{"name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8685,15 +8531,6 @@ func (ec *executionContext) unmarshalInputNewSchool(ctx context.Context, obj int
 				return it, err
 			}
 			it.Name = data
-		case "ownerID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerID = data
 		}
 	}
 
@@ -10433,11 +10270,6 @@ func (ec *executionContext) marshalNJwt2ᚖmegachasmaᚋgraphᚋmodelᚐJwt(ctx 
 	return ec._Jwt(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx context.Context, v interface{}) (model.LikeProps, error) {
-	res, err := ec.unmarshalInputLikeProps(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNNewClass2megachasmaᚋgraphᚋmodelᚐNewClass(ctx context.Context, v interface{}) (model.NewClass, error) {
 	res, err := ec.unmarshalInputNewClass(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10445,16 +10277,6 @@ func (ec *executionContext) unmarshalNNewClass2megachasmaᚋgraphᚋmodelᚐNewC
 
 func (ec *executionContext) unmarshalNNewComment2megachasmaᚋgraphᚋmodelᚐNewComment(ctx context.Context, v interface{}) (model.NewComment, error) {
 	res, err := ec.unmarshalInputNewComment(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewJoinClass2megachasmaᚋgraphᚋmodelᚐNewJoinClass(ctx context.Context, v interface{}) (model.NewJoinClass, error) {
-	res, err := ec.unmarshalInputNewJoinClass(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewJoinSchool2megachasmaᚋgraphᚋmodelᚐNewJoinSchool(ctx context.Context, v interface{}) (model.NewJoinSchool, error) {
-	res, err := ec.unmarshalInputNewJoinSchool(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

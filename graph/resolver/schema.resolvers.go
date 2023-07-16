@@ -23,7 +23,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input *mod
 
 // CreateNote is the resolver for the createNote field.
 func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) (*model.Note, error) {
-	return r.Srv.CreateNote(ctx, input.ClassID, input.SchoolID, input.Description, input.Title, input.UserID, input.IsPublic)
+	return r.Srv.CreateNote(ctx, input.ClassID, input.SchoolID, input.Description, input.Title, input.IsPublic)
 }
 
 // UpdateNote is the resolver for the updateNote field.
@@ -33,7 +33,7 @@ func (r *mutationResolver) UpdateNote(ctx context.Context, id string, input *mod
 
 // CreateClass is the resolver for the createClass field.
 func (r *mutationResolver) CreateClass(ctx context.Context, input model.NewClass) (*model.Class, error) {
-	return r.Srv.CreateClass(ctx, input.Name, input.SchoolID, input.OwnerID)
+	return r.Srv.CreateClass(ctx, input.Name, input.SchoolID)
 }
 
 // UpdateClass is the resolver for the updateClass field.
@@ -43,7 +43,7 @@ func (r *mutationResolver) UpdateClass(ctx context.Context, id string, input *mo
 
 // CreateSchool is the resolver for the createSchool field.
 func (r *mutationResolver) CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error) {
-	return r.Srv.CreateSchool(ctx, input.Name, input.OwnerID)
+	return r.Srv.CreateSchool(ctx, input.Name)
 }
 
 // UpdateSchool is the resolver for the updateSchool field.
@@ -53,7 +53,7 @@ func (r *mutationResolver) UpdateSchool(ctx context.Context, id string, input *m
 
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error) {
-	return r.Srv.CreateComment(input)
+	return r.Srv.CreateComment(ctx, input)
 }
 
 // UpdateComment is the resolver for the updateComment field.
@@ -67,23 +67,23 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 }
 
 // JoinClass is the resolver for the joinClass field.
-func (r *mutationResolver) JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error) {
-	return r.Srv.JoinClass(input)
+func (r *mutationResolver) JoinClass(ctx context.Context, classID string) (*model.Class, error) {
+	return r.Srv.JoinClass(ctx, classID)
 }
 
 // JoinSchool is the resolver for the joinSchool field.
-func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error) {
-	return r.Srv.JoinSchool(input)
+func (r *mutationResolver) JoinSchool(ctx context.Context, schoolID string) (*model.School, error) {
+	return r.Srv.JoinSchool(ctx, schoolID)
 }
 
 // Like is the resolver for the like field.
-func (r *mutationResolver) Like(ctx context.Context, input model.LikeProps) (*model.Note, error) {
-	return r.Srv.LikeNote(input)
+func (r *mutationResolver) Like(ctx context.Context, noteID string) (*model.Note, error) {
+	return r.Srv.LikeNote(ctx, noteID)
 }
 
 // DeleteLike is the resolver for the deleteLike field.
-func (r *mutationResolver) DeleteLike(ctx context.Context, input model.LikeProps) (*model.Note, error) {
-	return r.Srv.DeleteLikeNote(input)
+func (r *mutationResolver) DeleteLike(ctx context.Context, noteID string) (*model.Note, error) {
+	return r.Srv.DeleteLikeNote(ctx, noteID)
 }
 
 // School is the resolver for the school field.
@@ -98,7 +98,7 @@ func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag,
 
 // GetNotes is the resolver for the getNotes field.
 func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
-	return r.Srv.GetNotes(*input)
+	return r.Srv.GetNotes(ctx, *input)
 }
 
 // GetSchools is the resolver for the getSchools field.

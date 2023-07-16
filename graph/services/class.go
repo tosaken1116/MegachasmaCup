@@ -2,8 +2,10 @@ package services
 
 import (
 	"context"
+	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/middleware/auth"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -43,12 +45,21 @@ func convertCreateClass(class dbModel.Class) *model.Class {
 		Notes:     notes,
 	}
 }
-func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID string, OwnerID string) (*model.Class, error) {
+func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID string) (*model.Class, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	pSchoolID, err := uuid.Parse(SchoolID)
 	if err != nil {
 		return nil, err
 	}
-	pOwnerID, err := uuid.Parse(OwnerID)
+
+	if !IsUserSchoolExist(cs.db, userID, SchoolID) {
+		return nil, errors.New("you are not joined to school")
+	}
+
+	pOwnerID, err := uuid.Parse(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -116,4 +127,9 @@ func (cs *classService) GetClasses(input model.GetClassesProps) ([]*model.Class,
 	}
 
 	return result, nil
+}
+func IsUserClassExist(db *gorm.DB, userID string, classID string) bool {
+	var count int64
+	db.Raw("SELECT COUNT(*) FROM class_user WHERE user_id = ? AND class_id = ?", userID, classID).Scan(&count)
+	return count != 0
 }

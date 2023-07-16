@@ -42,6 +42,7 @@ type GetJwtProps struct {
 }
 
 type GetNoteProps struct {
+	IsMy     *bool   `json:"isMy,omitempty"`
 	NoteID   *string `json:"noteID,omitempty"`
 	SchoolID *string `json:"schoolID,omitempty"`
 	UserID   *string `json:"userID,omitempty"`
@@ -59,31 +60,14 @@ type Jwt struct {
 	Token string `json:"token"`
 }
 
-type LikeProps struct {
-	UserID string `json:"userID"`
-	NoteID string `json:"noteID"`
-}
-
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`
-	OwnerID  string `json:"ownerID"`
 }
 
 type NewComment struct {
-	UserID  string `json:"userID"`
 	NoteID  string `json:"noteID"`
 	Comment string `json:"comment"`
-}
-
-type NewJoinClass struct {
-	ClassID string `json:"classID"`
-	UserID  string `json:"userID"`
-}
-
-type NewJoinSchool struct {
-	SchoolID string `json:"schoolID"`
-	UserID   string `json:"userID"`
 }
 
 type NewNote struct {
@@ -91,13 +75,11 @@ type NewNote struct {
 	SchoolID    string `json:"schoolID"`
 	Description string `json:"description"`
 	Title       string `json:"title"`
-	UserID      string `json:"userID"`
 	IsPublic    bool   `json:"isPublic"`
 }
 
 type NewSchool struct {
-	Name    string `json:"name"`
-	OwnerID string `json:"ownerID"`
+	Name string `json:"name"`
 }
 
 type NewTag struct {
