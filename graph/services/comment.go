@@ -49,3 +49,25 @@ func (cs *commentService) CreateComment(ctx context.Context, input model.NewComm
 	createdComment := convertComment(comment)
 	return createdComment, nil
 }
+
+func (cs *commentService) UpdateComment(ctx context.Context, id string, input model.UpdateCommentProps) (*model.Comment, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+	comment := new(dbModel.Comment)
+	if err := cs.db.Where("id = ?", id).Find(&comment).Error; err != nil {
+		return nil, err
+	}
+	if comment.UserID.String() != userID {
+		return nil, errors.New("this comment is not yours")
+	}
+	if input.Comment != nil {
+		comment.Comment = *input.Comment
+	}
+	if err := cs.db.Save(&comment).Error; err != nil {
+		return nil, err
+	}
+	createdComment := convertComment(*comment)
+	return createdComment, nil
+}

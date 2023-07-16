@@ -79,7 +79,6 @@ type Query {
   getSchools(searchWord:String!): [School!]! @isAuthenticated
   getClasses(input:GetClassesProps): [Class!]! @isAuthenticated
   getTags(searchWord:String!): [Tag!]! @isAuthenticated
-  getMyNotes: Note! @isAuthenticated
   getUser(input:GetUserProps):[User!]! @isAuthenticated
   getJwt(input:GetJwtProps):Jwt! @isAuthenticated
 }
@@ -93,7 +92,7 @@ type Mutation {
   createSchool(input: NewSchool!): School! @isAuthenticated
   updateSchool(id:String!,input: UpdateSchoolProps):School! @isAuthenticated
   createComment(input: NewComment!): Comment! @isAuthenticated
-  updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
+  updateComment(id:String!,input: UpdateCommentProps):Comment! @isAuthenticated
   createTag(input: NewTag!): Tag! @isAuthenticated
   joinClass(classID: String!):Class! @isAuthenticated
   joinSchool(schoolID: String!):School! @isAuthenticated
@@ -176,3 +175,6 @@ input UpdateUserProps {
   imageUrl:String
 }
 
+input UpdateCommentProps {
+  comment:String
+}

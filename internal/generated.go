@@ -85,7 +85,7 @@ type ComplexityRoot struct {
 		JoinSchool    func(childComplexity int, schoolID string) int
 		Like          func(childComplexity int, noteID string) int
 		UpdateClass   func(childComplexity int, id string, input *model.UpdateClassProps) int
-		UpdateComment func(childComplexity int, id string, input *model.NewComment) int
+		UpdateComment func(childComplexity int, id string, input *model.UpdateCommentProps) int
 		UpdateNote    func(childComplexity int, id string, input *model.NewNote) int
 		UpdateSchool  func(childComplexity int, id string, input *model.UpdateSchoolProps) int
 		UpdateUser    func(childComplexity int, id string, input *model.UpdateUserProps) int
@@ -110,7 +110,6 @@ type ComplexityRoot struct {
 	Query struct {
 		GetClasses func(childComplexity int, input *model.GetClassesProps) int
 		GetJwt     func(childComplexity int, input *model.GetJwtProps) int
-		GetMyNotes func(childComplexity int) int
 		GetNotes   func(childComplexity int, input *model.GetNoteProps) int
 		GetSchools func(childComplexity int, searchWord string) int
 		GetTags    func(childComplexity int, searchWord string) int
@@ -156,7 +155,7 @@ type MutationResolver interface {
 	CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error)
 	UpdateSchool(ctx context.Context, id string, input *model.UpdateSchoolProps) (*model.School, error)
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
-	UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error)
+	UpdateComment(ctx context.Context, id string, input *model.UpdateCommentProps) (*model.Comment, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 	JoinClass(ctx context.Context, classID string) (*model.Class, error)
 	JoinSchool(ctx context.Context, schoolID string) (*model.School, error)
@@ -172,7 +171,6 @@ type QueryResolver interface {
 	GetSchools(ctx context.Context, searchWord string) ([]*model.School, error)
 	GetClasses(ctx context.Context, input *model.GetClassesProps) ([]*model.Class, error)
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
-	GetMyNotes(ctx context.Context) (*model.Note, error)
 	GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error)
 	GetJwt(ctx context.Context, input *model.GetJwtProps) (*model.Jwt, error)
 }
@@ -452,7 +450,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateComment(childComplexity, args["id"].(string), args["input"].(*model.NewComment)), true
+		return e.complexity.Mutation.UpdateComment(childComplexity, args["id"].(string), args["input"].(*model.UpdateCommentProps)), true
 
 	case "Mutation.updateNote":
 		if e.complexity.Mutation.UpdateNote == nil {
@@ -604,13 +602,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetJwt(childComplexity, args["input"].(*model.GetJwtProps)), true
-
-	case "Query.getMyNotes":
-		if e.complexity.Query.GetMyNotes == nil {
-			break
-		}
-
-		return e.complexity.Query.GetMyNotes(childComplexity), true
 
 	case "Query.getNotes":
 		if e.complexity.Query.GetNotes == nil {
@@ -812,6 +803,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewTag,
 		ec.unmarshalInputNewUser,
 		ec.unmarshalInputUpdateClassProps,
+		ec.unmarshalInputUpdateCommentProps,
 		ec.unmarshalInputUpdateSchoolProps,
 		ec.unmarshalInputUpdateUserProps,
 	)
@@ -992,7 +984,6 @@ type Query {
   getSchools(searchWord:String!): [School!]! @isAuthenticated
   getClasses(input:GetClassesProps): [Class!]! @isAuthenticated
   getTags(searchWord:String!): [Tag!]! @isAuthenticated
-  getMyNotes: Note! @isAuthenticated
   getUser(input:GetUserProps):[User!]! @isAuthenticated
   getJwt(input:GetJwtProps):Jwt! @isAuthenticated
 }
@@ -1006,7 +997,7 @@ type Mutation {
   createSchool(input: NewSchool!): School! @isAuthenticated
   updateSchool(id:String!,input: UpdateSchoolProps):School! @isAuthenticated
   createComment(input: NewComment!): Comment! @isAuthenticated
-  updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
+  updateComment(id:String!,input: UpdateCommentProps):Comment! @isAuthenticated
   createTag(input: NewTag!): Tag! @isAuthenticated
   joinClass(classID: String!):Class! @isAuthenticated
   joinSchool(schoolID: String!):School! @isAuthenticated
@@ -1089,7 +1080,9 @@ input UpdateUserProps {
   imageUrl:String
 }
 
-`, BuiltIn: false},
+input UpdateCommentProps {
+  comment:String
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -1283,10 +1276,10 @@ func (ec *executionContext) field_Mutation_updateComment_args(ctx context.Contex
 		}
 	}
 	args["id"] = arg0
-	var arg1 *model.NewComment
+	var arg1 *model.UpdateCommentProps
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalONewComment2ᚖmegachasmaᚋgraphᚋmodelᚐNewComment(ctx, tmp)
+		arg1, err = ec.unmarshalOUpdateCommentProps2ᚖmegachasmaᚋgraphᚋmodelᚐUpdateCommentProps(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3136,7 +3129,7 @@ func (ec *executionContext) _Mutation_updateComment(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateComment(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewComment))
+			return ec.resolvers.Mutation().UpdateComment(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.UpdateCommentProps))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsAuthenticated == nil {
@@ -4679,98 +4672,6 @@ func (ec *executionContext) fieldContext_Query_getTags(ctx context.Context, fiel
 	if fc.Args, err = ec.field_Query_getTags_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getMyNotes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getMyNotes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetMyNotes(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsAuthenticated == nil {
-				return nil, errors.New("directive isAuthenticated is not implemented")
-			}
-			return ec.directives.IsAuthenticated(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.Note); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *megachasma/graph/model.Note`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Note)
-	fc.Result = res
-	return ec.marshalNNote2ᚖmegachasmaᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getMyNotes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Note_id(ctx, field)
-			case "classId":
-				return ec.fieldContext_Note_classId(ctx, field)
-			case "schoolId":
-				return ec.fieldContext_Note_schoolId(ctx, field)
-			case "description":
-				return ec.fieldContext_Note_description(ctx, field)
-			case "title":
-				return ec.fieldContext_Note_title(ctx, field)
-			case "userId":
-				return ec.fieldContext_Note_userId(ctx, field)
-			case "isPublic":
-				return ec.fieldContext_Note_isPublic(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Note_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Note_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_Note_school(ctx, field)
-			case "tags":
-				return ec.fieldContext_Note_tags(ctx, field)
-			case "likeUser":
-				return ec.fieldContext_Note_likeUser(ctx, field)
-			case "comment":
-				return ec.fieldContext_Note_comment(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
-		},
 	}
 	return fc, nil
 }
@@ -8324,6 +8225,35 @@ func (ec *executionContext) unmarshalInputUpdateClassProps(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateCommentProps(ctx context.Context, obj interface{}) (model.UpdateCommentProps, error) {
+	var it model.UpdateCommentProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"comment"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "comment":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comment"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Comment = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateSchoolProps(ctx context.Context, obj interface{}) (model.UpdateSchoolProps, error) {
 	var it model.UpdateSchoolProps
 	asMap := map[string]interface{}{}
@@ -9002,28 +8932,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getTags(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getMyNotes":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getMyNotes(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10506,14 +10414,6 @@ func (ec *executionContext) unmarshalOGetUserProps2ᚖmegachasmaᚋgraphᚋmodel
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalONewComment2ᚖmegachasmaᚋgraphᚋmodelᚐNewComment(ctx context.Context, v interface{}) (*model.NewComment, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputNewComment(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalONewNote2ᚖmegachasmaᚋgraphᚋmodelᚐNewNote(ctx context.Context, v interface{}) (*model.NewNote, error) {
 	if v == nil {
 		return nil, nil
@@ -10543,6 +10443,14 @@ func (ec *executionContext) unmarshalOUpdateClassProps2ᚖmegachasmaᚋgraphᚋm
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputUpdateClassProps(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOUpdateCommentProps2ᚖmegachasmaᚋgraphᚋmodelᚐUpdateCommentProps(ctx context.Context, v interface{}) (*model.UpdateCommentProps, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpdateCommentProps(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

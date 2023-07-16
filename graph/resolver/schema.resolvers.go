@@ -57,8 +57,8 @@ func (r *mutationResolver) CreateComment(ctx context.Context, input model.NewCom
 }
 
 // UpdateComment is the resolver for the updateComment field.
-func (r *mutationResolver) UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error) {
-	panic(fmt.Errorf("not implemented: UpdateComment - updateComment"))
+func (r *mutationResolver) UpdateComment(ctx context.Context, id string, input *model.UpdateCommentProps) (*model.Comment, error) {
+	return r.Srv.UpdateComment(ctx, id, *input)
 }
 
 // CreateTag is the resolver for the createTag field.
@@ -114,11 +114,6 @@ func (r *queryResolver) GetClasses(ctx context.Context, input *model.GetClassesP
 // GetTags is the resolver for the getTags field.
 func (r *queryResolver) GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error) {
 	return r.Srv.GetTags(ctx, searchWord)
-}
-
-// GetMyNotes is the resolver for the getMyNotes field.
-func (r *queryResolver) GetMyNotes(ctx context.Context) (*model.Note, error) {
-	panic(fmt.Errorf("not implemented: GetMyNotes - getMyNotes"))
 }
 
 // GetUser is the resolver for the getUser field.

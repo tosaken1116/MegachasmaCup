@@ -126,6 +126,10 @@ type UpdateClassProps struct {
 	OwnerID *string `json:"owner_id,omitempty"`
 }
 
+type UpdateCommentProps struct {
+	Comment *string `json:"comment,omitempty"`
+}
+
 type UpdateSchoolProps struct {
 	Name    *string `json:"name,omitempty"`
 	OwnerID *string `json:"ownerID,omitempty"`
