@@ -47,18 +47,30 @@ func (ss *schoolService) CreateSchool(ctx context.Context, Name string, OwnerID 
 	return createdSchool, nil
 }
 
-// func (ss *schoolService) UpdateSchool(input model.NewSchool) (*model.School, error) {
-// 	school, err := GetSchoolByID(ss.db, input.ID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	school.Name = input.Name
-// 	if err := ss.db.Save(&school).Error; err != nil {
-// 		return nil, err
-// 	}
-// 	updatedSchool := convertSchool(*school)
-// 	return updatedSchool, nil
-// }
+func (ss *schoolService) UpdateSchool(ctx context.Context, id string, input model.UpdateSchoolProps) (*model.School, error) {
+
+	school := new(dbModel.School)
+	if err := ss.db.Where("id = ?", id).Find(&school).Error; err != nil {
+		return nil, err
+	}
+	if input.OwnerID != nil {
+		pOwnerID, err := uuid.Parse(*input.OwnerID)
+		if err != nil {
+			return nil, err
+		}
+		school.OwnerID = pOwnerID
+	}
+	if input.Name != nil {
+		school.Name = *input.Name
+	}
+
+	if err := ss.db.Save(&school).Error; err != nil {
+		return nil, err
+	}
+
+	updatedSchool := convertSchool(*school)
+	return updatedSchool, nil
+}
 
 func (ss *schoolService) GetSchoolBySearchWord(searchWord string) ([]*model.School, error) {
 	schools := []*dbModel.School{}

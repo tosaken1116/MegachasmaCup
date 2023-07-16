@@ -129,6 +129,11 @@ type Tag struct {
 	Name string `json:"name"`
 }
 
+type UpdateSchoolProps struct {
+	Name    *string `json:"name,omitempty"`
+	OwnerID *string `json:"ownerID,omitempty"`
+}
+
 type User struct {
 	ID        string    `json:"id"`
 	ImageURL  string    `json:"imageUrl"`

@@ -82,7 +82,7 @@ type ComplexityRoot struct {
 		UpdateClass   func(childComplexity int, id string, input *model.NewClass) int
 		UpdateComment func(childComplexity int, id string, input *model.NewComment) int
 		UpdateNote    func(childComplexity int, id string, input *model.NewNote) int
-		UpdateSchool  func(childComplexity int, id string, input *model.NewSchool) int
+		UpdateSchool  func(childComplexity int, id string, input *model.UpdateSchoolProps) int
 		UpdateUser    func(childComplexity int, id string, input *model.NewUser) int
 	}
 
@@ -151,7 +151,7 @@ type MutationResolver interface {
 	CreateClass(ctx context.Context, input model.NewClass) (*model.Class, error)
 	UpdateClass(ctx context.Context, id string, input *model.NewClass) (*model.Class, error)
 	CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error)
-	UpdateSchool(ctx context.Context, id string, input *model.NewSchool) (*model.School, error)
+	UpdateSchool(ctx context.Context, id string, input *model.UpdateSchoolProps) (*model.School, error)
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
 	UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
@@ -453,7 +453,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSchool(childComplexity, args["id"].(string), args["input"].(*model.NewSchool)), true
+		return e.complexity.Mutation.UpdateSchool(childComplexity, args["id"].(string), args["input"].(*model.UpdateSchoolProps)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -798,6 +798,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewSchool,
 		ec.unmarshalInputNewTag,
 		ec.unmarshalInputNewUser,
+		ec.unmarshalInputUpdateSchoolProps,
 	)
 	first := true
 
@@ -988,7 +989,7 @@ type Mutation {
   createClass(input: NewClass!): Class!
   updateClass(id:String!,input: NewClass):Class!
   createSchool(input: NewSchool!): School!
-  updateSchool(id:String!,input: NewSchool):School!
+  updateSchool(id:String!,input: UpdateSchoolProps):School!
   createComment(input: NewComment!): Comment!
   updateComment(id:String!,input: NewComment):Comment!
   createTag(input: NewTag!): Tag!
@@ -1064,7 +1065,10 @@ input GetUserProps {
   userID: String
   Name:String
 }
-`, BuiltIn: false},
+input UpdateSchoolProps{
+  name:String
+    ownerID:String
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -1276,10 +1280,10 @@ func (ec *executionContext) field_Mutation_updateSchool_args(ctx context.Context
 		}
 	}
 	args["id"] = arg0
-	var arg1 *model.NewSchool
+	var arg1 *model.UpdateSchoolProps
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalONewSchool2ᚖmegachasmaᚋgraphᚋmodelᚐNewSchool(ctx, tmp)
+		arg1, err = ec.unmarshalOUpdateSchoolProps2ᚖmegachasmaᚋgraphᚋmodelᚐUpdateSchoolProps(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2829,7 +2833,7 @@ func (ec *executionContext) _Mutation_updateSchool(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSchool(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.NewSchool))
+		return ec.resolvers.Mutation().UpdateSchool(rctx, fc.Args["id"].(string), fc.Args["input"].(*model.UpdateSchoolProps))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7870,6 +7874,44 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateSchoolProps(ctx context.Context, obj interface{}) (model.UpdateSchoolProps, error) {
+	var it model.UpdateSchoolProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "ownerID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "ownerID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerID = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -9929,14 +9971,6 @@ func (ec *executionContext) unmarshalONewNote2ᚖmegachasmaᚋgraphᚋmodelᚐNe
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalONewSchool2ᚖmegachasmaᚋgraphᚋmodelᚐNewSchool(ctx context.Context, v interface{}) (*model.NewSchool, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputNewSchool(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalONewUser2ᚖmegachasmaᚋgraphᚋmodelᚐNewUser(ctx context.Context, v interface{}) (*model.NewUser, error) {
 	if v == nil {
 		return nil, nil
@@ -9959,6 +9993,14 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOUpdateSchoolProps2ᚖmegachasmaᚋgraphᚋmodelᚐUpdateSchoolProps(ctx context.Context, v interface{}) (*model.UpdateSchoolProps, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpdateSchoolProps(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {
