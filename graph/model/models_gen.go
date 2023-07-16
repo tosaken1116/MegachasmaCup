@@ -29,6 +29,13 @@ type Comment struct {
 	DeletedAt time.Time `json:"deleted_at"`
 }
 
+type GetClassesProps struct {
+	SchoolID   *string `json:"SchoolID,omitempty"`
+	UserID     *string `json:"UserID,omitempty"`
+	ClassID    *string `json:"ClassID,omitempty"`
+	SearchWord *string `json:"SearchWord,omitempty"`
+}
+
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`
