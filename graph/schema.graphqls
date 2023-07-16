@@ -86,24 +86,24 @@ type Query {
   getTags(searchWord:String!): [Tag!]! @isAuthenticated
   getMyNotes: Note! @isAuthenticated
   getUser(input:GetUserProps):[User!]! @isAuthenticated
-  getJwt(input:GetJwtProps):Jwt!
+  getJwt(input:GetJwtProps):Jwt! @isAuthenticated
 }
 type Mutation {
   createUser(input: NewUser!): User!
-  updateUser(id:String!,input: NewUser):User!
-  createNote(input: NewNote!): Note!
-  updateNote(id:String!,input: NewNote):Note!
-  createClass(input: NewClass!): Class!
-  updateClass(id:String!,input: NewClass):Class!
-  createSchool(input: NewSchool!): School!
-  updateSchool(id:String!,input: UpdateSchoolProps):School!
-  createComment(input: NewComment!): Comment!
-  updateComment(id:String!,input: NewComment):Comment!
-  createTag(input: NewTag!): Tag!
-  joinClass(input:NewJoinClass!):Class!
-  joinSchool(input:NewJoinSchool!):School!
-  like(input:LikeProps!):Note!
-  deleteLike(input:LikeProps!):Note!
+  updateUser(id:String!,input: NewUser):User! @isAuthenticated
+  createNote(input: NewNote!): Note! @isAuthenticated
+  updateNote(id:String!,input: NewNote):Note! @isAuthenticated
+  createClass(input: NewClass!): Class! @isAuthenticated
+  updateClass(id:String!,input: NewClass):Class! @isAuthenticated
+  createSchool(input: NewSchool!): School! @isAuthenticated
+  updateSchool(id:String!,input: UpdateSchoolProps):School! @isAuthenticated
+  createComment(input: NewComment!): Comment! @isAuthenticated
+  updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
+  createTag(input: NewTag!): Tag! @isAuthenticated
+  joinClass(input:NewJoinClass!):Class! @isAuthenticated
+  joinSchool(input:NewJoinSchool!):School! @isAuthenticated
+  like(input:LikeProps!):Note! @isAuthenticated
+  deleteLike(input:LikeProps!):Note! @isAuthenticated
 }
 
 
