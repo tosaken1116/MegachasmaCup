@@ -24,7 +24,6 @@ func convertUser(user dbModel.User) *model.User {
 		Email:     user.Email,
 		Name:      user.Name,
 		CreatedAt: user.CreatedAt,
-		DeletedAt: user.DeletedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
 }
