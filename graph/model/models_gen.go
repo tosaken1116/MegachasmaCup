@@ -130,6 +130,12 @@ type UpdateCommentProps struct {
 	Comment *string `json:"comment,omitempty"`
 }
 
+type UpdateNoteProps struct {
+	Description *string `json:"description,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	IsPublic    *bool   `json:"isPublic,omitempty"`
+}
+
 type UpdateSchoolProps struct {
 	Name    *string `json:"name,omitempty"`
 	OwnerID *string `json:"ownerID,omitempty"`
