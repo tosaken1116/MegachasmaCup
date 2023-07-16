@@ -132,6 +132,7 @@ func (ns *noteService) GetNotes(ctx context.Context, input model.GetNoteProps) (
 			if input.IsPublic != nil {
 				orm.Where("is_public = ?", *input.IsPublic)
 			}
+			orm.Where("user_id = ?", userID)
 		}
 	} else if input.ClassID != nil && input.SchoolID != nil {
 		if !IsUserSchoolExist(ns.db, userID, *input.SchoolID) {
@@ -237,4 +238,26 @@ func (ns *noteService) GetNoteComments(ctx context.Context, noteId string) ([]*m
 		convertedComment[i] = convertComment(*key)
 	}
 	return convertedComment, nil
+}
+func (ns *noteService) GetUserNotes(ctx context.Context, userID string) ([]*model.Note, error) {
+	user := new(dbModel.User)
+	if err := ns.db.Preload("Notes").Where("id = ?", userID).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedNotes := make([]*model.Note, len(user.Notes))
+	for i, key := range user.Notes {
+		convertedNotes[i] = convertNote(*key)
+	}
+	return convertedNotes, nil
+}
+func (ns *noteService) GetClassNotes(ctx context.Context, classID string) ([]*model.Note, error) {
+	class := new(dbModel.Class)
+	if err := ns.db.Preload("Notes").Where("id = ?", classID).Find(&class).Error; err != nil {
+		return nil, err
+	}
+	convertedNotes := make([]*model.Note, len(class.Notes))
+	for i, key := range class.Notes {
+		convertedNotes[i] = convertNote(*key)
+	}
+	return convertedNotes, nil
 }

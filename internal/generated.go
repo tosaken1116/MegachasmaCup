@@ -37,9 +37,11 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Class() ClassResolver
 	Mutation() MutationResolver
 	Note() NoteResolver
 	Query() QueryResolver
+	School() SchoolResolver
 	User() UserResolver
 }
 
@@ -49,15 +51,16 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Class struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Name      func(childComplexity int) int
-		Notes     func(childComplexity int) int
-		OwnerID   func(childComplexity int) int
-		School    func(childComplexity int) int
-		SchoolID  func(childComplexity int) int
-		Students  func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
+		ClassNotes    func(childComplexity int) int
+		ClassOwner    func(childComplexity int) int
+		ClassSchool   func(childComplexity int) int
+		ClassStudents func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Name          func(childComplexity int) int
+		OwnerID       func(childComplexity int) int
+		SchoolID      func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
 	}
 
 	Comment struct {
@@ -117,13 +120,13 @@ type ComplexityRoot struct {
 	}
 
 	School struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Name      func(childComplexity int) int
-		Owner     func(childComplexity int) int
-		OwnerID   func(childComplexity int) int
-		Students  func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Name           func(childComplexity int) int
+		OwnerID        func(childComplexity int) int
+		SchoolOwner    func(childComplexity int) int
+		SchoolStudents func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
 	}
 
 	Tag struct {
@@ -132,19 +135,25 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Class     func(childComplexity int) int
-		CreatedAt func(childComplexity int) int
-		Email     func(childComplexity int) int
-		ID        func(childComplexity int) int
-		ImageURL  func(childComplexity int) int
-		Likes     func(childComplexity int) int
-		Name      func(childComplexity int) int
-		Notes     func(childComplexity int) int
-		School    func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Email      func(childComplexity int) int
+		ID         func(childComplexity int) int
+		ImageURL   func(childComplexity int) int
+		Likes      func(childComplexity int) int
+		Name       func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
+		UserClass  func(childComplexity int) int
+		UserNotes  func(childComplexity int) int
+		UserSchool func(childComplexity int) int
 	}
 }
 
+type ClassResolver interface {
+	ClassOwner(ctx context.Context, obj *model.Class) (*model.User, error)
+	ClassSchool(ctx context.Context, obj *model.Class) (*model.School, error)
+	ClassStudents(ctx context.Context, obj *model.Class) ([]*model.User, error)
+	ClassNotes(ctx context.Context, obj *model.Class) ([]*model.Note, error)
+}
 type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (*model.User, error)
 	UpdateUser(ctx context.Context, id string, input *model.UpdateUserProps) (*model.User, error)
@@ -176,11 +185,15 @@ type QueryResolver interface {
 	GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error)
 	GetJwt(ctx context.Context, input *model.GetJwtProps) (*model.Jwt, error)
 }
+type SchoolResolver interface {
+	SchoolOwner(ctx context.Context, obj *model.School) (*model.User, error)
+	SchoolStudents(ctx context.Context, obj *model.School) ([]*model.User, error)
+}
 type UserResolver interface {
-	School(ctx context.Context, obj *model.User) ([]*model.School, error)
+	UserSchool(ctx context.Context, obj *model.User) ([]*model.School, error)
 	Likes(ctx context.Context, obj *model.User) ([]*model.Note, error)
-	Class(ctx context.Context, obj *model.User) ([]*model.Class, error)
-	Notes(ctx context.Context, obj *model.User) ([]*model.Note, error)
+	UserClass(ctx context.Context, obj *model.User) ([]*model.Class, error)
+	UserNotes(ctx context.Context, obj *model.User) ([]*model.Note, error)
 }
 
 type executableSchema struct {
@@ -197,6 +210,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Class.classNotes":
+		if e.complexity.Class.ClassNotes == nil {
+			break
+		}
+
+		return e.complexity.Class.ClassNotes(childComplexity), true
+
+	case "Class.classOwner":
+		if e.complexity.Class.ClassOwner == nil {
+			break
+		}
+
+		return e.complexity.Class.ClassOwner(childComplexity), true
+
+	case "Class.classSchool":
+		if e.complexity.Class.ClassSchool == nil {
+			break
+		}
+
+		return e.complexity.Class.ClassSchool(childComplexity), true
+
+	case "Class.classStudents":
+		if e.complexity.Class.ClassStudents == nil {
+			break
+		}
+
+		return e.complexity.Class.ClassStudents(childComplexity), true
 
 	case "Class.createdAt":
 		if e.complexity.Class.CreatedAt == nil {
@@ -219,13 +260,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Class.Name(childComplexity), true
 
-	case "Class.notes":
-		if e.complexity.Class.Notes == nil {
-			break
-		}
-
-		return e.complexity.Class.Notes(childComplexity), true
-
 	case "Class.ownerId":
 		if e.complexity.Class.OwnerID == nil {
 			break
@@ -233,26 +267,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Class.OwnerID(childComplexity), true
 
-	case "Class.school":
-		if e.complexity.Class.School == nil {
-			break
-		}
-
-		return e.complexity.Class.School(childComplexity), true
-
 	case "Class.schoolId":
 		if e.complexity.Class.SchoolID == nil {
 			break
 		}
 
 		return e.complexity.Class.SchoolID(childComplexity), true
-
-	case "Class.students":
-		if e.complexity.Class.Students == nil {
-			break
-		}
-
-		return e.complexity.Class.Students(childComplexity), true
 
 	case "Class.updatedAt":
 		if e.complexity.Class.UpdatedAt == nil {
@@ -532,7 +552,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.IsPublic(childComplexity), true
 
-	case "Note.like_user":
+	case "Note.likeUser":
 		if e.complexity.Note.LikeUser == nil {
 			break
 		}
@@ -674,13 +694,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.School.Name(childComplexity), true
 
-	case "School.owner":
-		if e.complexity.School.Owner == nil {
-			break
-		}
-
-		return e.complexity.School.Owner(childComplexity), true
-
 	case "School.ownerId":
 		if e.complexity.School.OwnerID == nil {
 			break
@@ -688,12 +701,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.School.OwnerID(childComplexity), true
 
-	case "School.students":
-		if e.complexity.School.Students == nil {
+	case "School.schoolOwner":
+		if e.complexity.School.SchoolOwner == nil {
 			break
 		}
 
-		return e.complexity.School.Students(childComplexity), true
+		return e.complexity.School.SchoolOwner(childComplexity), true
+
+	case "School.schoolStudents":
+		if e.complexity.School.SchoolStudents == nil {
+			break
+		}
+
+		return e.complexity.School.SchoolStudents(childComplexity), true
 
 	case "School.updatedAt":
 		if e.complexity.School.UpdatedAt == nil {
@@ -715,13 +735,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Tag.Name(childComplexity), true
-
-	case "User.class":
-		if e.complexity.User.Class == nil {
-			break
-		}
-
-		return e.complexity.User.Class(childComplexity), true
 
 	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
@@ -765,26 +778,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
-	case "User.notes":
-		if e.complexity.User.Notes == nil {
-			break
-		}
-
-		return e.complexity.User.Notes(childComplexity), true
-
-	case "User.school":
-		if e.complexity.User.School == nil {
-			break
-		}
-
-		return e.complexity.User.School(childComplexity), true
-
 	case "User.updatedAt":
 		if e.complexity.User.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.User.UpdatedAt(childComplexity), true
+
+	case "User.userClass":
+		if e.complexity.User.UserClass == nil {
+			break
+		}
+
+		return e.complexity.User.UserClass(childComplexity), true
+
+	case "User.userNotes":
+		if e.complexity.User.UserNotes == nil {
+			break
+		}
+
+		return e.complexity.User.UserNotes(childComplexity), true
+
+	case "User.userSchool":
+		if e.complexity.User.UserSchool == nil {
+			break
+		}
+
+		return e.complexity.User.UserSchool(childComplexity), true
 
 	}
 	return 0, false
@@ -921,10 +941,10 @@ type User {
   createdAt:DateTime!
   updatedAt:DateTime!
 
-  school:[School!]!
+  userSchool:[School!]!
   likes:[Note!]!
-  class:[Class!]!
-  notes:[Note!]!
+  userClass:[Class!]!
+  userNotes:[Note!]!
 }
 type Jwt{
   token:String!
@@ -942,7 +962,7 @@ type Note{
 
   school:School!
   tags:[Tag!]!
-  like_user:[User!]!
+  likeUser:[User!]!
   comments:[Comment!]!
 }
 type School{
@@ -952,8 +972,8 @@ type School{
   createdAt:DateTime!
   updatedAt:DateTime!
 
-  owner:User!
-  students:[User!]!
+  schoolOwner:User!
+  schoolStudents:[User!]!
 }
 
 type Class {
@@ -964,9 +984,10 @@ type Class {
   createdAt:DateTime!
   updatedAt:DateTime!
 
-  school:School!
-  students:[User!]!
-  notes:[Note!]!
+  classOwner:User!
+  classSchool:School!
+  classStudents:[User!]!
+  classNotes:[Note!]!
 }
 
 type Tag {
@@ -1780,8 +1801,8 @@ func (ec *executionContext) fieldContext_Class_updatedAt(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_school(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_school(ctx, field)
+func (ec *executionContext) _Class_classOwner(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_classOwner(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1794,7 +1815,73 @@ func (ec *executionContext) _Class_school(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.School, nil
+		return ec.resolvers.Class().ClassOwner(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖmegachasmaᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Class_classOwner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Class",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
+			case "likes":
+				return ec.fieldContext_User_likes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Class_classSchool(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_classSchool(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Class().ClassSchool(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1811,12 +1898,12 @@ func (ec *executionContext) _Class_school(ctx context.Context, field graphql.Col
 	return ec.marshalNSchool2ᚖmegachasmaᚋgraphᚋmodelᚐSchool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_school(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_classSchool(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -1829,10 +1916,10 @@ func (ec *executionContext) fieldContext_Class_school(ctx context.Context, field
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -1840,8 +1927,8 @@ func (ec *executionContext) fieldContext_Class_school(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_students(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_students(ctx, field)
+func (ec *executionContext) _Class_classStudents(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_classStudents(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1854,7 +1941,7 @@ func (ec *executionContext) _Class_students(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Students, nil
+		return ec.resolvers.Class().ClassStudents(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1871,12 +1958,12 @@ func (ec *executionContext) _Class_students(ctx context.Context, field graphql.C
 	return ec.marshalNUser2ᚕᚖmegachasmaᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_students(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_classStudents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -1891,14 +1978,14 @@ func (ec *executionContext) fieldContext_Class_students(ctx context.Context, fie
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1906,8 +1993,8 @@ func (ec *executionContext) fieldContext_Class_students(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_notes(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_notes(ctx, field)
+func (ec *executionContext) _Class_classNotes(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_classNotes(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1920,7 +2007,7 @@ func (ec *executionContext) _Class_notes(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Notes, nil
+		return ec.resolvers.Class().ClassNotes(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1937,12 +2024,12 @@ func (ec *executionContext) _Class_notes(ctx context.Context, field graphql.Coll
 	return ec.marshalNNote2ᚕᚖmegachasmaᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_classNotes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -1967,8 +2054,8 @@ func (ec *executionContext) fieldContext_Class_notes(ctx context.Context, field 
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -2337,14 +2424,14 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2434,14 +2521,14 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2541,8 +2628,8 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -2644,8 +2731,8 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -2737,12 +2824,14 @@ func (ec *executionContext) fieldContext_Mutation_createClass(ctx context.Contex
 				return ec.fieldContext_Class_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Class_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_Class_school(ctx, field)
-			case "students":
-				return ec.fieldContext_Class_students(ctx, field)
-			case "notes":
-				return ec.fieldContext_Class_notes(ctx, field)
+			case "classOwner":
+				return ec.fieldContext_Class_classOwner(ctx, field)
+			case "classSchool":
+				return ec.fieldContext_Class_classSchool(ctx, field)
+			case "classStudents":
+				return ec.fieldContext_Class_classStudents(ctx, field)
+			case "classNotes":
+				return ec.fieldContext_Class_classNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Class", field.Name)
 		},
@@ -2832,12 +2921,14 @@ func (ec *executionContext) fieldContext_Mutation_updateClass(ctx context.Contex
 				return ec.fieldContext_Class_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Class_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_Class_school(ctx, field)
-			case "students":
-				return ec.fieldContext_Class_students(ctx, field)
-			case "notes":
-				return ec.fieldContext_Class_notes(ctx, field)
+			case "classOwner":
+				return ec.fieldContext_Class_classOwner(ctx, field)
+			case "classSchool":
+				return ec.fieldContext_Class_classSchool(ctx, field)
+			case "classStudents":
+				return ec.fieldContext_Class_classStudents(ctx, field)
+			case "classNotes":
+				return ec.fieldContext_Class_classNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Class", field.Name)
 		},
@@ -2925,10 +3016,10 @@ func (ec *executionContext) fieldContext_Mutation_createSchool(ctx context.Conte
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -3016,10 +3107,10 @@ func (ec *executionContext) fieldContext_Mutation_updateSchool(ctx context.Conte
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -3368,12 +3459,14 @@ func (ec *executionContext) fieldContext_Mutation_joinClass(ctx context.Context,
 				return ec.fieldContext_Class_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Class_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_Class_school(ctx, field)
-			case "students":
-				return ec.fieldContext_Class_students(ctx, field)
-			case "notes":
-				return ec.fieldContext_Class_notes(ctx, field)
+			case "classOwner":
+				return ec.fieldContext_Class_classOwner(ctx, field)
+			case "classSchool":
+				return ec.fieldContext_Class_classSchool(ctx, field)
+			case "classStudents":
+				return ec.fieldContext_Class_classStudents(ctx, field)
+			case "classNotes":
+				return ec.fieldContext_Class_classNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Class", field.Name)
 		},
@@ -3461,10 +3554,10 @@ func (ec *executionContext) fieldContext_Mutation_joinSchool(ctx context.Context
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -3564,8 +3657,8 @@ func (ec *executionContext) fieldContext_Mutation_like(ctx context.Context, fiel
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -3667,8 +3760,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteLike(ctx context.Context
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -4134,10 +4227,10 @@ func (ec *executionContext) fieldContext_Note_school(ctx context.Context, field 
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -4195,8 +4288,8 @@ func (ec *executionContext) fieldContext_Note_tags(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_like_user(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_like_user(ctx, field)
+func (ec *executionContext) _Note_likeUser(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_likeUser(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4226,7 +4319,7 @@ func (ec *executionContext) _Note_like_user(ctx context.Context, field graphql.C
 	return ec.marshalNUser2ᚕᚖmegachasmaᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_like_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_likeUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -4246,14 +4339,14 @@ func (ec *executionContext) fieldContext_Note_like_user(ctx context.Context, fie
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4400,8 +4493,8 @@ func (ec *executionContext) fieldContext_Query_getNotes(ctx context.Context, fie
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -4491,10 +4584,10 @@ func (ec *executionContext) fieldContext_Query_getSchools(ctx context.Context, f
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -4584,12 +4677,14 @@ func (ec *executionContext) fieldContext_Query_getClasses(ctx context.Context, f
 				return ec.fieldContext_Class_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Class_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_Class_school(ctx, field)
-			case "students":
-				return ec.fieldContext_Class_students(ctx, field)
-			case "notes":
-				return ec.fieldContext_Class_notes(ctx, field)
+			case "classOwner":
+				return ec.fieldContext_Class_classOwner(ctx, field)
+			case "classSchool":
+				return ec.fieldContext_Class_classSchool(ctx, field)
+			case "classStudents":
+				return ec.fieldContext_Class_classStudents(ctx, field)
+			case "classNotes":
+				return ec.fieldContext_Class_classNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Class", field.Name)
 		},
@@ -4760,14 +4855,14 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5214,8 +5309,8 @@ func (ec *executionContext) fieldContext_School_updatedAt(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _School_owner(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_School_owner(ctx, field)
+func (ec *executionContext) _School_schoolOwner(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_schoolOwner(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5228,7 +5323,7 @@ func (ec *executionContext) _School_owner(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Owner, nil
+		return ec.resolvers.School().SchoolOwner(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5245,12 +5340,12 @@ func (ec *executionContext) _School_owner(ctx context.Context, field graphql.Col
 	return ec.marshalNUser2ᚖmegachasmaᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_School_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_School_schoolOwner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "School",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -5265,14 +5360,14 @@ func (ec *executionContext) fieldContext_School_owner(ctx context.Context, field
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5280,8 +5375,8 @@ func (ec *executionContext) fieldContext_School_owner(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _School_students(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_School_students(ctx, field)
+func (ec *executionContext) _School_schoolStudents(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_schoolStudents(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5294,7 +5389,7 @@ func (ec *executionContext) _School_students(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Students, nil
+		return ec.resolvers.School().SchoolStudents(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5311,12 +5406,12 @@ func (ec *executionContext) _School_students(ctx context.Context, field graphql.
 	return ec.marshalNUser2ᚕᚖmegachasmaᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_School_students(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_School_schoolStudents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "School",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -5331,14 +5426,14 @@ func (ec *executionContext) fieldContext_School_students(ctx context.Context, fi
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_User_school(ctx, field)
+			case "userSchool":
+				return ec.fieldContext_User_userSchool(ctx, field)
 			case "likes":
 				return ec.fieldContext_User_likes(ctx, field)
-			case "class":
-				return ec.fieldContext_User_class(ctx, field)
-			case "notes":
-				return ec.fieldContext_User_notes(ctx, field)
+			case "userClass":
+				return ec.fieldContext_User_userClass(ctx, field)
+			case "userNotes":
+				return ec.fieldContext_User_userNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5698,8 +5793,8 @@ func (ec *executionContext) fieldContext_User_updatedAt(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _User_school(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_school(ctx, field)
+func (ec *executionContext) _User_userSchool(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_userSchool(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5712,7 +5807,7 @@ func (ec *executionContext) _User_school(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().School(rctx, obj)
+		return ec.resolvers.User().UserSchool(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5729,7 +5824,7 @@ func (ec *executionContext) _User_school(ctx context.Context, field graphql.Coll
 	return ec.marshalNSchool2ᚕᚖmegachasmaᚋgraphᚋmodelᚐSchoolᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_school(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userSchool(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5747,10 +5842,10 @@ func (ec *executionContext) fieldContext_User_school(ctx context.Context, field 
 				return ec.fieldContext_School_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_School_updatedAt(ctx, field)
-			case "owner":
-				return ec.fieldContext_School_owner(ctx, field)
-			case "students":
-				return ec.fieldContext_School_students(ctx, field)
+			case "schoolOwner":
+				return ec.fieldContext_School_schoolOwner(ctx, field)
+			case "schoolStudents":
+				return ec.fieldContext_School_schoolStudents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type School", field.Name)
 		},
@@ -5819,8 +5914,8 @@ func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field g
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -5830,8 +5925,8 @@ func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_class(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_class(ctx, field)
+func (ec *executionContext) _User_userClass(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_userClass(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5844,7 +5939,7 @@ func (ec *executionContext) _User_class(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().Class(rctx, obj)
+		return ec.resolvers.User().UserClass(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5861,7 +5956,7 @@ func (ec *executionContext) _User_class(ctx context.Context, field graphql.Colle
 	return ec.marshalNClass2ᚕᚖmegachasmaᚋgraphᚋmodelᚐClassᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_class(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userClass(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5881,12 +5976,14 @@ func (ec *executionContext) fieldContext_User_class(ctx context.Context, field g
 				return ec.fieldContext_Class_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Class_updatedAt(ctx, field)
-			case "school":
-				return ec.fieldContext_Class_school(ctx, field)
-			case "students":
-				return ec.fieldContext_Class_students(ctx, field)
-			case "notes":
-				return ec.fieldContext_Class_notes(ctx, field)
+			case "classOwner":
+				return ec.fieldContext_Class_classOwner(ctx, field)
+			case "classSchool":
+				return ec.fieldContext_Class_classSchool(ctx, field)
+			case "classStudents":
+				return ec.fieldContext_Class_classStudents(ctx, field)
+			case "classNotes":
+				return ec.fieldContext_Class_classNotes(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Class", field.Name)
 		},
@@ -5894,8 +5991,8 @@ func (ec *executionContext) fieldContext_User_class(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_notes(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_notes(ctx, field)
+func (ec *executionContext) _User_userNotes(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_userNotes(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5908,7 +6005,7 @@ func (ec *executionContext) _User_notes(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().Notes(rctx, obj)
+		return ec.resolvers.User().UserNotes(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5925,7 +6022,7 @@ func (ec *executionContext) _User_notes(ctx context.Context, field graphql.Colle
 	return ec.marshalNNote2ᚕᚖmegachasmaᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_notes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userNotes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5955,8 +6052,8 @@ func (ec *executionContext) fieldContext_User_notes(ctx context.Context, field g
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comments":
 				return ec.fieldContext_Note_comments(ctx, field)
 			}
@@ -8466,48 +8563,177 @@ func (ec *executionContext) _Class(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			out.Values[i] = ec._Class_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Class_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "schoolId":
 			out.Values[i] = ec._Class_schoolId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "ownerId":
 			out.Values[i] = ec._Class_ownerId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._Class_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Class_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "school":
-			out.Values[i] = ec._Class_school(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+		case "classOwner":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Class_classOwner(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
-		case "students":
-			out.Values[i] = ec._Class_students(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
 			}
-		case "notes":
-			out.Values[i] = ec._Class_notes(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "classSchool":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Class_classSchool(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "classStudents":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Class_classStudents(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "classNotes":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Class_classNotes(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -8909,7 +9135,7 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "like_user":
+		case "likeUser":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -8918,7 +9144,7 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Note_like_user(ctx, field, obj)
+				res = ec._Note_likeUser(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9200,38 +9426,100 @@ func (ec *executionContext) _School(ctx context.Context, sel ast.SelectionSet, o
 		case "id":
 			out.Values[i] = ec._School_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._School_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "ownerId":
 			out.Values[i] = ec._School_ownerId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._School_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._School_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "owner":
-			out.Values[i] = ec._School_owner(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+		case "schoolOwner":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._School_schoolOwner(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
-		case "students":
-			out.Values[i] = ec._School_students(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
 			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "schoolStudents":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._School_schoolStudents(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9340,7 +9628,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "school":
+		case "userSchool":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9349,7 +9637,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_school(ctx, field, obj)
+				res = ec._User_userSchool(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9412,7 +9700,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "class":
+		case "userClass":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9421,7 +9709,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_class(ctx, field, obj)
+				res = ec._User_userClass(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9448,7 +9736,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "notes":
+		case "userNotes":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9457,7 +9745,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_notes(ctx, field, obj)
+				res = ec._User_userNotes(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

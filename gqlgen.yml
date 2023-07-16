@@ -90,13 +90,13 @@ models:
       - github.com/99designs/gqlgen/graphql.Time
   User:
    fields:
-    school:
+    userSchool:
      resolver: true
     likes:
      resolver: true
-    class:
+    userClass:
      resolver: true
-    notes:
+    userNotes:
      resolver: true
   Note:
    fields:
@@ -104,21 +104,23 @@ models:
       resolver: true
     tags:
      resolver: true
-    like_user:
+    likeUser:
      resolver: true
     comments:
      resolver: true
-  school:
+  School:
     fields:
-      owner:
+      schoolOwner:
         resolver: true
-      students:
+      schoolStudents:
         resolver: true
-  class:
+  Class:
     fields:
-      school:
+      classOwner:
         resolver: true
-      students:
+      classSchool:
         resolver: true
-      notes:
+      classStudents:
+        resolver: true
+      classNotes:
         resolver: true

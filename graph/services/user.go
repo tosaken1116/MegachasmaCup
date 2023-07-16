@@ -107,18 +107,6 @@ func (us *userService) GetUsersLike(ctx context.Context, userID string) ([]*mode
 	return convertedNote, nil
 }
 
-func (us *userService) GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error) {
-	user := new(dbModel.User)
-	if err := us.db.Where("id = ?", userID).Find(&user).Error; err != nil {
-		return nil, err
-	}
-	convertedSchool := make([]*model.School, len(user.School))
-	for i, key := range user.School {
-		convertedSchool[i] = convertSchool(*key)
-	}
-	return convertedSchool, nil
-}
-
 func (us *userService) GetUser(input model.GetUserProps) ([]*model.User, error) {
 	user := new([]*dbModel.User)
 	orm := us.db.Where("")
@@ -185,4 +173,44 @@ func (us *userService) SignIn(input *model.GetJwtProps) (*model.Jwt, error) {
 		return nil, errors.New("failed to generate jwt")
 	}
 	return &model.Jwt{Token: jwt}, nil
+}
+func (us *userService) GetSchoolOwner(ctx context.Context, SchoolID string) (*model.User, error) {
+	school := new(dbModel.School)
+	if err := us.db.Preload("Owner").Where("id = ?", SchoolID).Find(&school).Error; err != nil {
+		return nil, err
+	}
+	return convertUser(school.Owner), nil
+}
+
+func (us *userService) GetClassOwner(ctx context.Context, ClassID string) (*model.User, error) {
+	class := new(dbModel.Class)
+	if err := us.db.Preload("Owner").Where("id = ?", ClassID).Find(&class).Error; err != nil {
+		return nil, err
+	}
+	return convertUser(class.Owner), nil
+}
+
+func (us *userService) GetSchoolStudents(ctx context.Context, SchoolID string) ([]*model.User, error) {
+	school := new(dbModel.School)
+	if err := us.db.Preload("Students").Where("id = ?", SchoolID).Find(&school).Error; err != nil {
+		return nil, err
+	}
+	convertedUser := make([]*model.User, len(school.Students))
+
+	for i, key := range school.Students {
+		convertedUser[i] = convertUser(*key)
+	}
+	return convertedUser, nil
+}
+func (us *userService) GetClassStudents(ctx context.Context, ClassID string) ([]*model.User, error) {
+	class := new(dbModel.Class)
+	if err := us.db.Preload("Students").Where("id = ?", ClassID).Find(&class).Error; err != nil {
+		return nil, err
+	}
+	convertedUser := make([]*model.User, len(class.Students))
+
+	for i, key := range class.Students {
+		convertedUser[i] = convertUser(*key)
+	}
+	return convertedUser, nil
 }

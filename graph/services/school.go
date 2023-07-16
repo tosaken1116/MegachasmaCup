@@ -107,3 +107,22 @@ func IsUserSchoolExist(db *gorm.DB, userID string, schoolID string) bool {
 	db.Raw("SELECT COUNT(*) FROM school_user WHERE user_id = ? AND school_id = ?", userID, schoolID).Scan(&count)
 	return count != 0
 }
+
+func (ss *schoolService) GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error) {
+	user := new(dbModel.User)
+	if err := ss.db.Preload("School").Where("id = ?", userID).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedSchool := make([]*model.School, len(user.School))
+	for i, key := range user.School {
+		convertedSchool[i] = convertSchool(*key)
+	}
+	return convertedSchool, nil
+}
+func (ss *schoolService) GetClassSchool(ctx context.Context, classID string) (*model.School, error) {
+	class := new(dbModel.Class)
+	if err := ss.db.Preload("School").Where("id = ?", classID).Find(&class).Error; err != nil {
+		return nil, err
+	}
+	return convertSchool(class.School), nil
+}

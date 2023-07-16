@@ -61,6 +61,7 @@ type Class struct {
 	SchoolID uuid.UUID `json:"school_id" gorm:"not null"`
 	OwnerID  uuid.UUID `json:"owner_id"`
 
+	Owner    User    `json:"owner" gorm:"foreignKey:OwnerID"`
 	School   School  `json:"school"`
 	Students []*User `json:"students" gorm:"many2many:class_user;"`
 	Notes    []*Note `json:"notes" gorm:"foreignKey:ClassID"`

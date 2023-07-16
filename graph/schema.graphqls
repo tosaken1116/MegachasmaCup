@@ -13,10 +13,10 @@ type User {
   createdAt:DateTime!
   updatedAt:DateTime!
 
-  school:[School!]!
+  userSchool:[School!]!
   likes:[Note!]!
-  class:[Class!]!
-  notes:[Note!]!
+  userClass:[Class!]!
+  userNotes:[Note!]!
 }
 type Jwt{
   token:String!
@@ -34,7 +34,7 @@ type Note{
 
   school:School!
   tags:[Tag!]!
-  like_user:[User!]!
+  likeUser:[User!]!
   comments:[Comment!]!
 }
 type School{
@@ -44,8 +44,8 @@ type School{
   createdAt:DateTime!
   updatedAt:DateTime!
 
-  owner:User!
-  students:[User!]!
+  schoolOwner:User!
+  schoolStudents:[User!]!
 }
 
 type Class {
@@ -56,9 +56,10 @@ type Class {
   createdAt:DateTime!
   updatedAt:DateTime!
 
-  school:School!
-  students:[User!]!
-  notes:[Note!]!
+  classOwner:User!
+  classSchool:School!
+  classStudents:[User!]!
+  classNotes:[Note!]!
 }
 
 type Tag {

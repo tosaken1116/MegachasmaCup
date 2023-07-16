@@ -34,15 +34,15 @@ func convertCreateClass(class dbModel.Class) *model.Class {
 		notes[i] = convertNote(*key)
 	}
 	return &model.Class{
-		ID:        class.ID.String(),
-		Name:      class.Name,
-		SchoolID:  class.SchoolID.String(),
-		OwnerID:   class.OwnerID.String(),
-		CreatedAt: class.CreatedAt,
-		UpdatedAt: class.UpdatedAt,
-		School:    &model.School{ID: class.SchoolID.String()},
-		Students:  students,
-		Notes:     notes,
+		ID:            class.ID.String(),
+		Name:          class.Name,
+		SchoolID:      class.SchoolID.String(),
+		OwnerID:       class.OwnerID.String(),
+		CreatedAt:     class.CreatedAt,
+		UpdatedAt:     class.UpdatedAt,
+		ClassSchool:   &model.School{ID: class.SchoolID.String()},
+		ClassStudents: students,
+		ClassNotes:    notes,
 	}
 }
 func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID string) (*model.Class, error) {
@@ -145,4 +145,16 @@ func IsUserClassExist(db *gorm.DB, userID string, classID string) bool {
 	var count int64
 	db.Raw("SELECT COUNT(*) FROM class_user WHERE user_id = ? AND class_id = ?", userID, classID).Scan(&count)
 	return count != 0
+}
+
+func (cs *classService) GetUserClass(ctx context.Context, userID string) ([]*model.Class, error) {
+	user := new(dbModel.User)
+	if err := cs.db.Preload("Class").Where("id = ?", userID).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedClass := make([]*model.Class, len(user.Class))
+	for i, key := range user.Class {
+		convertedClass[i] = convertClass(*key)
+	}
+	return convertedClass, nil
 }

@@ -7,15 +7,16 @@ import (
 )
 
 type Class struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	SchoolID  string    `json:"schoolId"`
-	OwnerID   string    `json:"ownerId"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	School    *School   `json:"school"`
-	Students  []*User   `json:"students"`
-	Notes     []*Note   `json:"notes"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	SchoolID      string    `json:"schoolId"`
+	OwnerID       string    `json:"ownerId"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
+	ClassOwner    *User     `json:"classOwner"`
+	ClassSchool   *School   `json:"classSchool"`
+	ClassStudents []*User   `json:"classStudents"`
+	ClassNotes    []*Note   `json:"classNotes"`
 }
 
 type Comment struct {
@@ -102,18 +103,18 @@ type Note struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 	School      *School    `json:"school"`
 	Tags        []*Tag     `json:"tags"`
-	LikeUser    []*User    `json:"like_user"`
+	LikeUser    []*User    `json:"likeUser"`
 	Comments    []*Comment `json:"comments"`
 }
 
 type School struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	OwnerID   string    `json:"ownerId"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	Owner     *User     `json:"owner"`
-	Students  []*User   `json:"students"`
+	ID             string    `json:"id"`
+	Name           string    `json:"name"`
+	OwnerID        string    `json:"ownerId"`
+	CreatedAt      time.Time `json:"createdAt"`
+	UpdatedAt      time.Time `json:"updatedAt"`
+	SchoolOwner    *User     `json:"schoolOwner"`
+	SchoolStudents []*User   `json:"schoolStudents"`
 }
 
 type Tag struct {
@@ -153,14 +154,14 @@ type UpdateUserProps struct {
 }
 
 type User struct {
-	ID        string    `json:"id"`
-	ImageURL  string    `json:"imageUrl"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	School    []*School `json:"school"`
-	Likes     []*Note   `json:"likes"`
-	Class     []*Class  `json:"class"`
-	Notes     []*Note   `json:"notes"`
+	ID         string    `json:"id"`
+	ImageURL   string    `json:"imageUrl"`
+	Name       string    `json:"name"`
+	Email      string    `json:"email"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+	UserSchool []*School `json:"userSchool"`
+	Likes      []*Note   `json:"likes"`
+	UserClass  []*Class  `json:"userClass"`
+	UserNotes  []*Note   `json:"userNotes"`
 }
