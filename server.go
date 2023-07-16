@@ -3,9 +3,11 @@ package main
 import (
 	"log"
 	"megachasma/db"
+	directive "megachasma/graph"
 	graph "megachasma/graph/resolver"
 	"megachasma/graph/services"
 	"megachasma/internal"
+	"megachasma/middleware/auth"
 	"net/http"
 	"os"
 
@@ -24,12 +26,15 @@ func main() {
 	db := db.NewPostgresConnector()
 	service := services.New(db.Conn)
 
-	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{
-		Srv: service,
-	}}))
+	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{
+		Resolvers: &graph.Resolver{
+			Srv: service,
+		},
+		Directives: directive.Directive,
+	}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", auth.AuthMiddleware(srv))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

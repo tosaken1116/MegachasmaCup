@@ -55,6 +55,10 @@ type GetUserProps struct {
 	Name   *string `json:"name,omitempty"`
 }
 
+type Jwt struct {
+	Token string `json:"token"`
+}
+
 type LikeProps struct {
 	UserID string `json:"userID"`
 	NoteID string `json:"noteID"`

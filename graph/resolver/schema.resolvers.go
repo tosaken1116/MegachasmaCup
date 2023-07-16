@@ -127,7 +127,7 @@ func (r *queryResolver) GetUser(ctx context.Context, input *model.GetUserProps) 
 }
 
 // GetJwt is the resolver for the getJwt field.
-func (r *queryResolver) GetJwt(ctx context.Context, input *model.GetJwtProps) (*string, error) {
+func (r *queryResolver) GetJwt(ctx context.Context, input *model.GetJwtProps) (*model.Jwt, error) {
 	return r.Srv.SignIn(input)
 }
 

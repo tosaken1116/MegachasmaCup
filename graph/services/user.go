@@ -133,7 +133,7 @@ func (us *userService) JoinSchool(input model.NewJoinSchool) (*model.School, err
 	return convertSchool(*joinSchool), nil
 }
 
-func (us *userService) SignIn(input *model.GetJwtProps) (*string, error) {
+func (us *userService) SignIn(input *model.GetJwtProps) (*model.Jwt, error) {
 	user := new(dbModel.User)
 	if err := us.db.Where("email = ?", input.Email).Find(&user).Error; err != nil {
 		return nil, errors.New("user not found")
@@ -145,5 +145,5 @@ func (us *userService) SignIn(input *model.GetJwtProps) (*string, error) {
 	if err != nil {
 		return nil, errors.New("failed to generate jwt")
 	}
-	return &jwt, nil
+	return &model.Jwt{Token: jwt}, nil
 }

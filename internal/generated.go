@@ -44,6 +44,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	IsAuthenticated func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -68,6 +69,10 @@ type ComplexityRoot struct {
 		NoteID    func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 		UserID    func(childComplexity int) int
+	}
+
+	Jwt struct {
+		Token func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -174,7 +179,7 @@ type QueryResolver interface {
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 	GetMyNotes(ctx context.Context) (*model.Note, error)
 	GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error)
-	GetJwt(ctx context.Context, input *model.GetJwtProps) (*string, error)
+	GetJwt(ctx context.Context, input *model.GetJwtProps) (*model.Jwt, error)
 }
 type UserResolver interface {
 	School(ctx context.Context, obj *model.User) ([]*model.School, error)
@@ -316,6 +321,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Comment.UserID(childComplexity), true
+
+	case "Jwt.token":
+		if e.complexity.Jwt.Token == nil {
+			break
+		}
+
+		return e.complexity.Jwt.Token(childComplexity), true
 
 	case "Mutation.createClass":
 		if e.complexity.Mutation.CreateClass == nil {
@@ -943,6 +955,7 @@ var sources = []*ast.Source{
 	{Name: "../graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
+directive @isAuthenticated on FIELD_DEFINITION
 
 scalar DateTime
 
@@ -959,6 +972,9 @@ type User {
   likes:[Note!]!
   class:[Class!]!
   notes:[Note!]!
+}
+type Jwt{
+  token:String!
 }
 type Note{
   id:String!
@@ -1018,13 +1034,13 @@ type Comment{
 }
 
 type Query {
-  getNotes(input:GetNoteProps): [Note!]!
-  getSchools(searchWord:String!): [School!]!
-  getClasses(input:GetClassesProps): [Class!]!
-  getTags(searchWord:String!): [Tag!]!
-  getMyNotes: Note!
-  getUser(input:GetUserProps):[User!]!
-  getJwt(input:GetJwtProps):String
+  getNotes(input:GetNoteProps): [Note!]! @isAuthenticated
+  getSchools(searchWord:String!): [School!]! @isAuthenticated
+  getClasses(input:GetClassesProps): [Class!]! @isAuthenticated
+  getTags(searchWord:String!): [Tag!]! @isAuthenticated
+  getMyNotes: Note! @isAuthenticated
+  getUser(input:GetUserProps):[User!]! @isAuthenticated
+  getJwt(input:GetJwtProps):Jwt!
 }
 type Mutation {
   createUser(input: NewUser!): User!
@@ -2359,6 +2375,50 @@ func (ec *executionContext) fieldContext_Comment_deletedAt(ctx context.Context, 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Jwt_token(ctx context.Context, field graphql.CollectedField, obj *model.Jwt) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Jwt_token(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Jwt_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Jwt",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4208,8 +4268,28 @@ func (ec *executionContext) _Query_getNotes(ctx context.Context, field graphql.C
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetNotes(rctx, fc.Args["input"].(*model.GetNoteProps))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetNotes(rctx, fc.Args["input"].(*model.GetNoteProps))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsAuthenticated == nil {
+				return nil, errors.New("directive isAuthenticated is not implemented")
+			}
+			return ec.directives.IsAuthenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Note); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*megachasma/graph/model.Note`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4293,8 +4373,28 @@ func (ec *executionContext) _Query_getSchools(ctx context.Context, field graphql
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSchools(rctx, fc.Args["searchWord"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetSchools(rctx, fc.Args["searchWord"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsAuthenticated == nil {
+				return nil, errors.New("directive isAuthenticated is not implemented")
+			}
+			return ec.directives.IsAuthenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.School); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*megachasma/graph/model.School`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4366,8 +4466,28 @@ func (ec *executionContext) _Query_getClasses(ctx context.Context, field graphql
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetClasses(rctx, fc.Args["input"].(*model.GetClassesProps))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetClasses(rctx, fc.Args["input"].(*model.GetClassesProps))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsAuthenticated == nil {
+				return nil, errors.New("directive isAuthenticated is not implemented")
+			}
+			return ec.directives.IsAuthenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Class); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*megachasma/graph/model.Class`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4443,8 +4563,28 @@ func (ec *executionContext) _Query_getTags(ctx context.Context, field graphql.Co
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetTags(rctx, fc.Args["searchWord"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetTags(rctx, fc.Args["searchWord"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsAuthenticated == nil {
+				return nil, errors.New("directive isAuthenticated is not implemented")
+			}
+			return ec.directives.IsAuthenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Tag); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*megachasma/graph/model.Tag`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4504,8 +4644,28 @@ func (ec *executionContext) _Query_getMyNotes(ctx context.Context, field graphql
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetMyNotes(rctx)
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetMyNotes(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsAuthenticated == nil {
+				return nil, errors.New("directive isAuthenticated is not implemented")
+			}
+			return ec.directives.IsAuthenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Note); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *megachasma/graph/model.Note`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4578,8 +4738,28 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUser(rctx, fc.Args["input"].(*model.GetUserProps))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetUser(rctx, fc.Args["input"].(*model.GetUserProps))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsAuthenticated == nil {
+				return nil, errors.New("directive isAuthenticated is not implemented")
+			}
+			return ec.directives.IsAuthenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.User); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*megachasma/graph/model.User`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4665,11 +4845,14 @@ func (ec *executionContext) _Query_getJwt(ctx context.Context, field graphql.Col
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Jwt)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNJwt2ᚖmegachasmaᚋgraphᚋmodelᚐJwt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getJwt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4679,7 +4862,11 @@ func (ec *executionContext) fieldContext_Query_getJwt(ctx context.Context, field
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "token":
+				return ec.fieldContext_Jwt_token(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Jwt", field.Name)
 		},
 	}
 	defer func() {
@@ -8471,6 +8658,45 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var jwtImplementors = []string{"Jwt"}
+
+func (ec *executionContext) _Jwt(ctx context.Context, sel ast.SelectionSet, obj *model.Jwt) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, jwtImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Jwt")
+		case "token":
+			out.Values[i] = ec._Jwt_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -8945,6 +9171,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getJwt(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -9786,6 +10015,20 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNJwt2megachasmaᚋgraphᚋmodelᚐJwt(ctx context.Context, sel ast.SelectionSet, v model.Jwt) graphql.Marshaler {
+	return ec._Jwt(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNJwt2ᚖmegachasmaᚋgraphᚋmodelᚐJwt(ctx context.Context, sel ast.SelectionSet, v *model.Jwt) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Jwt(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx context.Context, v interface{}) (model.LikeProps, error) {
