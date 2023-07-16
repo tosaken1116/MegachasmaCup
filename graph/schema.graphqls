@@ -82,6 +82,7 @@ type Query {
   getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
   getUser(input:GetUserProps):[User!]!
+  getJwt(input:GetJwtProps):String
 }
 type Mutation {
   createUser(input: NewUser!): User!
@@ -124,6 +125,10 @@ input NewSchool {
 
 input NewUser {
   name: String!
+  email: String!
+  password: String!
+}
+input GetJwtProps{
   email: String!
   password: String!
 }

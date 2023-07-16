@@ -107,6 +107,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		GetClasses func(childComplexity int, input *model.GetClassesProps) int
+		GetJwt     func(childComplexity int, input *model.GetJwtProps) int
 		GetMyNotes func(childComplexity int) int
 		GetNotes   func(childComplexity int, input *model.GetNoteProps) int
 		GetSchools func(childComplexity int, searchWord string) int
@@ -173,6 +174,7 @@ type QueryResolver interface {
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 	GetMyNotes(ctx context.Context) (*model.Note, error)
 	GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error)
+	GetJwt(ctx context.Context, input *model.GetJwtProps) (*string, error)
 }
 type UserResolver interface {
 	School(ctx context.Context, obj *model.User) ([]*model.School, error)
@@ -605,6 +607,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetClasses(childComplexity, args["input"].(*model.GetClassesProps)), true
 
+	case "Query.getJwt":
+		if e.complexity.Query.GetJwt == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getJwt_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetJwt(childComplexity, args["input"].(*model.GetJwtProps)), true
+
 	case "Query.getMyNotes":
 		if e.complexity.Query.GetMyNotes == nil {
 			break
@@ -816,6 +830,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputGetClassesProps,
+		ec.unmarshalInputGetJwtProps,
 		ec.unmarshalInputGetNoteProps,
 		ec.unmarshalInputGetUserProps,
 		ec.unmarshalInputLikeProps,
@@ -1009,6 +1024,7 @@ type Query {
   getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
   getUser(input:GetUserProps):[User!]!
+  getJwt(input:GetJwtProps):String
 }
 type Mutation {
   createUser(input: NewUser!): User!
@@ -1051,6 +1067,10 @@ input NewSchool {
 
 input NewUser {
   name: String!
+  email: String!
+  password: String!
+}
+input GetJwtProps{
   email: String!
   password: String!
 }
@@ -1403,6 +1423,21 @@ func (ec *executionContext) field_Query_getClasses_args(ctx context.Context, raw
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOGetClassesProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetClassesProps(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getJwt_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.GetJwtProps
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOGetJwtProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetJwtProps(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -4609,6 +4644,58 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_getJwt(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getJwt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetJwt(rctx, fc.Args["input"].(*model.GetJwtProps))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getJwt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getJwt_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
@@ -7639,6 +7726,44 @@ func (ec *executionContext) unmarshalInputGetClassesProps(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGetJwtProps(ctx context.Context, obj interface{}) (model.GetJwtProps, error) {
+	var it model.GetJwtProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email", "password"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Password = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGetNoteProps(ctx context.Context, obj interface{}) (model.GetNoteProps, error) {
 	var it model.GetNoteProps
 	asMap := map[string]interface{}{}
@@ -8801,6 +8926,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getJwt":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getJwt(ctx, field)
 				return res
 			}
 
@@ -10220,6 +10364,14 @@ func (ec *executionContext) unmarshalOGetClassesProps2ᚖmegachasmaᚋgraphᚋmo
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGetClassesProps(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOGetJwtProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetJwtProps(ctx context.Context, v interface{}) (*model.GetJwtProps, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGetJwtProps(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/utils"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -130,4 +131,19 @@ func (us *userService) JoinSchool(input model.NewJoinSchool) (*model.School, err
 		return nil, err
 	}
 	return convertSchool(*joinSchool), nil
+}
+
+func (us *userService) SignIn(input *model.GetJwtProps) (*string, error) {
+	user := new(dbModel.User)
+	if err := us.db.Where("email = ?", input.Email).Find(&user).Error; err != nil {
+		return nil, errors.New("user not found")
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(input.Password)); err != nil {
+		return nil, errors.New("password is incorrect")
+	}
+	jwt, err := utils.GenerateJwt(user.ID.String())
+	if err != nil {
+		return nil, errors.New("failed to generate jwt")
+	}
+	return &jwt, nil
 }
