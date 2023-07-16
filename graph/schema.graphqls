@@ -97,6 +97,7 @@ type Mutation {
   createTag(input: NewTag!): Tag!
   joinClass(input:NewJoinClass!):Class!
   joinSchool(input:NewJoinSchool!):School!
+  like(input:LikeProps!):Note!
 }
 
 
@@ -170,4 +171,8 @@ input GetUserProps {
 input UpdateSchoolProps{
   name:String
     ownerID:String
+}
+input LikeProps{
+  userID:String!
+  noteID:String!
 }

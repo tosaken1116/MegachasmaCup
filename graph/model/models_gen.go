@@ -50,6 +50,11 @@ type GetUserProps struct {
 	Name   *string `json:"name,omitempty"`
 }
 
+type LikeProps struct {
+	UserID string `json:"userID"`
+	NoteID string `json:"noteID"`
+}
+
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`

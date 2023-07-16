@@ -76,6 +76,11 @@ func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSc
 	return r.Srv.JoinSchool(input)
 }
 
+// Like is the resolver for the like field.
+func (r *mutationResolver) Like(ctx context.Context, input model.LikeProps) (*model.Note, error) {
+	return r.Srv.LikeNote(input)
+}
+
 // School is the resolver for the school field.
 func (r *noteResolver) School(ctx context.Context, obj *model.Note) (*model.School, error) {
 	return r.Srv.GetSchoolByID(ctx, obj.SchoolID)

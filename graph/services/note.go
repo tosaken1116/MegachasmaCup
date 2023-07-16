@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
@@ -129,4 +130,14 @@ func (ns *noteService) GetNotes(input model.GetNoteProps) ([]*model.Note, error)
 		convertedNote[i] = convertNote(*key)
 	}
 	return convertedNote, nil
+}
+func (ns *noteService) LikeNote(input model.LikeProps) (*model.Note, error) {
+	likeNote := new(dbModel.Note)
+	if err := ns.db.Where("id = ?", input.NoteID).Find(&likeNote).Error; err != nil {
+		return nil, err
+	}
+	if err := ns.db.Exec("INSERT INTO likes (user_id,note_id) VALUES(@user_id,@note_id)", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).Error; err != nil {
+		return nil, err
+	}
+	return convertNote(*likeNote), nil
 }
