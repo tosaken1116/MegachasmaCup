@@ -6,12 +6,12 @@ scalar DateTime
 
 type User {
   id:String!
-  image_url:String!
+  imageUrl:String!
   name:String!
   email:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   school:[School!]!
   likes:[Note!]!
@@ -20,28 +20,28 @@ type User {
 }
 type Note{
   id:String!
-  class_id:String!
-  school_id:String!
+  classId:String!
+  schoolId:String!
   description:String!
   title:String!
-  user_id:String!
-  is_public:Boolean!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  userId:String!
+  isPublic:Boolean!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   school:School!
   tags:[Tag!]!
-  like_user:[User!]!
+  likeUser:[User!]!
   comment:[Comment!]!
 }
 type School{
   id:String!
   name:String!
-  owner_id:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  ownerId:String!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   owner:User!
   students:[User!]!
@@ -50,11 +50,11 @@ type School{
 type Class {
   id:String!
   name:String!
-  school_id:String!
-  owner_id:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  schoolId:String!
+  ownerId:String!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   school:School!
   students:[User!]!
@@ -67,12 +67,12 @@ type Tag {
 }
 type Comment{
   id:String!
-  note_id:String!
-  user_id:String!
+  noteId:String!
+  userId:String!
   comment:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 }
 
 type Query {
@@ -116,41 +116,41 @@ input NewClass {
 }
 
 input NewSchool {
-  Name: String!
+  name: String!
   ownerID:String!
 }
 
 input NewUser {
-  Name: String!
-  Email: String!
-  Password: String!
+  name: String!
+  email: String!
+  password: String!
 }
 
 input NewTag {
-  Name: String!
+  name: String!
 }
 
 input NewComment {
-  UserID: String!
-  NoteID: String!
-  Comment: String!
+  userID: String!
+  noteID: String!
+  comment: String!
 }
 
 
 input NewJoinClass {
-  ClassID: String!
-  UserID: String!
+  classID: String!
+  userID: String!
 }
 
 input NewJoinSchool {
-  SchoolID: String!
-  UserID: String!
+  schoolID: String!
+  userID: String!
 }
 
 input GetNoteProps {
-  NoteID: String
-  SchoolID: String
-  UserID: String
-  ClassID: String
-  IsPublic:Boolean
+  noteID: String
+  schoolID: String
+  userID: String
+  classID: String
+  isPublic:Boolean
 }

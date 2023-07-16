@@ -161,7 +161,6 @@ type MutationResolver interface {
 type NoteResolver interface {
 	School(ctx context.Context, obj *model.Note) (*model.School, error)
 	Tags(ctx context.Context, obj *model.Note) ([]*model.Tag, error)
-	LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error)
 }
 type QueryResolver interface {
 	GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error)
@@ -193,14 +192,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Class.created_at":
+	case "Class.createdAt":
 		if e.complexity.Class.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Class.CreatedAt(childComplexity), true
 
-	case "Class.deleted_at":
+	case "Class.deletedAt":
 		if e.complexity.Class.DeletedAt == nil {
 			break
 		}
@@ -228,7 +227,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Class.Notes(childComplexity), true
 
-	case "Class.owner_id":
+	case "Class.ownerId":
 		if e.complexity.Class.OwnerID == nil {
 			break
 		}
@@ -242,7 +241,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Class.School(childComplexity), true
 
-	case "Class.school_id":
+	case "Class.schoolId":
 		if e.complexity.Class.SchoolID == nil {
 			break
 		}
@@ -256,7 +255,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Class.Students(childComplexity), true
 
-	case "Class.updated_at":
+	case "Class.updatedAt":
 		if e.complexity.Class.UpdatedAt == nil {
 			break
 		}
@@ -270,14 +269,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Comment.Comment(childComplexity), true
 
-	case "Comment.created_at":
+	case "Comment.createdAt":
 		if e.complexity.Comment.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Comment.CreatedAt(childComplexity), true
 
-	case "Comment.deleted_at":
+	case "Comment.deletedAt":
 		if e.complexity.Comment.DeletedAt == nil {
 			break
 		}
@@ -291,21 +290,21 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Comment.ID(childComplexity), true
 
-	case "Comment.note_id":
+	case "Comment.noteId":
 		if e.complexity.Comment.NoteID == nil {
 			break
 		}
 
 		return e.complexity.Comment.NoteID(childComplexity), true
 
-	case "Comment.updated_at":
+	case "Comment.updatedAt":
 		if e.complexity.Comment.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.Comment.UpdatedAt(childComplexity), true
 
-	case "Comment.user_id":
+	case "Comment.userId":
 		if e.complexity.Comment.UserID == nil {
 			break
 		}
@@ -468,7 +467,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(*model.NewUser)), true
 
-	case "Note.class_id":
+	case "Note.classId":
 		if e.complexity.Note.ClassID == nil {
 			break
 		}
@@ -482,14 +481,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.Comment(childComplexity), true
 
-	case "Note.created_at":
+	case "Note.createdAt":
 		if e.complexity.Note.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Note.CreatedAt(childComplexity), true
 
-	case "Note.deleted_at":
+	case "Note.deletedAt":
 		if e.complexity.Note.DeletedAt == nil {
 			break
 		}
@@ -510,14 +509,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.ID(childComplexity), true
 
-	case "Note.is_public":
+	case "Note.isPublic":
 		if e.complexity.Note.IsPublic == nil {
 			break
 		}
 
 		return e.complexity.Note.IsPublic(childComplexity), true
 
-	case "Note.like_user":
+	case "Note.likeUser":
 		if e.complexity.Note.LikeUser == nil {
 			break
 		}
@@ -531,7 +530,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.School(childComplexity), true
 
-	case "Note.school_id":
+	case "Note.schoolId":
 		if e.complexity.Note.SchoolID == nil {
 			break
 		}
@@ -552,14 +551,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Note.Title(childComplexity), true
 
-	case "Note.updated_at":
+	case "Note.updatedAt":
 		if e.complexity.Note.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.Note.UpdatedAt(childComplexity), true
 
-	case "Note.user_id":
+	case "Note.userId":
 		if e.complexity.Note.UserID == nil {
 			break
 		}
@@ -623,14 +622,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetUser(childComplexity), true
 
-	case "School.created_at":
+	case "School.createdAt":
 		if e.complexity.School.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.School.CreatedAt(childComplexity), true
 
-	case "School.deleted_at":
+	case "School.deletedAt":
 		if e.complexity.School.DeletedAt == nil {
 			break
 		}
@@ -658,7 +657,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.School.Owner(childComplexity), true
 
-	case "School.owner_id":
+	case "School.ownerId":
 		if e.complexity.School.OwnerID == nil {
 			break
 		}
@@ -672,7 +671,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.School.Students(childComplexity), true
 
-	case "School.updated_at":
+	case "School.updatedAt":
 		if e.complexity.School.UpdatedAt == nil {
 			break
 		}
@@ -700,14 +699,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Class(childComplexity), true
 
-	case "User.created_at":
+	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.User.CreatedAt(childComplexity), true
 
-	case "User.deleted_at":
+	case "User.deletedAt":
 		if e.complexity.User.DeletedAt == nil {
 			break
 		}
@@ -728,7 +727,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ID(childComplexity), true
 
-	case "User.image_url":
+	case "User.imageUrl":
 		if e.complexity.User.ImageURL == nil {
 			break
 		}
@@ -763,7 +762,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.School(childComplexity), true
 
-	case "User.updated_at":
+	case "User.updatedAt":
 		if e.complexity.User.UpdatedAt == nil {
 			break
 		}
@@ -892,12 +891,12 @@ scalar DateTime
 
 type User {
   id:String!
-  image_url:String!
+  imageUrl:String!
   name:String!
   email:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   school:[School!]!
   likes:[Note!]!
@@ -906,28 +905,28 @@ type User {
 }
 type Note{
   id:String!
-  class_id:String!
-  school_id:String!
+  classId:String!
+  schoolId:String!
   description:String!
   title:String!
-  user_id:String!
-  is_public:Boolean!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  userId:String!
+  isPublic:Boolean!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   school:School!
   tags:[Tag!]!
-  like_user:[User!]!
+  likeUser:[User!]!
   comment:[Comment!]!
 }
 type School{
   id:String!
   name:String!
-  owner_id:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  ownerId:String!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   owner:User!
   students:[User!]!
@@ -936,11 +935,11 @@ type School{
 type Class {
   id:String!
   name:String!
-  school_id:String!
-  owner_id:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  schoolId:String!
+  ownerId:String!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 
   school:School!
   students:[User!]!
@@ -953,12 +952,12 @@ type Tag {
 }
 type Comment{
   id:String!
-  note_id:String!
-  user_id:String!
+  noteId:String!
+  userId:String!
   comment:String!
-  created_at:DateTime!
-  updated_at:DateTime!
-  deleted_at:DateTime!
+  createdAt:DateTime!
+  updatedAt:DateTime!
+  deletedAt:DateTime!
 }
 
 type Query {
@@ -1002,43 +1001,43 @@ input NewClass {
 }
 
 input NewSchool {
-  Name: String!
+  name: String!
   ownerID:String!
 }
 
 input NewUser {
-  Name: String!
-  Email: String!
-  Password: String!
+  name: String!
+  email: String!
+  password: String!
 }
 
 input NewTag {
-  Name: String!
+  name: String!
 }
 
 input NewComment {
-  UserID: String!
-  NoteID: String!
-  Comment: String!
+  userID: String!
+  noteID: String!
+  comment: String!
 }
 
 
 input NewJoinClass {
-  ClassID: String!
-  UserID: String!
+  classID: String!
+  userID: String!
 }
 
 input NewJoinSchool {
-  SchoolID: String!
-  UserID: String!
+  schoolID: String!
+  userID: String!
 }
 
 input GetNoteProps {
-  NoteID: String
-  SchoolID: String
-  UserID: String
-  ClassID: String
-  IsPublic:Boolean
+  noteID: String
+  schoolID: String
+  userID: String
+  classID: String
+  isPublic:Boolean
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -1473,8 +1472,8 @@ func (ec *executionContext) fieldContext_Class_name(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_school_id(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_school_id(ctx, field)
+func (ec *executionContext) _Class_schoolId(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_schoolId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1504,7 +1503,7 @@ func (ec *executionContext) _Class_school_id(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_school_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_schoolId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
@@ -1517,8 +1516,8 @@ func (ec *executionContext) fieldContext_Class_school_id(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_owner_id(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_owner_id(ctx, field)
+func (ec *executionContext) _Class_ownerId(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_ownerId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1548,7 +1547,7 @@ func (ec *executionContext) _Class_owner_id(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_owner_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_ownerId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
@@ -1561,8 +1560,8 @@ func (ec *executionContext) fieldContext_Class_owner_id(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_created_at(ctx, field)
+func (ec *executionContext) _Class_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1592,7 +1591,7 @@ func (ec *executionContext) _Class_created_at(ctx context.Context, field graphql
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
@@ -1605,8 +1604,8 @@ func (ec *executionContext) fieldContext_Class_created_at(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_updated_at(ctx, field)
+func (ec *executionContext) _Class_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1636,7 +1635,7 @@ func (ec *executionContext) _Class_updated_at(ctx context.Context, field graphql
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
@@ -1649,8 +1648,8 @@ func (ec *executionContext) fieldContext_Class_updated_at(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Class_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Class_deleted_at(ctx, field)
+func (ec *executionContext) _Class_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Class) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Class_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1680,7 +1679,7 @@ func (ec *executionContext) _Class_deleted_at(ctx context.Context, field graphql
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Class_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Class_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Class",
 		Field:      field,
@@ -1736,14 +1735,14 @@ func (ec *executionContext) fieldContext_Class_school(ctx context.Context, field
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -1796,18 +1795,18 @@ func (ec *executionContext) fieldContext_Class_students(ctx context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -1864,30 +1863,30 @@ func (ec *executionContext) fieldContext_Class_notes(ctx context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -1941,8 +1940,8 @@ func (ec *executionContext) fieldContext_Comment_id(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_note_id(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_note_id(ctx, field)
+func (ec *executionContext) _Comment_noteId(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_noteId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1972,7 +1971,7 @@ func (ec *executionContext) _Comment_note_id(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comment_note_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comment_noteId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comment",
 		Field:      field,
@@ -1985,8 +1984,8 @@ func (ec *executionContext) fieldContext_Comment_note_id(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_user_id(ctx, field)
+func (ec *executionContext) _Comment_userId(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_userId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2016,7 +2015,7 @@ func (ec *executionContext) _Comment_user_id(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comment_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comment_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comment",
 		Field:      field,
@@ -2073,8 +2072,8 @@ func (ec *executionContext) fieldContext_Comment_comment(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_created_at(ctx, field)
+func (ec *executionContext) _Comment_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2104,7 +2103,7 @@ func (ec *executionContext) _Comment_created_at(ctx context.Context, field graph
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comment_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comment_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comment",
 		Field:      field,
@@ -2117,8 +2116,8 @@ func (ec *executionContext) fieldContext_Comment_created_at(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_updated_at(ctx, field)
+func (ec *executionContext) _Comment_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2148,7 +2147,7 @@ func (ec *executionContext) _Comment_updated_at(ctx context.Context, field graph
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comment_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comment_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comment",
 		Field:      field,
@@ -2161,8 +2160,8 @@ func (ec *executionContext) fieldContext_Comment_updated_at(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_deleted_at(ctx, field)
+func (ec *executionContext) _Comment_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2192,7 +2191,7 @@ func (ec *executionContext) _Comment_deleted_at(ctx context.Context, field graph
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comment_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comment_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comment",
 		Field:      field,
@@ -2246,18 +2245,18 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -2325,18 +2324,18 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -2404,30 +2403,30 @@ func (ec *executionContext) fieldContext_Mutation_createNote(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -2489,30 +2488,30 @@ func (ec *executionContext) fieldContext_Mutation_updateNote(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -2576,16 +2575,16 @@ func (ec *executionContext) fieldContext_Mutation_createClass(ctx context.Contex
 				return ec.fieldContext_Class_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Class_name(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Class_school_id(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_Class_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Class_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Class_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Class_deleted_at(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Class_schoolId(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_Class_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Class_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Class_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Class_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -2653,16 +2652,16 @@ func (ec *executionContext) fieldContext_Mutation_updateClass(ctx context.Contex
 				return ec.fieldContext_Class_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Class_name(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Class_school_id(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_Class_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Class_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Class_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Class_deleted_at(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Class_schoolId(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_Class_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Class_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Class_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Class_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -2730,14 +2729,14 @@ func (ec *executionContext) fieldContext_Mutation_createSchool(ctx context.Conte
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -2803,14 +2802,14 @@ func (ec *executionContext) fieldContext_Mutation_updateSchool(ctx context.Conte
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -2874,18 +2873,18 @@ func (ec *executionContext) fieldContext_Mutation_createComment(ctx context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Comment_id(ctx, field)
-			case "note_id":
-				return ec.fieldContext_Comment_note_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Comment_user_id(ctx, field)
+			case "noteId":
+				return ec.fieldContext_Comment_noteId(ctx, field)
+			case "userId":
+				return ec.fieldContext_Comment_userId(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Comment_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Comment_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Comment_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Comment_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
 		},
@@ -2945,18 +2944,18 @@ func (ec *executionContext) fieldContext_Mutation_updateComment(ctx context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Comment_id(ctx, field)
-			case "note_id":
-				return ec.fieldContext_Comment_note_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Comment_user_id(ctx, field)
+			case "noteId":
+				return ec.fieldContext_Comment_noteId(ctx, field)
+			case "userId":
+				return ec.fieldContext_Comment_userId(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Comment_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Comment_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Comment_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Comment_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
 		},
@@ -3079,16 +3078,16 @@ func (ec *executionContext) fieldContext_Mutation_joinClass(ctx context.Context,
 				return ec.fieldContext_Class_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Class_name(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Class_school_id(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_Class_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Class_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Class_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Class_deleted_at(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Class_schoolId(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_Class_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Class_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Class_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Class_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -3156,14 +3155,14 @@ func (ec *executionContext) fieldContext_Mutation_joinSchool(ctx context.Context
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -3230,8 +3229,8 @@ func (ec *executionContext) fieldContext_Note_id(ctx context.Context, field grap
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_class_id(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_class_id(ctx, field)
+func (ec *executionContext) _Note_classId(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_classId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3261,7 +3260,7 @@ func (ec *executionContext) _Note_class_id(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_class_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_classId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3274,8 +3273,8 @@ func (ec *executionContext) fieldContext_Note_class_id(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_school_id(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_school_id(ctx, field)
+func (ec *executionContext) _Note_schoolId(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_schoolId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3305,7 +3304,7 @@ func (ec *executionContext) _Note_school_id(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_school_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_schoolId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3406,8 +3405,8 @@ func (ec *executionContext) fieldContext_Note_title(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_user_id(ctx, field)
+func (ec *executionContext) _Note_userId(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_userId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3437,7 +3436,7 @@ func (ec *executionContext) _Note_user_id(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_user_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3450,8 +3449,8 @@ func (ec *executionContext) fieldContext_Note_user_id(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_is_public(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_is_public(ctx, field)
+func (ec *executionContext) _Note_isPublic(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_isPublic(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3481,7 +3480,7 @@ func (ec *executionContext) _Note_is_public(ctx context.Context, field graphql.C
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_is_public(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_isPublic(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3494,8 +3493,8 @@ func (ec *executionContext) fieldContext_Note_is_public(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_created_at(ctx, field)
+func (ec *executionContext) _Note_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3525,7 +3524,7 @@ func (ec *executionContext) _Note_created_at(ctx context.Context, field graphql.
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3538,8 +3537,8 @@ func (ec *executionContext) fieldContext_Note_created_at(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_updated_at(ctx, field)
+func (ec *executionContext) _Note_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3569,7 +3568,7 @@ func (ec *executionContext) _Note_updated_at(ctx context.Context, field graphql.
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3582,8 +3581,8 @@ func (ec *executionContext) fieldContext_Note_updated_at(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_deleted_at(ctx, field)
+func (ec *executionContext) _Note_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3613,7 +3612,7 @@ func (ec *executionContext) _Note_deleted_at(ctx context.Context, field graphql.
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
@@ -3669,14 +3668,14 @@ func (ec *executionContext) fieldContext_Note_school(ctx context.Context, field 
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -3738,8 +3737,8 @@ func (ec *executionContext) fieldContext_Note_tags(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Note_like_user(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Note_like_user(ctx, field)
+func (ec *executionContext) _Note_likeUser(ctx context.Context, field graphql.CollectedField, obj *model.Note) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Note_likeUser(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3752,7 +3751,7 @@ func (ec *executionContext) _Note_like_user(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Note().LikeUser(rctx, obj)
+		return obj.LikeUser, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3769,28 +3768,28 @@ func (ec *executionContext) _Note_like_user(ctx context.Context, field graphql.C
 	return ec.marshalNUser2ᚕᚖmegachasmaᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Note_like_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Note_likeUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Note",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -3847,18 +3846,18 @@ func (ec *executionContext) fieldContext_Note_comment(ctx context.Context, field
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Comment_id(ctx, field)
-			case "note_id":
-				return ec.fieldContext_Comment_note_id(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Comment_user_id(ctx, field)
+			case "noteId":
+				return ec.fieldContext_Comment_noteId(ctx, field)
+			case "userId":
+				return ec.fieldContext_Comment_userId(ctx, field)
 			case "comment":
 				return ec.fieldContext_Comment_comment(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Comment_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Comment_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Comment_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Comment_deletedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
 		},
@@ -3907,30 +3906,30 @@ func (ec *executionContext) fieldContext_Query_getNotes(ctx context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -3994,14 +3993,14 @@ func (ec *executionContext) fieldContext_Query_getSchools(ctx context.Context, f
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -4067,16 +4066,16 @@ func (ec *executionContext) fieldContext_Query_getClasses(ctx context.Context, f
 				return ec.fieldContext_Class_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Class_name(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Class_school_id(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_Class_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Class_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Class_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Class_deleted_at(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Class_schoolId(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_Class_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Class_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Class_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Class_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -4192,30 +4191,30 @@ func (ec *executionContext) fieldContext_Query_getMyNotes(ctx context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -4266,18 +4265,18 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -4510,8 +4509,8 @@ func (ec *executionContext) fieldContext_School_name(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _School_owner_id(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_School_owner_id(ctx, field)
+func (ec *executionContext) _School_ownerId(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_ownerId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4541,7 +4540,7 @@ func (ec *executionContext) _School_owner_id(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_School_owner_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_School_ownerId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "School",
 		Field:      field,
@@ -4554,8 +4553,8 @@ func (ec *executionContext) fieldContext_School_owner_id(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _School_created_at(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_School_created_at(ctx, field)
+func (ec *executionContext) _School_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4585,7 +4584,7 @@ func (ec *executionContext) _School_created_at(ctx context.Context, field graphq
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_School_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_School_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "School",
 		Field:      field,
@@ -4598,8 +4597,8 @@ func (ec *executionContext) fieldContext_School_created_at(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _School_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_School_updated_at(ctx, field)
+func (ec *executionContext) _School_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4629,7 +4628,7 @@ func (ec *executionContext) _School_updated_at(ctx context.Context, field graphq
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_School_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_School_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "School",
 		Field:      field,
@@ -4642,8 +4641,8 @@ func (ec *executionContext) fieldContext_School_updated_at(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _School_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_School_deleted_at(ctx, field)
+func (ec *executionContext) _School_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.School) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_School_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4673,7 +4672,7 @@ func (ec *executionContext) _School_deleted_at(ctx context.Context, field graphq
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_School_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_School_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "School",
 		Field:      field,
@@ -4727,18 +4726,18 @@ func (ec *executionContext) fieldContext_School_owner(ctx context.Context, field
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -4795,18 +4794,18 @@ func (ec *executionContext) fieldContext_School_students(ctx context.Context, fi
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_User_id(ctx, field)
-			case "image_url":
-				return ec.fieldContext_User_image_url(ctx, field)
+			case "imageUrl":
+				return ec.fieldContext_User_imageUrl(ctx, field)
 			case "name":
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_User_deleted_at(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_User_school(ctx, field)
 			case "likes":
@@ -4954,8 +4953,8 @@ func (ec *executionContext) fieldContext_User_id(ctx context.Context, field grap
 	return fc, nil
 }
 
-func (ec *executionContext) _User_image_url(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_image_url(ctx, field)
+func (ec *executionContext) _User_imageUrl(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_imageUrl(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4985,7 +4984,7 @@ func (ec *executionContext) _User_image_url(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_image_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_imageUrl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5086,8 +5085,8 @@ func (ec *executionContext) fieldContext_User_email(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_created_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_created_at(ctx, field)
+func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5117,7 +5116,7 @@ func (ec *executionContext) _User_created_at(ctx context.Context, field graphql.
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_created_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5130,8 +5129,8 @@ func (ec *executionContext) fieldContext_User_created_at(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_updated_at(ctx, field)
+func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5161,7 +5160,7 @@ func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_updated_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5174,8 +5173,8 @@ func (ec *executionContext) fieldContext_User_updated_at(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _User_deleted_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_deleted_at(ctx, field)
+func (ec *executionContext) _User_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5205,7 +5204,7 @@ func (ec *executionContext) _User_deleted_at(ctx context.Context, field graphql.
 	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_deleted_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5261,14 +5260,14 @@ func (ec *executionContext) fieldContext_User_school(ctx context.Context, field 
 				return ec.fieldContext_School_id(ctx, field)
 			case "name":
 				return ec.fieldContext_School_name(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_School_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_School_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_School_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_School_deleted_at(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_School_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_School_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_School_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_School_deletedAt(ctx, field)
 			case "owner":
 				return ec.fieldContext_School_owner(ctx, field)
 			case "students":
@@ -5321,30 +5320,30 @@ func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field g
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -5397,16 +5396,16 @@ func (ec *executionContext) fieldContext_User_class(ctx context.Context, field g
 				return ec.fieldContext_Class_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Class_name(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Class_school_id(ctx, field)
-			case "owner_id":
-				return ec.fieldContext_Class_owner_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Class_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Class_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Class_deleted_at(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Class_schoolId(ctx, field)
+			case "ownerId":
+				return ec.fieldContext_Class_ownerId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Class_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Class_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Class_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Class_school(ctx, field)
 			case "students":
@@ -5461,30 +5460,30 @@ func (ec *executionContext) fieldContext_User_notes(ctx context.Context, field g
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Note_id(ctx, field)
-			case "class_id":
-				return ec.fieldContext_Note_class_id(ctx, field)
-			case "school_id":
-				return ec.fieldContext_Note_school_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
 			case "description":
 				return ec.fieldContext_Note_description(ctx, field)
 			case "title":
 				return ec.fieldContext_Note_title(ctx, field)
-			case "user_id":
-				return ec.fieldContext_Note_user_id(ctx, field)
-			case "is_public":
-				return ec.fieldContext_Note_is_public(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Note_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Note_updated_at(ctx, field)
-			case "deleted_at":
-				return ec.fieldContext_Note_deleted_at(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
 			case "school":
 				return ec.fieldContext_Note_school(ctx, field)
 			case "tags":
 				return ec.fieldContext_Note_tags(ctx, field)
-			case "like_user":
-				return ec.fieldContext_Note_like_user(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
 			case "comment":
 				return ec.fieldContext_Note_comment(ctx, field)
 			}
@@ -7274,53 +7273,53 @@ func (ec *executionContext) unmarshalInputGetNoteProps(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"NoteID", "SchoolID", "UserID", "ClassID", "IsPublic"}
+	fieldsInOrder := [...]string{"noteID", "schoolID", "userID", "classID", "isPublic"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "NoteID":
+		case "noteID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("NoteID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noteID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.NoteID = data
-		case "SchoolID":
+		case "schoolID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SchoolID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.SchoolID = data
-		case "UserID":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.UserID = data
-		case "ClassID":
+		case "classID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ClassID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.ClassID = data
-		case "IsPublic":
+		case "isPublic":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IsPublic"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPublic"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
@@ -7386,35 +7385,35 @@ func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"UserID", "NoteID", "Comment"}
+	fieldsInOrder := [...]string{"userID", "noteID", "comment"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "UserID":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.UserID = data
-		case "NoteID":
+		case "noteID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("NoteID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noteID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.NoteID = data
-		case "Comment":
+		case "comment":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Comment"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comment"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -7433,26 +7432,26 @@ func (ec *executionContext) unmarshalInputNewJoinClass(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"ClassID", "UserID"}
+	fieldsInOrder := [...]string{"classID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "ClassID":
+		case "classID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ClassID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.ClassID = data
-		case "UserID":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -7471,26 +7470,26 @@ func (ec *executionContext) unmarshalInputNewJoinSchool(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"SchoolID", "UserID"}
+	fieldsInOrder := [...]string{"schoolID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "SchoolID":
+		case "schoolID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SchoolID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.SchoolID = data
-		case "UserID":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -7583,17 +7582,17 @@ func (ec *executionContext) unmarshalInputNewSchool(ctx context.Context, obj int
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Name", "ownerID"}
+	fieldsInOrder := [...]string{"name", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "Name":
+		case "name":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Name"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -7621,17 +7620,17 @@ func (ec *executionContext) unmarshalInputNewTag(ctx context.Context, obj interf
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Name"}
+	fieldsInOrder := [...]string{"name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "Name":
+		case "name":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Name"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -7650,35 +7649,35 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Name", "Email", "Password"}
+	fieldsInOrder := [...]string{"name", "email", "password"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "Name":
+		case "name":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Name"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Name = data
-		case "Email":
+		case "email":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Email"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Email = data
-		case "Password":
+		case "password":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Password"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -7719,28 +7718,28 @@ func (ec *executionContext) _Class(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "school_id":
-			out.Values[i] = ec._Class_school_id(ctx, field, obj)
+		case "schoolId":
+			out.Values[i] = ec._Class_schoolId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "owner_id":
-			out.Values[i] = ec._Class_owner_id(ctx, field, obj)
+		case "ownerId":
+			out.Values[i] = ec._Class_ownerId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_at":
-			out.Values[i] = ec._Class_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Class_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updated_at":
-			out.Values[i] = ec._Class_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Class_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleted_at":
-			out.Values[i] = ec._Class_deleted_at(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._Class_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7798,13 +7797,13 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "note_id":
-			out.Values[i] = ec._Comment_note_id(ctx, field, obj)
+		case "noteId":
+			out.Values[i] = ec._Comment_noteId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._Comment_user_id(ctx, field, obj)
+		case "userId":
+			out.Values[i] = ec._Comment_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7813,18 +7812,18 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_at":
-			out.Values[i] = ec._Comment_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Comment_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updated_at":
-			out.Values[i] = ec._Comment_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Comment_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleted_at":
-			out.Values[i] = ec._Comment_deleted_at(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._Comment_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -8000,13 +7999,13 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "class_id":
-			out.Values[i] = ec._Note_class_id(ctx, field, obj)
+		case "classId":
+			out.Values[i] = ec._Note_classId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "school_id":
-			out.Values[i] = ec._Note_school_id(ctx, field, obj)
+		case "schoolId":
+			out.Values[i] = ec._Note_schoolId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -8020,28 +8019,28 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "user_id":
-			out.Values[i] = ec._Note_user_id(ctx, field, obj)
+		case "userId":
+			out.Values[i] = ec._Note_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "is_public":
-			out.Values[i] = ec._Note_is_public(ctx, field, obj)
+		case "isPublic":
+			out.Values[i] = ec._Note_isPublic(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "created_at":
-			out.Values[i] = ec._Note_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Note_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "updated_at":
-			out.Values[i] = ec._Note_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Note_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "deleted_at":
-			out.Values[i] = ec._Note_deleted_at(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._Note_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -8117,42 +8116,11 @@ func (ec *executionContext) _Note(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "like_user":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Note_like_user(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
+		case "likeUser":
+			out.Values[i] = ec._Note_likeUser(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
 			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "comment":
 			out.Values[i] = ec._Note_comment(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -8384,23 +8352,23 @@ func (ec *executionContext) _School(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "owner_id":
-			out.Values[i] = ec._School_owner_id(ctx, field, obj)
+		case "ownerId":
+			out.Values[i] = ec._School_ownerId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "created_at":
-			out.Values[i] = ec._School_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._School_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updated_at":
-			out.Values[i] = ec._School_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._School_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleted_at":
-			out.Values[i] = ec._School_deleted_at(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._School_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -8497,8 +8465,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "image_url":
-			out.Values[i] = ec._User_image_url(ctx, field, obj)
+		case "imageUrl":
+			out.Values[i] = ec._User_imageUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -8512,18 +8480,18 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "created_at":
-			out.Values[i] = ec._User_created_at(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "updated_at":
-			out.Values[i] = ec._User_updated_at(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._User_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "deleted_at":
-			out.Values[i] = ec._User_deleted_at(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._User_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
