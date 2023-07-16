@@ -43,7 +43,7 @@ func (r *mutationResolver) UpdateClass(ctx context.Context, id string, input *mo
 
 // CreateSchool is the resolver for the createSchool field.
 func (r *mutationResolver) CreateSchool(ctx context.Context, input model.NewSchool) (*model.School, error) {
-	return r.Srv.CreateSchool(ctx, input.Name, input.OwnerID)
+	return r.Srv.CreateSchool(ctx, input.Name)
 }
 
 // UpdateSchool is the resolver for the updateSchool field.

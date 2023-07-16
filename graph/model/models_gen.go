@@ -96,8 +96,7 @@ type NewNote struct {
 }
 
 type NewSchool struct {
-	Name    string `json:"name"`
-	OwnerID string `json:"ownerID"`
+	Name string `json:"name"`
 }
 
 type NewTag struct {

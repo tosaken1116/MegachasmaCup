@@ -2,8 +2,10 @@ package services
 
 import (
 	"context"
+	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/middleware/auth"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -31,8 +33,12 @@ func (ss *schoolService) GetSchoolByID(ctx context.Context, id string) (*model.S
 	return convertSchool(*school), nil
 }
 
-func (ss *schoolService) CreateSchool(ctx context.Context, Name string, OwnerID string) (*model.School, error) {
-	pOwnerID, err := uuid.Parse(OwnerID)
+func (ss *schoolService) CreateSchool(ctx context.Context, Name string) (*model.School, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+	pOwnerID, err := uuid.Parse(userID)
 	if err != nil {
 		return nil, err
 	}
