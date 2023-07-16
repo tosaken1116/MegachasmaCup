@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
@@ -69,6 +70,9 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 	}
 	if err := cs.db.Create(&newClass).Error; err != nil {
 		return nil, err
+	}
+	if err := cs.db.Exec("INSERT INTO class_user (user_id,class_id) VALUES (@user_id,@class_id)", sql.Named("user_id", userID), sql.Named("class_id", &newClass.ID)).Error; err != nil {
+		return nil, errors.New("owner cant join class")
 	}
 	return convertCreateClass(newClass), nil
 }
