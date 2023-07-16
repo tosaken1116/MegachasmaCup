@@ -93,3 +93,9 @@ func (ss *schoolService) GetSchoolBySearchWord(searchWord string) ([]*model.Scho
 	}
 	return convertedSchool, nil
 }
+
+func IsUserSchoolExist(db *gorm.DB, userID string, schoolID string) bool {
+	var count int64
+	db.Raw("SELECT COUNT(*) FROM school_user WHERE user_id = ? AND school_id = ?", userID, schoolID).Scan(&count)
+	return count != 0
+}

@@ -1068,7 +1068,6 @@ input NewNote {
   schoolID:String!
   description:String!
   title:String!
-  userID:String!
   isPublic:Boolean!
 }
 
@@ -8584,7 +8583,7 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"classID", "schoolID", "description", "title", "userID", "isPublic"}
+	fieldsInOrder := [...]string{"classID", "schoolID", "description", "title", "isPublic"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8627,15 +8626,6 @@ func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj inter
 				return it, err
 			}
 			it.Title = data
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		case "isPublic":
 			var err error
 

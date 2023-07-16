@@ -90,7 +90,6 @@ type NewNote struct {
 	SchoolID    string `json:"schoolID"`
 	Description string `json:"description"`
 	Title       string `json:"title"`
-	UserID      string `json:"userID"`
 	IsPublic    bool   `json:"isPublic"`
 }
 

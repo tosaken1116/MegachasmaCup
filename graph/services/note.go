@@ -6,6 +6,7 @@ import (
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
+	"megachasma/middleware/auth"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -56,7 +57,15 @@ func convertCreateNote(note dbModel.Note) *model.Note {
 	}
 }
 
-func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, UserID string, IsPublic bool) (*model.Note, error) {
+func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID string, Description string, Title string, IsPublic bool) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+	pUserID, err := uuid.Parse(userID)
+	if err != nil {
+		return nil, err
+	}
 	pSchoolID, err := uuid.Parse(SchoolID)
 	if err != nil {
 		return nil, err
@@ -65,9 +74,11 @@ func (ns *noteService) CreateNote(ctx context.Context, ClassID string, SchoolID 
 	if err != nil {
 		return nil, err
 	}
-	pUserID, err := uuid.Parse(UserID)
-	if err != nil {
-		return nil, err
+	if !IsUserSchoolExist(ns.db, userID, SchoolID) {
+		return nil, errors.New("you are not joined to school")
+	}
+	if !IsUserClassExist(ns.db, userID, ClassID) {
+
 	}
 	newNote := dbModel.Note{
 		ClassID:     pClassID,

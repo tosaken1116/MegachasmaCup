@@ -112,7 +112,6 @@ input NewNote {
   schoolID:String!
   description:String!
   title:String!
-  userID:String!
   isPublic:Boolean!
 }
 

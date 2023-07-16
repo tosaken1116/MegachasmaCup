@@ -55,8 +55,7 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 		return nil, err
 	}
 
-	var count int64
-	if cs.db.Raw("SELECT COUNT(*) FROM school_user WHERE user_id = ? AND school_id = ?", userID, SchoolID).Scan(&count); count == 0 {
+	if !IsUserSchoolExist(cs.db, userID, SchoolID) {
 		return nil, errors.New("you are not joined to school")
 	}
 
@@ -128,4 +127,9 @@ func (cs *classService) GetClasses(input model.GetClassesProps) ([]*model.Class,
 	}
 
 	return result, nil
+}
+func IsUserClassExist(db *gorm.DB, userID string, classID string) bool {
+	var count int64
+	db.Raw("SELECT COUNT(*) FROM class_user WHERE user_id = ? AND class_id = ?", userID, classID).Scan(&count)
+	return count != 0
 }
