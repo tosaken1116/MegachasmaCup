@@ -77,8 +77,10 @@ type ComplexityRoot struct {
 		CreateSchool  func(childComplexity int, input model.NewSchool) int
 		CreateTag     func(childComplexity int, input model.NewTag) int
 		CreateUser    func(childComplexity int, input model.NewUser) int
+		DeleteLike    func(childComplexity int, input model.LikeProps) int
 		JoinClass     func(childComplexity int, input model.NewJoinClass) int
 		JoinSchool    func(childComplexity int, input model.NewJoinSchool) int
+		Like          func(childComplexity int, input model.LikeProps) int
 		UpdateClass   func(childComplexity int, id string, input *model.NewClass) int
 		UpdateComment func(childComplexity int, id string, input *model.NewComment) int
 		UpdateNote    func(childComplexity int, id string, input *model.NewNote) int
@@ -157,6 +159,8 @@ type MutationResolver interface {
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 	JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error)
 	JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error)
+	Like(ctx context.Context, input model.LikeProps) (*model.Note, error)
+	DeleteLike(ctx context.Context, input model.LikeProps) (*model.Note, error)
 }
 type NoteResolver interface {
 	School(ctx context.Context, obj *model.Note) (*model.School, error)
@@ -383,6 +387,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.NewUser)), true
 
+	case "Mutation.deleteLike":
+		if e.complexity.Mutation.DeleteLike == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteLike_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteLike(childComplexity, args["input"].(model.LikeProps)), true
+
 	case "Mutation.joinClass":
 		if e.complexity.Mutation.JoinClass == nil {
 			break
@@ -406,6 +422,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.JoinSchool(childComplexity, args["input"].(model.NewJoinSchool)), true
+
+	case "Mutation.like":
+		if e.complexity.Mutation.Like == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_like_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Like(childComplexity, args["input"].(model.LikeProps)), true
 
 	case "Mutation.updateClass":
 		if e.complexity.Mutation.UpdateClass == nil {
@@ -790,6 +818,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGetClassesProps,
 		ec.unmarshalInputGetNoteProps,
 		ec.unmarshalInputGetUserProps,
+		ec.unmarshalInputLikeProps,
 		ec.unmarshalInputNewClass,
 		ec.unmarshalInputNewComment,
 		ec.unmarshalInputNewJoinClass,
@@ -995,6 +1024,8 @@ type Mutation {
   createTag(input: NewTag!): Tag!
   joinClass(input:NewJoinClass!):Class!
   joinSchool(input:NewJoinSchool!):School!
+  like(input:LikeProps!):Note!
+  deleteLike(input:LikeProps!):Note!
 }
 
 
@@ -1068,6 +1099,10 @@ input GetUserProps {
 input UpdateSchoolProps{
   name:String
     ownerID:String
+}
+input LikeProps{
+  userID:String!
+  noteID:String!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -1166,6 +1201,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.LikeProps
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_joinClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1188,6 +1238,21 @@ func (ec *executionContext) field_Mutation_joinSchool_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNNewJoinSchool2megachasmaᚋgraphᚋmodelᚐNewJoinSchool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_like_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.LikeProps
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3239,6 +3304,176 @@ func (ec *executionContext) fieldContext_Mutation_joinSchool(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_joinSchool_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_like(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_like(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Like(rctx, fc.Args["input"].(model.LikeProps))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Note)
+	fc.Result = res
+	return ec.marshalNNote2ᚖmegachasmaᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_like(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
+			case "description":
+				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
+			case "school":
+				return ec.fieldContext_Note_school(ctx, field)
+			case "tags":
+				return ec.fieldContext_Note_tags(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
+			case "comment":
+				return ec.fieldContext_Note_comment(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_like_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteLike(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteLike(rctx, fc.Args["input"].(model.LikeProps))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Note)
+	fc.Result = res
+	return ec.marshalNNote2ᚖmegachasmaᚋgraphᚋmodelᚐNote(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteLike(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Note_id(ctx, field)
+			case "classId":
+				return ec.fieldContext_Note_classId(ctx, field)
+			case "schoolId":
+				return ec.fieldContext_Note_schoolId(ctx, field)
+			case "description":
+				return ec.fieldContext_Note_description(ctx, field)
+			case "title":
+				return ec.fieldContext_Note_title(ctx, field)
+			case "userId":
+				return ec.fieldContext_Note_userId(ctx, field)
+			case "isPublic":
+				return ec.fieldContext_Note_isPublic(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Note_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Note_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Note_deletedAt(ctx, field)
+			case "school":
+				return ec.fieldContext_Note_school(ctx, field)
+			case "tags":
+				return ec.fieldContext_Note_tags(ctx, field)
+			case "likeUser":
+				return ec.fieldContext_Note_likeUser(ctx, field)
+			case "comment":
+				return ec.fieldContext_Note_comment(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteLike_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7516,6 +7751,44 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputLikeProps(ctx context.Context, obj interface{}) (model.LikeProps, error) {
+	var it model.LikeProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"userID", "noteID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "noteID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noteID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NoteID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj interface{}) (model.NewClass, error) {
 	var it model.NewClass
 	asMap := map[string]interface{}{}
@@ -8179,6 +8452,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "joinSchool":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_joinSchool(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "like":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_like(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteLike":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteLike(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -9355,6 +9642,11 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNLikeProps2megachasmaᚋgraphᚋmodelᚐLikeProps(ctx context.Context, v interface{}) (model.LikeProps, error) {
+	res, err := ec.unmarshalInputLikeProps(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNNewClass2megachasmaᚋgraphᚋmodelᚐNewClass(ctx context.Context, v interface{}) (model.NewClass, error) {
