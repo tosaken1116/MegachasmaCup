@@ -61,6 +61,9 @@ func (us *userService) UpdateUser(ctx context.Context, id string, input model.Up
 	if input.ImageURL != nil {
 		user.ImageUrl = *input.ImageURL
 	}
+	if input.DeletedAt != nil {
+		user.DeletedAt = *input.DeletedAt
+	}
 	if err := us.db.Save(&user).Error; err != nil {
 		return nil, err
 	}

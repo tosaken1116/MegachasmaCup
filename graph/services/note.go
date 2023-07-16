@@ -218,6 +218,9 @@ func (ns *noteService) UpdateNote(ctx context.Context, id string, input model.Up
 	if input.Title != nil {
 		note.Title = *input.Title
 	}
+	if input.DeletedAt != nil {
+		note.DeletedAt = *input.DeletedAt
+	}
 	if err := ns.db.Save(&note).Error; err != nil {
 		return nil, err
 	}

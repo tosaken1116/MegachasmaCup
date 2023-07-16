@@ -1068,26 +1068,31 @@ input GetUserProps {
 input UpdateSchoolProps {
   name:String
   ownerID:String
+  deletedAt:DateTime
 }
 
 input UpdateClassProps {
   name:String
   owner_id:String
+  deletedAt:DateTime
 }
 
 input UpdateUserProps {
   email:String
   name:String
   imageUrl:String
+  deletedAt:DateTime
 }
 
 input UpdateCommentProps {
   comment:String
+  deletedAt:DateTime
 }
 input UpdateNoteProps{
   description:String
   title:String
   isPublic:Boolean
+  deletedAt:DateTime
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -8200,7 +8205,7 @@ func (ec *executionContext) unmarshalInputUpdateClassProps(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "owner_id"}
+	fieldsInOrder := [...]string{"name", "owner_id", "deletedAt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8225,6 +8230,15 @@ func (ec *executionContext) unmarshalInputUpdateClassProps(ctx context.Context, 
 				return it, err
 			}
 			it.OwnerID = data
+		case "deletedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalODateTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
 		}
 	}
 
@@ -8238,7 +8252,7 @@ func (ec *executionContext) unmarshalInputUpdateCommentProps(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"comment"}
+	fieldsInOrder := [...]string{"comment", "deletedAt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8254,6 +8268,15 @@ func (ec *executionContext) unmarshalInputUpdateCommentProps(ctx context.Context
 				return it, err
 			}
 			it.Comment = data
+		case "deletedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalODateTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
 		}
 	}
 
@@ -8267,7 +8290,7 @@ func (ec *executionContext) unmarshalInputUpdateNoteProps(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"description", "title", "isPublic"}
+	fieldsInOrder := [...]string{"description", "title", "isPublic", "deletedAt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8301,6 +8324,15 @@ func (ec *executionContext) unmarshalInputUpdateNoteProps(ctx context.Context, o
 				return it, err
 			}
 			it.IsPublic = data
+		case "deletedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalODateTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
 		}
 	}
 
@@ -8314,7 +8346,7 @@ func (ec *executionContext) unmarshalInputUpdateSchoolProps(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "ownerID"}
+	fieldsInOrder := [...]string{"name", "ownerID", "deletedAt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8339,6 +8371,15 @@ func (ec *executionContext) unmarshalInputUpdateSchoolProps(ctx context.Context,
 				return it, err
 			}
 			it.OwnerID = data
+		case "deletedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalODateTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
 		}
 	}
 
@@ -8352,7 +8393,7 @@ func (ec *executionContext) unmarshalInputUpdateUserProps(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "name", "imageUrl"}
+	fieldsInOrder := [...]string{"email", "name", "imageUrl", "deletedAt"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8386,6 +8427,15 @@ func (ec *executionContext) unmarshalInputUpdateUserProps(ctx context.Context, o
 				return it, err
 			}
 			it.ImageURL = data
+		case "deletedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalODateTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
 		}
 	}
 
@@ -10432,6 +10482,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalODateTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODateTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalTime(*v)
 	return res
 }
 

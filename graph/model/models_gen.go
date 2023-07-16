@@ -122,29 +122,34 @@ type Tag struct {
 }
 
 type UpdateClassProps struct {
-	Name    *string `json:"name,omitempty"`
-	OwnerID *string `json:"owner_id,omitempty"`
+	Name      *string    `json:"name,omitempty"`
+	OwnerID   *string    `json:"owner_id,omitempty"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 }
 
 type UpdateCommentProps struct {
-	Comment *string `json:"comment,omitempty"`
+	Comment   *string    `json:"comment,omitempty"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 }
 
 type UpdateNoteProps struct {
-	Description *string `json:"description,omitempty"`
-	Title       *string `json:"title,omitempty"`
-	IsPublic    *bool   `json:"isPublic,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Title       *string    `json:"title,omitempty"`
+	IsPublic    *bool      `json:"isPublic,omitempty"`
+	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
 }
 
 type UpdateSchoolProps struct {
-	Name    *string `json:"name,omitempty"`
-	OwnerID *string `json:"ownerID,omitempty"`
+	Name      *string    `json:"name,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 }
 
 type UpdateUserProps struct {
-	Email    *string `json:"email,omitempty"`
-	Name     *string `json:"name,omitempty"`
-	ImageURL *string `json:"imageUrl,omitempty"`
+	Email     *string    `json:"email,omitempty"`
+	Name      *string    `json:"name,omitempty"`
+	ImageURL  *string    `json:"imageUrl,omitempty"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 }
 
 type User struct {

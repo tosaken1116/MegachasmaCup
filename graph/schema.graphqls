@@ -162,24 +162,29 @@ input GetUserProps {
 input UpdateSchoolProps {
   name:String
   ownerID:String
+  deletedAt:DateTime
 }
 
 input UpdateClassProps {
   name:String
   owner_id:String
+  deletedAt:DateTime
 }
 
 input UpdateUserProps {
   email:String
   name:String
   imageUrl:String
+  deletedAt:DateTime
 }
 
 input UpdateCommentProps {
   comment:String
+  deletedAt:DateTime
 }
 input UpdateNoteProps{
   description:String
   title:String
   isPublic:Boolean
+  deletedAt:DateTime
 }

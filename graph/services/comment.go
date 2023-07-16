@@ -65,6 +65,9 @@ func (cs *commentService) UpdateComment(ctx context.Context, id string, input mo
 	if input.Comment != nil {
 		comment.Comment = *input.Comment
 	}
+	if input.DeletedAt != nil {
+		comment.DeletedAt = *input.DeletedAt
+	}
 	if err := cs.db.Save(&comment).Error; err != nil {
 		return nil, err
 	}

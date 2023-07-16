@@ -100,6 +100,9 @@ func (cs *classService) UpdateClass(ctx context.Context, id string, input model.
 		}
 		class.OwnerID = pOwnerID
 	}
+	if input.DeletedAt != nil {
+		class.DeletedAt = *input.DeletedAt
+	}
 
 	if err := cs.db.Save(&class).Error; err != nil {
 		return nil, err
