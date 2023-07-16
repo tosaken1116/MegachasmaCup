@@ -78,6 +78,9 @@ func (ss *schoolService) UpdateSchool(ctx context.Context, id string, input mode
 	if input.Name != nil {
 		school.Name = *input.Name
 	}
+	if input.DeletedAt != nil {
+		school.DeletedAt = *input.DeletedAt
+	}
 
 	if err := ss.db.Save(&school).Error; err != nil {
 		return nil, err
