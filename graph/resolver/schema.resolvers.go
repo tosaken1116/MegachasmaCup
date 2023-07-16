@@ -98,7 +98,7 @@ func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag,
 
 // GetNotes is the resolver for the getNotes field.
 func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
-	return r.Srv.GetNotes(*input)
+	return r.Srv.GetNotes(ctx, *input)
 }
 
 // GetSchools is the resolver for the getSchools field.

@@ -1104,6 +1104,7 @@ input GetClassesProps {
 }
 
 input GetNoteProps {
+  isMy:Boolean
   noteID: String
   schoolID: String
   userID: String
@@ -8252,13 +8253,22 @@ func (ec *executionContext) unmarshalInputGetNoteProps(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"noteID", "schoolID", "userID", "classID", "isPublic"}
+	fieldsInOrder := [...]string{"isMy", "noteID", "schoolID", "userID", "classID", "isPublic"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "isMy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMy"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsMy = data
 		case "noteID":
 			var err error
 

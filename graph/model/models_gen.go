@@ -42,6 +42,7 @@ type GetJwtProps struct {
 }
 
 type GetNoteProps struct {
+	IsMy     *bool   `json:"isMy,omitempty"`
 	NoteID   *string `json:"noteID,omitempty"`
 	SchoolID *string `json:"schoolID,omitempty"`
 	UserID   *string `json:"userID,omitempty"`
