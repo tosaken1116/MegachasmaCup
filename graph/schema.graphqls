@@ -86,7 +86,7 @@ type Mutation {
   createUser(input: NewUser!): User!
   updateUser(id:String!,input: UpdateUserProps):User! @isAuthenticated
   createNote(input: NewNote!): Note! @isAuthenticated
-  updateNote(id:String!,input: NewNote):Note! @isAuthenticated
+  updateNote(id:String!,input: UpdateNoteProps):Note! @isAuthenticated
   createClass(input: NewClass!): Class! @isAuthenticated
   updateClass(id:String!,input: UpdateClassProps):Class! @isAuthenticated
   createSchool(input: NewSchool!): School! @isAuthenticated
@@ -177,4 +177,9 @@ input UpdateUserProps {
 
 input UpdateCommentProps {
   comment:String
+}
+input UpdateNoteProps{
+  description:String
+  title:String
+  isPublic:Boolean
 }

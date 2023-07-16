@@ -27,7 +27,7 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.NewNote) 
 }
 
 // UpdateNote is the resolver for the updateNote field.
-func (r *mutationResolver) UpdateNote(ctx context.Context, id string, input *model.NewNote) (*model.Note, error) {
+func (r *mutationResolver) UpdateNote(ctx context.Context, id string, input *model.UpdateNoteProps) (*model.Note, error) {
 	panic(fmt.Errorf("not implemented: UpdateNote - updateNote"))
 }
 

@@ -196,3 +196,30 @@ func (ns *noteService) DeleteLikeNote(ctx context.Context, noteID string) (*mode
 	}
 	return convertNote(*likeNote), nil
 }
+
+func (ns *noteService) UpdateNote(ctx context.Context, id string, input model.UpdateNoteProps) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
+	note := new(dbModel.Note)
+	if err := ns.db.Where("id = ?", id).Find(&note).Error; err != nil {
+		return nil, err
+	}
+	if userID != note.UserID.String() {
+		return nil, errors.New("this note is not yours")
+	}
+	if input.Description != nil {
+		note.Description = *input.Description
+	}
+	if input.IsPublic != nil {
+		note.IsPublic = *input.IsPublic
+	}
+	if input.Title != nil {
+		note.Title = *input.Title
+	}
+	if err := ns.db.Save(&note).Error; err != nil {
+		return nil, err
+	}
+	return convertNote(*note), nil
+}
