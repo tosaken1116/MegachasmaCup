@@ -50,9 +50,8 @@ func (us *userService) UpdateUser(ctx context.Context, id string, input model.Up
 	if input.Name != nil {
 		user.Name = *input.Name
 	}
-	if input.Password != nil {
-		hashed, _ := bcrypt.GenerateFromPassword([]byte(*input.Password), 10)
-		user.HashedPassword = string(hashed)
+	if input.ImageURL != nil {
+		user.ImageUrl = *input.ImageURL
 	}
 	if err := us.db.Save(&user).Error; err != nil {
 		return nil, err
