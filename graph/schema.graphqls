@@ -85,7 +85,7 @@ type Query {
 }
 type Mutation {
   createUser(input: NewUser!): User!
-  updateUser(id:String!,input: NewUser):User!
+  updateUser(id:String!,input: UpdateUserProps):User!
   createNote(input: NewNote!): Note!
   updateNote(id:String!,input: NewNote):Note!
   createClass(input: NewClass!): Class!
@@ -169,15 +169,25 @@ input GetUserProps {
   userID: String
   name:String
 }
-input UpdateSchoolProps{
+
+input UpdateSchoolProps {
   name:String
   ownerID:String
 }
+
 input UpdateClassProps {
   name:String
   owner_id:String
 }
-input LikeProps{
+
+input LikeProps {
   userID:String!
   noteID:String!
 }
+
+input UpdateUserProps {
+  email:String
+  name:String
+  password:String
+}
+
