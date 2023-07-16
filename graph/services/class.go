@@ -63,9 +63,25 @@ func (cs *classService) CreateClass(ctx context.Context, Name string, SchoolID s
 	return convertCreateClass(newClass), nil
 }
 
-func (cs *classService) GetClasses(ctx context.Context) ([]*model.Class, error) {
-	var classes []*dbModel.Class
-	if err := cs.db.Find(&classes).Error; err != nil {
+func (cs *classService) GetClasses(input model.GetClassesProps) ([]*model.Class, error) {
+	classes := make([]*dbModel.Class, 0)
+	orm := cs.db.Model(&dbModel.Class{})
+
+	if input.SchoolID != nil {
+		orm.Where("school_id = ?", *input.SchoolID)
+	}
+	if input.UserID != nil {
+		orm.Where("owner_id = ?", *input.UserID)
+	}
+	if input.ClassID != nil {
+		orm.Where("id = ?", *input.ClassID)
+	}
+	if input.SearchWord != nil {
+
+		orm.Where("name LIKE ?", "%"+*input.SearchWord+"%")
+	}
+
+	if err := orm.Find(&classes).Error; err != nil {
 		return nil, err
 	}
 
