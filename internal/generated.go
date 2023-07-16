@@ -790,6 +790,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGetClassesProps,
 		ec.unmarshalInputGetNoteProps,
 		ec.unmarshalInputGetUserProps,
+		ec.unmarshalInputJoinClassProps,
 		ec.unmarshalInputNewClass,
 		ec.unmarshalInputNewComment,
 		ec.unmarshalInputNewJoinClass,
@@ -1045,10 +1046,10 @@ input NewJoinSchool {
 }
 
 input GetClassesProps {
-  SchoolID: String
-  UserID: String
-  ClassID: String
-  SearchWord:String
+  schoolID: String
+  userID: String
+  classID: String
+  searchWord:String
 }
 
 input GetNoteProps {
@@ -1062,9 +1063,13 @@ input GetNoteProps {
 input GetUserProps {
   email: String
   userID: String
-  Name:String
+  name:String
 }
-`, BuiltIn: false},
+
+input JoinClassProps{
+  userID:String!
+  classID: String
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -7351,44 +7356,44 @@ func (ec *executionContext) unmarshalInputGetClassesProps(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"SchoolID", "UserID", "ClassID", "SearchWord"}
+	fieldsInOrder := [...]string{"schoolID", "userID", "classID", "searchWord"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "SchoolID":
+		case "schoolID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SchoolID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.SchoolID = data
-		case "UserID":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.UserID = data
-		case "ClassID":
+		case "classID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ClassID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.ClassID = data
-		case "SearchWord":
+		case "searchWord":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SearchWord"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("searchWord"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
@@ -7472,7 +7477,7 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "userID", "Name"}
+	fieldsInOrder := [...]string{"email", "userID", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7497,15 +7502,53 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 				return it, err
 			}
 			it.UserID = data
-		case "Name":
+		case "name":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Name"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Name = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputJoinClassProps(ctx context.Context, obj interface{}) (model.JoinClassProps, error) {
+	var it model.JoinClassProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"userID", "classID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "classID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClassID = data
 		}
 	}
 

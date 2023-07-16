@@ -14,6 +14,7 @@ type UserService interface {
 	GetUsersLike(ctx context.Context, userID string) ([]*model.Note, error)
 	GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error)
 	GetUser(input model.GetUserProps) ([]*model.User, error)
+	JoinClass(input model.NewJoinClass) (*model.Class, error)
 }
 
 type NoteService interface {

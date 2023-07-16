@@ -148,10 +148,10 @@ input NewJoinSchool {
 }
 
 input GetClassesProps {
-  SchoolID: String
-  UserID: String
-  ClassID: String
-  SearchWord:String
+  schoolID: String
+  userID: String
+  classID: String
+  searchWord:String
 }
 
 input GetNoteProps {
@@ -165,5 +165,5 @@ input GetNoteProps {
 input GetUserProps {
   email: String
   userID: String
-  Name:String
+  name:String
 }
