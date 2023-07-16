@@ -81,7 +81,7 @@ type Query {
   getClasses: [Class!]!
   getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
-  getUser:User!
+  getUser(input:GetUserProps):[User!]!
 }
 type Mutation {
   createUser(input: NewUser!): User!
@@ -153,4 +153,10 @@ input GetNoteProps {
   userID: String
   classID: String
   isPublic:Boolean
+}
+
+input GetUserProps {
+  email: String
+  userID: String
+  Name:String
 }

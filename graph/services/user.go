@@ -85,3 +85,26 @@ func (us *userService) GetUsersSchool(ctx context.Context, userID string) ([]*mo
 	}
 	return convertedSchool, nil
 }
+
+func (us *userService) GetUser(input model.GetUserProps) ([]*model.User, error) {
+	user := new([]*dbModel.User)
+	orm := us.db.Where("")
+	if input.UserID != nil {
+		orm.Where("id = ?", *input.UserID)
+	} else {
+		if input.Name != nil {
+			orm.Where("name LIKE ?", "%"+*input.Name+"%")
+		}
+		if input.Email != nil {
+			orm.Where("email LIKE ?", "%"+*input.Email+"%")
+		}
+	}
+	if err := orm.Find(&user).Error; err != nil {
+		return nil, err
+	}
+	convertedUser := make([]*model.User, len(*user))
+	for i, key := range *user {
+		convertedUser[i] = convertUser(*key)
+	}
+	return convertedUser, nil
+}

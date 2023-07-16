@@ -37,6 +37,12 @@ type GetNoteProps struct {
 	IsPublic *bool   `json:"isPublic,omitempty"`
 }
 
+type GetUserProps struct {
+	Email  *string `json:"email,omitempty"`
+	UserID *string `json:"userID,omitempty"`
+	Name   *string `json:"Name,omitempty"`
+}
+
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`

@@ -109,7 +109,7 @@ type ComplexityRoot struct {
 		GetNotes   func(childComplexity int, input *model.GetNoteProps) int
 		GetSchools func(childComplexity int, searchWord string) int
 		GetTags    func(childComplexity int, searchWord string) int
-		GetUser    func(childComplexity int) int
+		GetUser    func(childComplexity int, input *model.GetUserProps) int
 	}
 
 	School struct {
@@ -168,7 +168,7 @@ type QueryResolver interface {
 	GetClasses(ctx context.Context) ([]*model.Class, error)
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
 	GetMyNotes(ctx context.Context) (*model.Note, error)
-	GetUser(ctx context.Context) (*model.User, error)
+	GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error)
 }
 type UserResolver interface {
 	School(ctx context.Context, obj *model.User) ([]*model.School, error)
@@ -620,7 +620,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetUser(childComplexity), true
+		args, err := ec.field_Query_getUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetUser(childComplexity, args["input"].(*model.GetUserProps)), true
 
 	case "School.createdAt":
 		if e.complexity.School.CreatedAt == nil {
@@ -778,6 +783,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputGetNoteProps,
+		ec.unmarshalInputGetUserProps,
 		ec.unmarshalInputNewClass,
 		ec.unmarshalInputNewComment,
 		ec.unmarshalInputNewJoinClass,
@@ -966,7 +972,7 @@ type Query {
   getClasses: [Class!]!
   getTags(searchWord:String!): [Tag!]!
   getMyNotes: Note!
-  getUser:User!
+  getUser(input:GetUserProps):[User!]!
 }
 type Mutation {
   createUser(input: NewUser!): User!
@@ -1038,6 +1044,12 @@ input GetNoteProps {
   userID: String
   classID: String
   isPublic:Boolean
+}
+
+input GetUserProps {
+  email: String
+  userID: String
+  Name:String
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -1343,6 +1355,21 @@ func (ec *executionContext) field_Query_getTags_args(ctx context.Context, rawArg
 		}
 	}
 	args["searchWord"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.GetUserProps
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOGetUserProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetUserProps(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -4238,7 +4265,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUser(rctx)
+		return ec.resolvers.Query().GetUser(rctx, fc.Args["input"].(*model.GetUserProps))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4250,9 +4277,9 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.([]*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖmegachasmaᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖmegachasmaᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4288,6 +4315,17 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -7331,6 +7369,53 @@ func (ec *executionContext) unmarshalInputGetNoteProps(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj interface{}) (model.GetUserProps, error) {
+	var it model.GetUserProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email", "userID", "Name"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "Name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj interface{}) (model.NewClass, error) {
 	var it model.NewClass
 	asMap := map[string]interface{}{}
@@ -9705,6 +9790,14 @@ func (ec *executionContext) unmarshalOGetNoteProps2ᚖmegachasmaᚋgraphᚋmodel
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGetNoteProps(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOGetUserProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetUserProps(ctx context.Context, v interface{}) (*model.GetUserProps, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGetUserProps(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
