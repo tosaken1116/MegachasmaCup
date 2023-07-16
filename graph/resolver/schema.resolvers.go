@@ -112,8 +112,8 @@ func (r *queryResolver) GetMyNotes(ctx context.Context) (*model.Note, error) {
 }
 
 // GetUser is the resolver for the getUser field.
-func (r *queryResolver) GetUser(ctx context.Context) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: GetUser - getUser"))
+func (r *queryResolver) GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error) {
+	return r.Srv.GetUser(*input)
 }
 
 // School is the resolver for the school field.
@@ -152,13 +152,3 @@ type mutationResolver struct{ *Resolver }
 type noteResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
-	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
-}
