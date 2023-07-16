@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
 
@@ -138,6 +139,16 @@ func (ns *noteService) LikeNote(input model.LikeProps) (*model.Note, error) {
 	}
 	if err := ns.db.Exec("INSERT INTO likes (user_id,note_id) VALUES(@user_id,@note_id)", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).Error; err != nil {
 		return nil, err
+	}
+	return convertNote(*likeNote), nil
+}
+func (ns *noteService) DeleteLikeNote(input model.LikeProps) (*model.Note, error) {
+	likeNote := new(dbModel.Note)
+	if err := ns.db.Where("id = ?", input.NoteID).Find(&likeNote).Error; err != nil {
+		return nil, err
+	}
+	if count := ns.db.Exec("DELETE FROM likes WHERE user_id = @user_id AND note_id = @note_id", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).RowsAffected; count == 0 {
+		return nil, errors.New("yet like note")
 	}
 	return convertNote(*likeNote), nil
 }
