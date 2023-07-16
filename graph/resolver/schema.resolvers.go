@@ -73,7 +73,7 @@ func (r *mutationResolver) JoinClass(ctx context.Context, input model.NewJoinCla
 
 // JoinSchool is the resolver for the joinSchool field.
 func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error) {
-	panic(fmt.Errorf("not implemented: JoinSchool - joinSchool"))
+	return r.Srv.JoinSchool(input)
 }
 
 // School is the resolver for the school field.
