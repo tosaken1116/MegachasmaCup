@@ -41,8 +41,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 				http.Error(w, `{"reason":"bearer is not found"}`, http.StatusUnauthorized)
 				return
 			}
-			http.Error(w, `{"reason":"bearer is not found"}`, http.StatusUnauthorized)
-			return
 		}
 
 	})
