@@ -1046,10 +1046,10 @@ input NewJoinSchool {
 }
 
 input GetClassesProps {
-  SchoolID: String
-  UserID: String
-  ClassID: String
-  SearchWord:String
+  schoolID: String
+  userID: String
+  classID: String
+  searchWord:String
 }
 
 input GetNoteProps {
@@ -1063,7 +1063,7 @@ input GetNoteProps {
 input GetUserProps {
   email: String
   userID: String
-  Name:String
+  name:String
 }
 input UpdateSchoolProps{
   name:String
@@ -7355,44 +7355,44 @@ func (ec *executionContext) unmarshalInputGetClassesProps(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"SchoolID", "UserID", "ClassID", "SearchWord"}
+	fieldsInOrder := [...]string{"schoolID", "userID", "classID", "searchWord"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "SchoolID":
+		case "schoolID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SchoolID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schoolID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.SchoolID = data
-		case "UserID":
+		case "userID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.UserID = data
-		case "ClassID":
+		case "classID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ClassID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.ClassID = data
-		case "SearchWord":
+		case "searchWord":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SearchWord"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("searchWord"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
@@ -7476,7 +7476,7 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "userID", "Name"}
+	fieldsInOrder := [...]string{"email", "userID", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7501,10 +7501,10 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 				return it, err
 			}
 			it.UserID = data
-		case "Name":
+		case "name":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Name"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err

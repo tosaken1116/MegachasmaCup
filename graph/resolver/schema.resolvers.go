@@ -68,7 +68,7 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 
 // JoinClass is the resolver for the joinClass field.
 func (r *mutationResolver) JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error) {
-	panic(fmt.Errorf("not implemented: JoinClass - joinClass"))
+	return r.Srv.JoinClass(input)
 }
 
 // JoinSchool is the resolver for the joinSchool field.

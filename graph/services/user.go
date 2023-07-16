@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
@@ -107,4 +108,15 @@ func (us *userService) GetUser(input model.GetUserProps) ([]*model.User, error) 
 		convertedUser[i] = convertUser(*key)
 	}
 	return convertedUser, nil
+}
+
+func (us *userService) JoinClass(input model.NewJoinClass) (*model.Class, error) {
+	joinClass := new(dbModel.Class)
+	if err := us.db.Where("id = ?", input.ClassID).Find(&joinClass).Error; err != nil {
+		return nil, err
+	}
+	if err := us.db.Exec("INSERT INTO class_user (user_id,class_id) VALUES(@user_id,@class_id)", sql.Named("class_id", input.ClassID), sql.Named("user_id", input.UserID)).Error; err != nil {
+		return nil, err
+	}
+	return convertClass(*joinClass), nil
 }

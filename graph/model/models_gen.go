@@ -30,10 +30,10 @@ type Comment struct {
 }
 
 type GetClassesProps struct {
-	SchoolID   *string `json:"SchoolID,omitempty"`
-	UserID     *string `json:"UserID,omitempty"`
-	ClassID    *string `json:"ClassID,omitempty"`
-	SearchWord *string `json:"SearchWord,omitempty"`
+	SchoolID   *string `json:"schoolID,omitempty"`
+	UserID     *string `json:"userID,omitempty"`
+	ClassID    *string `json:"classID,omitempty"`
+	SearchWord *string `json:"searchWord,omitempty"`
 }
 
 type GetNoteProps struct {
@@ -47,7 +47,7 @@ type GetNoteProps struct {
 type GetUserProps struct {
 	Email  *string `json:"email,omitempty"`
 	UserID *string `json:"userID,omitempty"`
-	Name   *string `json:"Name,omitempty"`
+	Name   *string `json:"name,omitempty"`
 }
 
 type NewClass struct {
