@@ -91,7 +91,7 @@ type Mutation {
   createClass(input: NewClass!): Class!
   updateClass(id:String!,input: NewClass):Class!
   createSchool(input: NewSchool!): School!
-  updateSchool(id:String!,input: NewSchool):School!
+  updateSchool(id:String!,input: UpdateSchoolProps):School!
   createComment(input: NewComment!): Comment!
   updateComment(id:String!,input: NewComment):Comment!
   createTag(input: NewTag!): Tag!
@@ -166,4 +166,8 @@ input GetUserProps {
   email: String
   userID: String
   name:String
+}
+input UpdateSchoolProps{
+  name:String
+    ownerID:String
 }

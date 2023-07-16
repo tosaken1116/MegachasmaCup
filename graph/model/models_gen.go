@@ -50,11 +50,6 @@ type GetUserProps struct {
 	Name   *string `json:"name,omitempty"`
 }
 
-type JoinClassProps struct {
-	UserID  string  `json:"userID"`
-	ClassID *string `json:"classID,omitempty"`
-}
-
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`
@@ -132,6 +127,11 @@ type School struct {
 type Tag struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type UpdateSchoolProps struct {
+	Name    *string `json:"name,omitempty"`
+	OwnerID *string `json:"ownerID,omitempty"`
 }
 
 type User struct {
