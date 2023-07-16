@@ -18,6 +18,10 @@ type UserService interface {
 	JoinSchool(ctx context.Context, schoolID string) (*model.School, error)
 	SignIn(input *model.GetJwtProps) (*model.Jwt, error)
 	UpdateUser(ctx context.Context, id string, input model.UpdateUserProps) (*model.User, error)
+	GetSchoolOwner(ctx context.Context, SchoolID string) (*model.User, error)
+	GetSchoolStudents(ctx context.Context, SchoolID string) ([]*model.User, error)
+	GetClassOwner(ctx context.Context, ClassID string) (*model.User, error)
+	GetClassStudents(ctx context.Context, ClassID string) ([]*model.User, error)
 }
 
 type NoteService interface {
@@ -28,6 +32,8 @@ type NoteService interface {
 	LikeNote(ctx context.Context, noteID string) (*model.Note, error)
 	DeleteLikeNote(ctx context.Context, noteID string) (*model.Note, error)
 	UpdateNote(ctx context.Context, id string, input model.UpdateNoteProps) (*model.Note, error)
+	GetNoteComments(ctx context.Context, noteId string) ([]*model.Comment, error)
+	GetClassNotes(ctx context.Context, classID string) ([]*model.Note, error)
 }
 
 type SchoolService interface {
@@ -35,12 +41,15 @@ type SchoolService interface {
 	CreateSchool(ctx context.Context, Name string) (*model.School, error)
 	GetSchoolBySearchWord(searchWord string) ([]*model.School, error)
 	UpdateSchool(ctx context.Context, id string, input model.UpdateSchoolProps) (*model.School, error)
+	GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error)
+	GetClassSchool(ctx context.Context, classID string) (*model.School, error)
 }
 
 type ClassService interface {
 	CreateClass(ctx context.Context, Name string, SchoolID string) (*model.Class, error)
 	GetClasses(input model.GetClassesProps) ([]*model.Class, error)
 	UpdateClass(ctx context.Context, id string, input model.UpdateClassProps) (*model.Class, error)
+	GetUserClass(ctx context.Context, userID string) ([]*model.Class, error)
 }
 
 type TagService interface {

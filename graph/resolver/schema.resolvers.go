@@ -10,6 +10,26 @@ import (
 	"megachasma/internal"
 )
 
+// ClassOwner is the resolver for the classOwner field.
+func (r *classResolver) ClassOwner(ctx context.Context, obj *model.Class) (*model.User, error) {
+	return r.Srv.GetClassOwner(ctx, obj.ID)
+}
+
+// ClassSchool is the resolver for the classSchool field.
+func (r *classResolver) ClassSchool(ctx context.Context, obj *model.Class) (*model.School, error) {
+	return r.Srv.GetClassSchool(ctx, obj.ID)
+}
+
+// ClassStudents is the resolver for the classStudents field.
+func (r *classResolver) ClassStudents(ctx context.Context, obj *model.Class) ([]*model.User, error) {
+	return r.Srv.GetClassStudents(ctx, obj.ID)
+}
+
+// ClassNotes is the resolver for the classNotes field.
+func (r *classResolver) ClassNotes(ctx context.Context, obj *model.Class) ([]*model.Note, error) {
+	return r.Srv.GetClassNotes(ctx, obj.ID)
+}
+
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
 	return r.Srv.CreateUser(ctx, input.Email, input.Password, input.Name)
@@ -95,6 +115,16 @@ func (r *noteResolver) Tags(ctx context.Context, obj *model.Note) ([]*model.Tag,
 	return r.Srv.GetNoteTags(ctx, obj.ID)
 }
 
+// LikeUser is the resolver for the like_user field.
+func (r *noteResolver) LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error) {
+	return r.Srv.GetLikeUserOfNote(ctx, obj.ID)
+}
+
+// Comments is the resolver for the comments field.
+func (r *noteResolver) Comments(ctx context.Context, obj *model.Note) ([]*model.Comment, error) {
+	return r.Srv.GetNoteComments(ctx, obj.ID)
+}
+
 // GetNotes is the resolver for the getNotes field.
 func (r *queryResolver) GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error) {
 	return r.Srv.GetNotes(ctx, *input)
@@ -125,8 +155,18 @@ func (r *queryResolver) GetJwt(ctx context.Context, input *model.GetJwtProps) (*
 	return r.Srv.SignIn(input)
 }
 
-// School is the resolver for the school field.
-func (r *userResolver) School(ctx context.Context, obj *model.User) ([]*model.School, error) {
+// SchoolOwner is the resolver for the schoolOwner field.
+func (r *schoolResolver) SchoolOwner(ctx context.Context, obj *model.School) (*model.User, error) {
+	return r.Srv.GetSchoolOwner(ctx, obj.ID)
+}
+
+// SchoolStudents is the resolver for the schoolStudents field.
+func (r *schoolResolver) SchoolStudents(ctx context.Context, obj *model.School) ([]*model.User, error) {
+	return r.Srv.GetSchoolStudents(ctx, obj.ID)
+}
+
+// UserSchool is the resolver for the userSchool field.
+func (r *userResolver) UserSchool(ctx context.Context, obj *model.User) ([]*model.School, error) {
 	return r.Srv.GetUsersSchool(ctx, obj.ID)
 }
 
@@ -135,15 +175,18 @@ func (r *userResolver) Likes(ctx context.Context, obj *model.User) ([]*model.Not
 	return r.Srv.GetUsersLike(ctx, obj.ID)
 }
 
-// Class is the resolver for the class field.
-func (r *userResolver) Class(ctx context.Context, obj *model.User) ([]*model.Class, error) {
+// UserClass is the resolver for the userClass field.
+func (r *userResolver) UserClass(ctx context.Context, obj *model.User) ([]*model.Class, error) {
 	return r.Srv.GetUsersClass(ctx, obj.ID)
 }
 
-// Notes is the resolver for the notes field.
-func (r *userResolver) Notes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
+// UserNotes is the resolver for the userNotes field.
+func (r *userResolver) UserNotes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
 	return r.Srv.GetUsersNote(ctx, obj.ID)
 }
+
+// Class returns internal.ClassResolver implementation.
+func (r *Resolver) Class() internal.ClassResolver { return &classResolver{r} }
 
 // Mutation returns internal.MutationResolver implementation.
 func (r *Resolver) Mutation() internal.MutationResolver { return &mutationResolver{r} }
@@ -154,10 +197,15 @@ func (r *Resolver) Note() internal.NoteResolver { return &noteResolver{r} }
 // Query returns internal.QueryResolver implementation.
 func (r *Resolver) Query() internal.QueryResolver { return &queryResolver{r} }
 
+// School returns internal.SchoolResolver implementation.
+func (r *Resolver) School() internal.SchoolResolver { return &schoolResolver{r} }
+
 // User returns internal.UserResolver implementation.
 func (r *Resolver) User() internal.UserResolver { return &userResolver{r} }
 
+type classResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type noteResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type schoolResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
