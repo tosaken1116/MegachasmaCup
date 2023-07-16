@@ -68,12 +68,22 @@ func (r *mutationResolver) CreateTag(ctx context.Context, input model.NewTag) (*
 
 // JoinClass is the resolver for the joinClass field.
 func (r *mutationResolver) JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error) {
-	panic(fmt.Errorf("not implemented: JoinClass - joinClass"))
+	return r.Srv.JoinClass(input)
 }
 
 // JoinSchool is the resolver for the joinSchool field.
 func (r *mutationResolver) JoinSchool(ctx context.Context, input model.NewJoinSchool) (*model.School, error) {
-	panic(fmt.Errorf("not implemented: JoinSchool - joinSchool"))
+	return r.Srv.JoinSchool(input)
+}
+
+// Like is the resolver for the like field.
+func (r *mutationResolver) Like(ctx context.Context, input model.LikeProps) (*model.Note, error) {
+	return r.Srv.LikeNote(input)
+}
+
+// DeleteLike is the resolver for the deleteLike field.
+func (r *mutationResolver) DeleteLike(ctx context.Context, input model.LikeProps) (*model.Note, error) {
+	return r.Srv.DeleteLikeNote(input)
 }
 
 // School is the resolver for the school field.

@@ -97,6 +97,8 @@ type Mutation {
   createTag(input: NewTag!): Tag!
   joinClass(input:NewJoinClass!):Class!
   joinSchool(input:NewJoinSchool!):School!
+  like(input:LikeProps!):Note!
+  deleteLike(input:LikeProps!):Note!
 }
 
 
@@ -148,10 +150,10 @@ input NewJoinSchool {
 }
 
 input GetClassesProps {
-  SchoolID: String
-  UserID: String
-  ClassID: String
-  SearchWord:String
+  schoolID: String
+  userID: String
+  classID: String
+  searchWord:String
 }
 
 input GetNoteProps {
@@ -165,7 +167,7 @@ input GetNoteProps {
 input GetUserProps {
   email: String
   userID: String
-  Name:String
+  name:String
 }
 input UpdateSchoolProps{
   name:String
@@ -174,4 +176,8 @@ input UpdateSchoolProps{
 input UpdateClassProps {
   name:String
   owner_id:String
+}
+input LikeProps{
+  userID:String!
+  noteID:String!
 }

@@ -14,6 +14,8 @@ type UserService interface {
 	GetUsersLike(ctx context.Context, userID string) ([]*model.Note, error)
 	GetUsersSchool(ctx context.Context, userID string) ([]*model.School, error)
 	GetUser(input model.GetUserProps) ([]*model.User, error)
+	JoinClass(input model.NewJoinClass) (*model.Class, error)
+	JoinSchool(input model.NewJoinSchool) (*model.School, error)
 }
 
 type NoteService interface {
@@ -21,6 +23,8 @@ type NoteService interface {
 	GetNoteTags(ctx context.Context, NoteID string) ([]*model.Tag, error)
 	GetLikeUserOfNote(ctx context.Context, NoteID string) ([]*model.User, error)
 	GetNotes(input model.GetNoteProps) ([]*model.Note, error)
+	LikeNote(input model.LikeProps) (*model.Note, error)
+	DeleteLikeNote(input model.LikeProps) (*model.Note, error)
 }
 
 type SchoolService interface {
