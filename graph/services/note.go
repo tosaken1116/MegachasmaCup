@@ -143,22 +143,30 @@ func (ns *noteService) GetNotes(input model.GetNoteProps) ([]*model.Note, error)
 	}
 	return convertedNote, nil
 }
-func (ns *noteService) LikeNote(input model.LikeProps) (*model.Note, error) {
+func (ns *noteService) LikeNote(ctx context.Context, noteID string) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	likeNote := new(dbModel.Note)
-	if err := ns.db.Where("id = ?", input.NoteID).Find(&likeNote).Error; err != nil {
+	if err := ns.db.Where("id = ?", noteID).Find(&likeNote).Error; err != nil {
 		return nil, err
 	}
-	if err := ns.db.Exec("INSERT INTO likes (user_id,note_id) VALUES(@user_id,@note_id)", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).Error; err != nil {
+	if err := ns.db.Exec("INSERT INTO likes (user_id,note_id) VALUES(@user_id,@note_id)", sql.Named("note_id", noteID), sql.Named("user_id", userID)).Error; err != nil {
 		return nil, err
 	}
 	return convertNote(*likeNote), nil
 }
-func (ns *noteService) DeleteLikeNote(input model.LikeProps) (*model.Note, error) {
+func (ns *noteService) DeleteLikeNote(ctx context.Context, noteID string) (*model.Note, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	likeNote := new(dbModel.Note)
-	if err := ns.db.Where("id = ?", input.NoteID).Find(&likeNote).Error; err != nil {
+	if err := ns.db.Where("id = ?", noteID).Find(&likeNote).Error; err != nil {
 		return nil, err
 	}
-	if count := ns.db.Exec("DELETE FROM likes WHERE user_id = @user_id AND note_id = @note_id", sql.Named("note_id", input.NoteID), sql.Named("user_id", input.UserID)).RowsAffected; count == 0 {
+	if count := ns.db.Exec("DELETE FROM likes WHERE user_id = @user_id AND note_id = @note_id", sql.Named("note_id", noteID), sql.Named("user_id", userID)).RowsAffected; count == 0 {
 		return nil, errors.New("yet like note")
 	}
 	return convertNote(*likeNote), nil

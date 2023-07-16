@@ -77,13 +77,13 @@ func (r *mutationResolver) JoinSchool(ctx context.Context, schoolID string) (*mo
 }
 
 // Like is the resolver for the like field.
-func (r *mutationResolver) Like(ctx context.Context, input model.LikeProps) (*model.Note, error) {
-	return r.Srv.LikeNote(input)
+func (r *mutationResolver) Like(ctx context.Context, noteID string) (*model.Note, error) {
+	return r.Srv.LikeNote(ctx, noteID)
 }
 
 // DeleteLike is the resolver for the deleteLike field.
-func (r *mutationResolver) DeleteLike(ctx context.Context, input model.LikeProps) (*model.Note, error) {
-	return r.Srv.DeleteLikeNote(input)
+func (r *mutationResolver) DeleteLike(ctx context.Context, noteID string) (*model.Note, error) {
+	return r.Srv.DeleteLikeNote(ctx, noteID)
 }
 
 // School is the resolver for the school field.

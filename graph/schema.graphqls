@@ -102,8 +102,8 @@ type Mutation {
   createTag(input: NewTag!): Tag! @isAuthenticated
   joinClass(classID: String!):Class! @isAuthenticated
   joinSchool(schoolID: String!):School! @isAuthenticated
-  like(input:LikeProps!):Note! @isAuthenticated
-  deleteLike(input:LikeProps!):Note! @isAuthenticated
+  like(noteID: String!):Note! @isAuthenticated
+  deleteLike(noteID:String!):Note! @isAuthenticated
 }
 
 
@@ -172,11 +172,6 @@ input UpdateSchoolProps {
 input UpdateClassProps {
   name:String
   owner_id:String
-}
-
-input LikeProps {
-  userID:String!
-  noteID:String!
 }
 
 input UpdateUserProps {

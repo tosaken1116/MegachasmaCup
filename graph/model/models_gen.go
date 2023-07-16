@@ -59,11 +59,6 @@ type Jwt struct {
 	Token string `json:"token"`
 }
 
-type LikeProps struct {
-	UserID string `json:"userID"`
-	NoteID string `json:"noteID"`
-}
-
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`
