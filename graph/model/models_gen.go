@@ -67,7 +67,6 @@ type LikeProps struct {
 type NewClass struct {
 	Name     string `json:"name"`
 	SchoolID string `json:"schoolID"`
-	OwnerID  string `json:"ownerID"`
 }
 
 type NewComment struct {

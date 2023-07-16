@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"megachasma/graph/model"
 	dbModel "megachasma/graph/model/db"
@@ -48,6 +49,9 @@ func (ss *schoolService) CreateSchool(ctx context.Context, Name string) (*model.
 	}
 	if err := ss.db.Create(&school).Error; err != nil {
 		return nil, err
+	}
+	if err := ss.db.Exec("INSERT INTO school_user (user_id,school_id) VALUES (@user_id,@school_id)", sql.Named("user_id", userID), sql.Named("school_id", &school.ID)).Error; err != nil {
+		return nil, errors.New("owner cant join school")
 	}
 	createdSchool := convertSchool(school)
 	return createdSchool, nil

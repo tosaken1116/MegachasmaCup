@@ -119,7 +119,6 @@ input NewNote {
 input NewClass {
   name: String!
   schoolID:String!
-  ownerID:String!
 }
 
 input NewSchool {

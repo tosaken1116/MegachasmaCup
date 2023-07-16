@@ -1075,7 +1075,6 @@ input NewNote {
 input NewClass {
   name: String!
   schoolID:String!
-  ownerID:String!
 }
 
 input NewSchool {
@@ -8424,7 +8423,7 @@ func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "schoolID", "ownerID"}
+	fieldsInOrder := [...]string{"name", "schoolID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8449,15 +8448,6 @@ func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj inte
 				return it, err
 			}
 			it.SchoolID = data
-		case "ownerID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerID = data
 		}
 	}
 
