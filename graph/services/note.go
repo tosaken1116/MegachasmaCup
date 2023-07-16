@@ -25,7 +25,6 @@ func convertNote(note dbModel.Note) *model.Note {
 		IsPublic:    note.IsPublic,
 		UserID:      note.UserID.String(),
 		CreatedAt:   note.CreatedAt,
-		DeletedAt:   note.DeletedAt,
 		UpdatedAt:   note.UpdatedAt,
 	}
 }

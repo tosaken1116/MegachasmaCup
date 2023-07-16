@@ -22,7 +22,6 @@ func convertSchool(school dbModel.School) *model.School {
 		Name:      school.Name,
 		OwnerID:   school.OwnerID.String(),
 		CreatedAt: school.CreatedAt,
-		DeletedAt: school.DeletedAt,
 		UpdatedAt: school.UpdatedAt,
 	}
 }
