@@ -53,7 +53,7 @@ func (r *mutationResolver) UpdateSchool(ctx context.Context, id string, input *m
 
 // CreateComment is the resolver for the createComment field.
 func (r *mutationResolver) CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error) {
-	return r.Srv.CreateComment(input)
+	return r.Srv.CreateComment(ctx, input)
 }
 
 // UpdateComment is the resolver for the updateComment field.

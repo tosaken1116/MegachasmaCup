@@ -1095,7 +1095,6 @@ input NewTag {
 }
 
 input NewComment {
-  userID: String!
   noteID: String!
   comment: String!
 }
@@ -8460,22 +8459,13 @@ func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userID", "noteID", "comment"}
+	fieldsInOrder := [...]string{"noteID", "comment"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		case "noteID":
 			var err error
 

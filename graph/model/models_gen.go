@@ -70,7 +70,6 @@ type NewClass struct {
 }
 
 type NewComment struct {
-	UserID  string `json:"userID"`
 	NoteID  string `json:"noteID"`
 	Comment string `json:"comment"`
 }

@@ -139,7 +139,6 @@ input NewTag {
 }
 
 input NewComment {
-  userID: String!
   noteID: String!
   comment: String!
 }
