@@ -47,26 +47,28 @@ func (ss *schoolService) CreateSchool(ctx context.Context, Name string, OwnerID 
 	return createdSchool, nil
 }
 
-func (ss *schoolService) UpdateSchool(ctx context.Context, Name string, OwnerID string) (*model.School, error) {
-	pOwnerID, err := uuid.Parse(OwnerID)
-	if err != nil {
-		return nil, err
-	}
-	school := dbModel.School{
-		Name:    Name,
-		OwnerID: pOwnerID,
-	}
-	if err := ss.db.Where("id = ?", OwnerID).Find(&school).Error; err != nil {
-		return nil, err
-	}
+func (ss *schoolService) UpdateSchool(ctx context.Context, id string, input model.UpdateSchoolProps) (*model.School, error) {
 
-	school.Name = Name
+	school := new(dbModel.School)
+	if err := ss.db.Where("id = ?", id).Find(&school).Error; err != nil {
+		return nil, err
+	}
+	if input.OwnerID != nil {
+		pOwnerID, err := uuid.Parse(*input.OwnerID)
+		if err != nil {
+			return nil, err
+		}
+		school.OwnerID = pOwnerID
+	}
+	if input.Name != nil {
+		school.Name = *input.Name
+	}
 
 	if err := ss.db.Save(&school).Error; err != nil {
 		return nil, err
 	}
 
-	updatedSchool := convertSchool(school)
+	updatedSchool := convertSchool(*school)
 	return updatedSchool, nil
 }
 
