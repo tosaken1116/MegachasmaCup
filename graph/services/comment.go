@@ -23,12 +23,18 @@ func convertComment(comment dbModel.Comment) *model.Comment {
 	}
 }
 func (cs *commentService) CreateComment(input model.NewComment) (*model.Comment, error) {
-	pUserID, err := uuid.Parse(input.NoteID)
+	pUserID, err := uuid.Parse(input.UserID)
 	if err != nil {
 		return nil, err
 	}
+	pNoteID, err := uuid.Parse(input.NoteID)
+	if err != nil {
+		return nil, err
+	}
+
 	comment := dbModel.Comment{
 		UserID:  pUserID,
+		NoteID:  pNoteID,
 		Comment: input.Comment,
 	}
 	if err := cs.db.Create(&comment).Error; err != nil {
