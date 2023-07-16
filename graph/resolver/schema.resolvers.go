@@ -97,8 +97,8 @@ func (r *queryResolver) GetSchools(ctx context.Context, searchWord string) ([]*m
 }
 
 // GetClasses is the resolver for the getClasses field.
-func (r *queryResolver) GetClasses(ctx context.Context) ([]*model.Class, error) {
-	panic(fmt.Errorf("not implemented: GetClasses - getClasses"))
+func (r *queryResolver) GetClasses(ctx context.Context, input *model.GetClassesProps) ([]*model.Class, error) {
+	return r.Srv.GetClasses(*input)
 }
 
 // GetTags is the resolver for the getTags field.
