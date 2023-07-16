@@ -74,11 +74,6 @@ type NewComment struct {
 	Comment string `json:"comment"`
 }
 
-type NewJoinClass struct {
-	ClassID string `json:"classID"`
-	UserID  string `json:"userID"`
-}
-
 type NewNote struct {
 	ClassID     string `json:"classID"`
 	SchoolID    string `json:"schoolID"`

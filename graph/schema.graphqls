@@ -100,7 +100,7 @@ type Mutation {
   createComment(input: NewComment!): Comment! @isAuthenticated
   updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
   createTag(input: NewTag!): Tag! @isAuthenticated
-  joinClass(input:NewJoinClass!):Class! @isAuthenticated
+  joinClass(classID: String!):Class! @isAuthenticated
   joinSchool(schoolID: String!):School! @isAuthenticated
   like(input:LikeProps!):Note! @isAuthenticated
   deleteLike(input:LikeProps!):Note! @isAuthenticated
@@ -141,12 +141,6 @@ input NewTag {
 input NewComment {
   noteID: String!
   comment: String!
-}
-
-
-input NewJoinClass {
-  classID: String!
-  userID: String!
 }
 
 input GetClassesProps {

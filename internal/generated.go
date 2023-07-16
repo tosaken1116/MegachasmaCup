@@ -83,7 +83,7 @@ type ComplexityRoot struct {
 		CreateTag     func(childComplexity int, input model.NewTag) int
 		CreateUser    func(childComplexity int, input model.NewUser) int
 		DeleteLike    func(childComplexity int, input model.LikeProps) int
-		JoinClass     func(childComplexity int, input model.NewJoinClass) int
+		JoinClass     func(childComplexity int, classID string) int
 		JoinSchool    func(childComplexity int, schoolID string) int
 		Like          func(childComplexity int, input model.LikeProps) int
 		UpdateClass   func(childComplexity int, id string, input *model.UpdateClassProps) int
@@ -163,7 +163,7 @@ type MutationResolver interface {
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
 	UpdateComment(ctx context.Context, id string, input *model.NewComment) (*model.Comment, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
-	JoinClass(ctx context.Context, input model.NewJoinClass) (*model.Class, error)
+	JoinClass(ctx context.Context, classID string) (*model.Class, error)
 	JoinSchool(ctx context.Context, schoolID string) (*model.School, error)
 	Like(ctx context.Context, input model.LikeProps) (*model.Note, error)
 	DeleteLike(ctx context.Context, input model.LikeProps) (*model.Note, error)
@@ -423,7 +423,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.JoinClass(childComplexity, args["input"].(model.NewJoinClass)), true
+		return e.complexity.Mutation.JoinClass(childComplexity, args["classID"].(string)), true
 
 	case "Mutation.joinSchool":
 		if e.complexity.Mutation.JoinSchool == nil {
@@ -848,7 +848,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputLikeProps,
 		ec.unmarshalInputNewClass,
 		ec.unmarshalInputNewComment,
-		ec.unmarshalInputNewJoinClass,
 		ec.unmarshalInputNewNote,
 		ec.unmarshalInputNewSchool,
 		ec.unmarshalInputNewTag,
@@ -1055,7 +1054,7 @@ type Mutation {
   createComment(input: NewComment!): Comment! @isAuthenticated
   updateComment(id:String!,input: NewComment):Comment! @isAuthenticated
   createTag(input: NewTag!): Tag! @isAuthenticated
-  joinClass(input:NewJoinClass!):Class! @isAuthenticated
+  joinClass(classID: String!):Class! @isAuthenticated
   joinSchool(schoolID: String!):School! @isAuthenticated
   like(input:LikeProps!):Note! @isAuthenticated
   deleteLike(input:LikeProps!):Note! @isAuthenticated
@@ -1096,12 +1095,6 @@ input NewTag {
 input NewComment {
   noteID: String!
   comment: String!
-}
-
-
-input NewJoinClass {
-  classID: String!
-  userID: String!
 }
 
 input GetClassesProps {
@@ -1262,15 +1255,15 @@ func (ec *executionContext) field_Mutation_deleteLike_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_joinClass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewJoinClass
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewJoinClass2megachasmaᚋgraphᚋmodelᚐNewJoinClass(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["classID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["classID"] = arg0
 	return args, nil
 }
 
@@ -3477,7 +3470,7 @@ func (ec *executionContext) _Mutation_joinClass(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().JoinClass(rctx, fc.Args["input"].(model.NewJoinClass))
+			return ec.resolvers.Mutation().JoinClass(rctx, fc.Args["classID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsAuthenticated == nil {
@@ -8484,44 +8477,6 @@ func (ec *executionContext) unmarshalInputNewComment(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewJoinClass(ctx context.Context, obj interface{}) (model.NewJoinClass, error) {
-	var it model.NewJoinClass
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"classID", "userID"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "classID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("classID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClassID = data
-		case "userID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputNewNote(ctx context.Context, obj interface{}) (model.NewNote, error) {
 	var it model.NewNote
 	asMap := map[string]interface{}{}
@@ -10361,11 +10316,6 @@ func (ec *executionContext) unmarshalNNewClass2megachasmaᚋgraphᚋmodelᚐNewC
 
 func (ec *executionContext) unmarshalNNewComment2megachasmaᚋgraphᚋmodelᚐNewComment(ctx context.Context, v interface{}) (model.NewComment, error) {
 	res, err := ec.unmarshalInputNewComment(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewJoinClass2megachasmaᚋgraphᚋmodelᚐNewJoinClass(ctx context.Context, v interface{}) (model.NewJoinClass, error) {
-	res, err := ec.unmarshalInputNewJoinClass(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

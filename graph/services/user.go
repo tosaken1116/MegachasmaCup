@@ -133,12 +133,16 @@ func (us *userService) GetUser(input model.GetUserProps) ([]*model.User, error) 
 	return convertedUser, nil
 }
 
-func (us *userService) JoinClass(input model.NewJoinClass) (*model.Class, error) {
+func (us *userService) JoinClass(ctx context.Context, classID string) (*model.Class, error) {
+	userID, isGet := auth.GetUserID(ctx)
+	if !isGet {
+		return nil, errors.New("cant get userId")
+	}
 	joinClass := new(dbModel.Class)
-	if err := us.db.Where("id = ?", input.ClassID).Find(&joinClass).Error; err != nil {
+	if err := us.db.Where("id = ?", classID).Find(&joinClass).Error; err != nil {
 		return nil, err
 	}
-	if err := us.db.Exec("INSERT INTO class_user (user_id,class_id) VALUES(@user_id,@class_id)", sql.Named("class_id", input.ClassID), sql.Named("user_id", input.UserID)).Error; err != nil {
+	if err := us.db.Exec("INSERT INTO class_user (user_id,class_id) VALUES(@user_id,@class_id)", sql.Named("class_id", classID), sql.Named("user_id", userID)).Error; err != nil {
 		return nil, err
 	}
 	return convertClass(*joinClass), nil
