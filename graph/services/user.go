@@ -39,6 +39,28 @@ func (us *userService) CreateUser(ctx context.Context, Email string, Name string
 	return convertUser(newUser), nil
 }
 
+func (us *userService) UpdateUser(ctx context.Context, id string, input model.UpdateUserProps) (*model.User, error) {
+	user := new(dbModel.User)
+	if err := us.db.Where("id = ?", id).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	if input.Email != nil {
+		user.Email = *input.Email
+	}
+	if input.Name != nil {
+		user.Name = *input.Name
+	}
+	if input.Password != nil {
+		hashed, _ := bcrypt.GenerateFromPassword([]byte(*input.Password), 10)
+		user.HashedPassword = string(hashed)
+	}
+	if err := us.db.Save(&user).Error; err != nil {
+		return nil, err
+	}
+	updatedUser := convertUser(*user)
+	return updatedUser, nil
+}
+
 func (us *userService) GetUsersNote(ctx context.Context, userID string) ([]*model.Note, error) {
 	note := new([]*dbModel.Note)
 	if err := us.db.Where("user_id = ?", userID).Find(&note).Error; err != nil {
