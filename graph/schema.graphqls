@@ -76,7 +76,7 @@ type Comment{
 }
 
 type Query {
-  getNotes: [Note!]!
+  getNotes(input:GetNoteProps): [Note!]!
   getSchools(searchWord:String!): [School!]!
   getClasses: [Class!]!
   getTags(searchWord:String!): [Tag!]!
@@ -147,3 +147,10 @@ input NewJoinSchool {
   UserID: String!
 }
 
+input GetNoteProps {
+  NoteID: String
+  SchoolID: String
+  UserID: String
+  ClassID: String
+  IsPublic:Boolean
+}

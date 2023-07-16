@@ -106,7 +106,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetClasses func(childComplexity int) int
 		GetMyNotes func(childComplexity int) int
-		GetNotes   func(childComplexity int) int
+		GetNotes   func(childComplexity int, input *model.GetNoteProps) int
 		GetSchools func(childComplexity int, searchWord string) int
 		GetTags    func(childComplexity int, searchWord string) int
 		GetUser    func(childComplexity int) int
@@ -164,7 +164,7 @@ type NoteResolver interface {
 	LikeUser(ctx context.Context, obj *model.Note) ([]*model.User, error)
 }
 type QueryResolver interface {
-	GetNotes(ctx context.Context) ([]*model.Note, error)
+	GetNotes(ctx context.Context, input *model.GetNoteProps) ([]*model.Note, error)
 	GetSchools(ctx context.Context, searchWord string) ([]*model.School, error)
 	GetClasses(ctx context.Context) ([]*model.Class, error)
 	GetTags(ctx context.Context, searchWord string) ([]*model.Tag, error)
@@ -585,7 +585,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetNotes(childComplexity), true
+		args, err := ec.field_Query_getNotes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetNotes(childComplexity, args["input"].(*model.GetNoteProps)), true
 
 	case "Query.getSchools":
 		if e.complexity.Query.GetSchools == nil {
@@ -773,6 +778,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputGetNoteProps,
 		ec.unmarshalInputNewClass,
 		ec.unmarshalInputNewComment,
 		ec.unmarshalInputNewJoinClass,
@@ -956,7 +962,7 @@ type Comment{
 }
 
 type Query {
-  getNotes: [Note!]!
+  getNotes(input:GetNoteProps): [Note!]!
   getSchools(searchWord:String!): [School!]!
   getClasses: [Class!]!
   getTags(searchWord:String!): [Tag!]!
@@ -1027,7 +1033,13 @@ input NewJoinSchool {
   UserID: String!
 }
 
-`, BuiltIn: false},
+input GetNoteProps {
+  NoteID: String
+  SchoolID: String
+  UserID: String
+  ClassID: String
+  IsPublic:Boolean
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -1287,6 +1299,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getNotes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.GetNoteProps
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOGetNoteProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetNoteProps(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -3853,7 +3880,7 @@ func (ec *executionContext) _Query_getNotes(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetNotes(rctx)
+		return ec.resolvers.Query().GetNotes(rctx, fc.Args["input"].(*model.GetNoteProps))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3909,6 +3936,17 @@ func (ec *executionContext) fieldContext_Query_getNotes(ctx context.Context, fie
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Note", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getNotes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -7229,6 +7267,71 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputGetNoteProps(ctx context.Context, obj interface{}) (model.GetNoteProps, error) {
+	var it model.GetNoteProps
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"NoteID", "SchoolID", "UserID", "ClassID", "IsPublic"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "NoteID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("NoteID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NoteID = data
+		case "SchoolID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("SchoolID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SchoolID = data
+		case "UserID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "ClassID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ClassID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClassID = data
+		case "IsPublic":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IsPublic"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsPublic = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewClass(ctx context.Context, obj interface{}) (model.NewClass, error) {
 	var it model.NewClass
 	asMap := map[string]interface{}{}
@@ -9627,6 +9730,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOGetNoteProps2ᚖmegachasmaᚋgraphᚋmodelᚐGetNoteProps(ctx context.Context, v interface{}) (*model.GetNoteProps, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGetNoteProps(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalONewClass2ᚖmegachasmaᚋgraphᚋmodelᚐNewClass(ctx context.Context, v interface{}) (*model.NewClass, error) {
