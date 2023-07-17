@@ -1009,7 +1009,7 @@ type Query {
   getClasses(input:GetClassesProps): [Class!]! @isAuthenticated
   getTags(searchWord:String!): [Tag!]! @isAuthenticated
   getUser(input:GetUserProps):[User!]! @isAuthenticated
-  getJwt(input:GetJwtProps):Jwt! @isAuthenticated
+  getJwt(input:GetJwtProps):Jwt!
 }
 type Mutation {
   createUser(input: NewUser!): User!
@@ -4894,28 +4894,8 @@ func (ec *executionContext) _Query_getJwt(ctx context.Context, field graphql.Col
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetJwt(rctx, fc.Args["input"].(*model.GetJwtProps))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsAuthenticated == nil {
-				return nil, errors.New("directive isAuthenticated is not implemented")
-			}
-			return ec.directives.IsAuthenticated(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.Jwt); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *megachasma/graph/model.Jwt`, tmp)
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetJwt(rctx, fc.Args["input"].(*model.GetJwtProps))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
