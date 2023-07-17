@@ -81,7 +81,7 @@ type Query {
   getClasses(input:GetClassesProps): [Class!]! @isAuthenticated
   getTags(searchWord:String!): [Tag!]! @isAuthenticated
   getUser(input:GetUserProps):[User!]! @isAuthenticated
-  getJwt(input:GetJwtProps):Jwt! @isAuthenticated
+  getJwt(input:GetJwtProps):Jwt!
 }
 type Mutation {
   createUser(input: NewUser!): User!
