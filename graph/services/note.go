@@ -22,6 +22,7 @@ func convertNote(note dbModel.Note) *model.Note {
 		ClassID:     note.ClassID.String(),
 		SchoolID:    note.SchoolID.String(),
 		Description: note.Description,
+		Title:       note.Title,
 		IsPublic:    note.IsPublic,
 		UserID:      note.UserID.String(),
 		CreatedAt:   note.CreatedAt,
