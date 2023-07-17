@@ -32,7 +32,7 @@ func (r *classResolver) ClassNotes(ctx context.Context, obj *model.Class) ([]*mo
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	return r.Srv.CreateUser(ctx, input.Email, input.Password, input.Name)
+	return r.Srv.CreateUser(ctx, input.Email, input.Name, input.Password)
 }
 
 // UpdateUser is the resolver for the updateUser field.
