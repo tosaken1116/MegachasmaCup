@@ -107,10 +107,16 @@ func (us *userService) GetUsersLike(ctx context.Context, userID string) ([]*mode
 	return convertedNote, nil
 }
 
-func (us *userService) GetUser(input model.GetUserProps) ([]*model.User, error) {
+func (us *userService) GetUser(ctx context.Context, input model.GetUserProps) ([]*model.User, error) {
 	user := new([]*dbModel.User)
 	orm := us.db.Where("")
-	if input.UserID != nil {
+	if input.IsMe != nil {
+		userID, isGet := auth.GetUserID(ctx)
+		if !isGet {
+			return nil, errors.New("cant get userId")
+		}
+		orm.Where("id = ?", userID)
+	} else if input.UserID != nil {
 		orm.Where("id = ?", *input.UserID)
 	} else {
 		if input.Name != nil {

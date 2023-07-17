@@ -147,7 +147,7 @@ func (r *queryResolver) GetTags(ctx context.Context, searchWord string) ([]*mode
 
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, input *model.GetUserProps) ([]*model.User, error) {
-	return r.Srv.GetUser(*input)
+	return r.Srv.GetUser(ctx, *input)
 }
 
 // GetJwt is the resolver for the getJwt field.

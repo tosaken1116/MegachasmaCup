@@ -1083,6 +1083,7 @@ input GetNoteProps {
 }
 
 input GetUserProps {
+  isMe:Boolean
   email: String
   userID: String
   name:String
@@ -7991,13 +7992,22 @@ func (ec *executionContext) unmarshalInputGetUserProps(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "userID", "name"}
+	fieldsInOrder := [...]string{"isMe", "email", "userID", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "isMe":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isMe"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsMe = data
 		case "email":
 			var err error
 

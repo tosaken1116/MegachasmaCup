@@ -50,6 +50,7 @@ type GetNoteProps struct {
 }
 
 type GetUserProps struct {
+	IsMe   *bool   `json:"isMe,omitempty"`
 	Email  *string `json:"email,omitempty"`
 	UserID *string `json:"userID,omitempty"`
 	Name   *string `json:"name,omitempty"`
