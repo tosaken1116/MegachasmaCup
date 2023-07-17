@@ -92,7 +92,7 @@ models:
    fields:
     userSchool:
      resolver: true
-    likes:
+    userLikes:
      resolver: true
     userClass:
      resolver: true

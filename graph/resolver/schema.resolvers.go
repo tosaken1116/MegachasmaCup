@@ -170,8 +170,8 @@ func (r *userResolver) UserSchool(ctx context.Context, obj *model.User) ([]*mode
 	return r.Srv.GetUsersSchool(ctx, obj.ID)
 }
 
-// Likes is the resolver for the likes field.
-func (r *userResolver) Likes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
+// UserLikes is the resolver for the userLikes field.
+func (r *userResolver) UserLikes(ctx context.Context, obj *model.User) ([]*model.Note, error) {
 	return r.Srv.GetUsersLike(ctx, obj.ID)
 }
 

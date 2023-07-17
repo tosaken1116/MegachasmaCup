@@ -97,7 +97,7 @@ func (us *userService) GetUsersClass(ctx context.Context, userID string) ([]*mod
 
 func (us *userService) GetUsersLike(ctx context.Context, userID string) ([]*model.Note, error) {
 	user := new(dbModel.User)
-	if err := us.db.Where("id = ?", userID).Find(&user).Error; err != nil {
+	if err := us.db.Preload("Likes").Where("id = ?", userID).Find(&user).Error; err != nil {
 		return nil, err
 	}
 	convertedNote := make([]*model.Note, len(user.Likes))

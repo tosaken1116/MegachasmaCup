@@ -162,7 +162,7 @@ type User struct {
 	CreatedAt  time.Time `json:"createdAt"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	UserSchool []*School `json:"userSchool"`
-	Likes      []*Note   `json:"likes"`
+	UserLikes  []*Note   `json:"userLikes"`
 	UserClass  []*Class  `json:"userClass"`
 	UserNotes  []*Note   `json:"userNotes"`
 }

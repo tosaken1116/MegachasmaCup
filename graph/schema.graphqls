@@ -14,7 +14,7 @@ type User {
   updatedAt:DateTime!
 
   userSchool:[School!]!
-  likes:[Note!]!
+  userLikes:[Note!]!
   userClass:[Class!]!
   userNotes:[Note!]!
 }

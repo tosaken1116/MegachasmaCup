@@ -139,10 +139,10 @@ type ComplexityRoot struct {
 		Email      func(childComplexity int) int
 		ID         func(childComplexity int) int
 		ImageURL   func(childComplexity int) int
-		Likes      func(childComplexity int) int
 		Name       func(childComplexity int) int
 		UpdatedAt  func(childComplexity int) int
 		UserClass  func(childComplexity int) int
+		UserLikes  func(childComplexity int) int
 		UserNotes  func(childComplexity int) int
 		UserSchool func(childComplexity int) int
 	}
@@ -191,7 +191,7 @@ type SchoolResolver interface {
 }
 type UserResolver interface {
 	UserSchool(ctx context.Context, obj *model.User) ([]*model.School, error)
-	Likes(ctx context.Context, obj *model.User) ([]*model.Note, error)
+	UserLikes(ctx context.Context, obj *model.User) ([]*model.Note, error)
 	UserClass(ctx context.Context, obj *model.User) ([]*model.Class, error)
 	UserNotes(ctx context.Context, obj *model.User) ([]*model.Note, error)
 }
@@ -764,13 +764,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ImageURL(childComplexity), true
 
-	case "User.likes":
-		if e.complexity.User.Likes == nil {
-			break
-		}
-
-		return e.complexity.User.Likes(childComplexity), true
-
 	case "User.name":
 		if e.complexity.User.Name == nil {
 			break
@@ -791,6 +784,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.UserClass(childComplexity), true
+
+	case "User.userLikes":
+		if e.complexity.User.UserLikes == nil {
+			break
+		}
+
+		return e.complexity.User.UserLikes(childComplexity), true
 
 	case "User.userNotes":
 		if e.complexity.User.UserNotes == nil {
@@ -942,7 +942,7 @@ type User {
   updatedAt:DateTime!
 
   userSchool:[School!]!
-  likes:[Note!]!
+  userLikes:[Note!]!
   userClass:[Class!]!
   userNotes:[Note!]!
 }
@@ -1855,8 +1855,8 @@ func (ec *executionContext) fieldContext_Class_classOwner(ctx context.Context, f
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -1981,8 +1981,8 @@ func (ec *executionContext) fieldContext_Class_classStudents(ctx context.Context
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -2427,8 +2427,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -2524,8 +2524,8 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -4342,8 +4342,8 @@ func (ec *executionContext) fieldContext_Note_likeUser(ctx context.Context, fiel
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -4858,8 +4858,8 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -5343,8 +5343,8 @@ func (ec *executionContext) fieldContext_School_schoolOwner(ctx context.Context,
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -5409,8 +5409,8 @@ func (ec *executionContext) fieldContext_School_schoolStudents(ctx context.Conte
 				return ec.fieldContext_User_updatedAt(ctx, field)
 			case "userSchool":
 				return ec.fieldContext_User_userSchool(ctx, field)
-			case "likes":
-				return ec.fieldContext_User_likes(ctx, field)
+			case "userLikes":
+				return ec.fieldContext_User_userLikes(ctx, field)
 			case "userClass":
 				return ec.fieldContext_User_userClass(ctx, field)
 			case "userNotes":
@@ -5834,8 +5834,8 @@ func (ec *executionContext) fieldContext_User_userSchool(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _User_likes(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_likes(ctx, field)
+func (ec *executionContext) _User_userLikes(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_userLikes(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5848,7 +5848,7 @@ func (ec *executionContext) _User_likes(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.User().Likes(rctx, obj)
+		return ec.resolvers.User().UserLikes(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5865,7 +5865,7 @@ func (ec *executionContext) _User_likes(ctx context.Context, field graphql.Colle
 	return ec.marshalNNote2ᚕᚖmegachasmaᚋgraphᚋmodelᚐNoteᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_likes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userLikes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -9654,7 +9654,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "likes":
+		case "userLikes":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9663,7 +9663,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_likes(ctx, field, obj)
+				res = ec._User_userLikes(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
